@@ -20,93 +20,17 @@
 		<title>Instalador</title>
 		<meta charset="utf-8"/>
 		<link href="css/semantic.css" rel="stylesheet" type="text/css">
-		<style>
-		body {
-			display: inherit;
-			margin: 0;
-			font-family: "Open Sans";
-		}
-
-		.noline {
-			text-decoration: none;
-		}
-
-		ul>li {
-			float: left;
-		}
-		</style>
+		<link href="css/style.css" rel="stylesheet" type="text/css">
 		<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="js/semantic.js"></script>
-		<script type="text/javascript">
-		    $(function() {
-		    	$('document').ready(function() {
-		    		maximaCarga = $('.completo').innerWidth()-13;
-		    	})
-
-    			$( "#tabs" ).tabs();
-    			
-    			$('.ustedaqui').popup({
-					on: 'hover'
-				});
-
-				$('.completo').popup({
-					on: 'hover'
-				});
-
-				$('#i1').click( function() {
-					$('#i2').removeClass("active");
-					$('#i3').removeClass("active");
-					$('#i4').removeClass("active");
-					$('#i1').addClass("active");
-				});
-				
-				$('#i2').click( function() {
-					$('#i1').removeClass("active");
-					$('#i3').removeClass("active");
-					$('#i4').removeClass("active");
-					$('#i2').addClass("active");
-				});
-				
-				$('#i3').click( function() {
-					$('#i2').removeClass("active");
-					$('#i1').removeClass("active");
-					$('#i4').removeClass("active");
-					$('#i3').addClass("active");
-				});
-				
-				$('#i4').click( function() {
-					$('#i2').removeClass("active");
-					$('#i3').removeClass("active");
-					$('#i1').removeClass("active");
-					$('#i4').addClass("active");
-				});
-
-				$('input').focus( function() {
-					$(this).addClass('iselected');
-				})
-
-				$('input').blur( function() {
-					var progreso = $('#progreso').width();
-					var valor = $('.iselected').val();
-					$('.iselected').removeClass('iselected');
-					if (valor != "" && !$(this).hasClass('iready') && progreso < maximaCarga) {
-						$('#progreso').width('+=500');
-						$(this).addClass('iready');
-						var progreso = $('#progreso').width();
-						if (progreso > maximaCarga) {
-							$('#progreso').width(maximaCarga);
-						};
-					};
-				})
-  			});
-		</script>
+		<script type="text/javascript" src="js/myscript.js"></script>
 	</head>
 	<body>
 		<div class="ui grid">
 			<div class="fiveten wide column">
-					<div class="ui header aligned center">Asistente de instalación de veloci</div>
+					<div class="ui header aligned center">Asistente de instalación de Veloci</div>
 					<div class="ui fluid divider"></div>
 					<div class="ui successful progress completo" data-content="Esta barra muestra el progreso de la instalación">
 						<div id="progreso" class="bar completo" data-content="Completado: 0%" style="width:2%"></div>
@@ -150,8 +74,8 @@
 											Funcionalidades actuales
 										</div>
 										<div class="ui fluid divider"></div>
-										<p>veloci está preparado para gestionar cualquier tipo de competición de carreras. La versión 1
-										de veloci tiene capacidad para:</p>
+										<p>Veloci está preparado para gestionar cualquier tipo de competición de carreras. La versión 1
+										de Veloci tiene capacidad para:</p>
 										<ol>
 											<li>Control de asistencias a carreras</li>
 											<li>Control de reclamaciones</li>
@@ -160,7 +84,7 @@
 										</ol>
 										<div class="ui fluid divider"></div>
 										<div class="ui header">
-											¿Qué más tendrá veloci?
+											¿Qué más tendrá Veloci?
 										</div>
 										<p>La aplicación pretende llegar más lejos, por lo que en un futuro podrá ser actualizada
 											a través de modulos, los cuales se implementarán a traves de un asistente y se añadirán
@@ -212,7 +136,7 @@
 											<div class="field">
 												<label>Contraseña</label>
 												<div class="ui left labeled icon input">
-													<input type="text" name="inputPassUsuarioBase" placeholder="Contraseña del usuario">
+													<input type="password" name="inputPassUsuarioBase" placeholder="Contraseña del usuario">
 													<i class="legal icon"></i>
 												</div>
 											</div>
@@ -263,7 +187,7 @@
 											<button type="submit" name="instalar" class="ui animated positive fade button floated right">
 												<div class="visible content">Completar instalación</div>
 												<div class="hidden content">
-													VELOCI
+													Veloci
 												</div>
 											</button>
 									</div>
