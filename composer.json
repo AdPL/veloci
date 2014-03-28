@@ -1,0 +1,19 @@
+{
+    "name": "vendor/apuestas-f1",
+    "description": "Sistema de apuestas de formula 1",
+    "require": {
+	"slim/slim": "2.4.2",
+	"slim/extras": "2.*",
+	"slim/views": "0.*",
+        "j4mie/idiorm": "1.*",
+        "twig/twig": "1.*",
+	"semantic/ui": "dev-master",
+	"php": ">=5.2.2"
+    },
+    "authors": [
+        {
+            "name": "Adrián Pérez López",
+            "email": "adrianpelopez@gmail.com"
+        }
+    ]
+}

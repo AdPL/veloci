@@ -1,0 +1,212 @@
+<html>
+<head>
+	<title>Proyecto</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=2.0">
+	<link rel="stylesheet" href="css/semantic.css" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="js/semantic.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('.togglesidebar').click( function(e) {
+			$('.ui.sidebar').sidebar('toggle');	
+		});
+	});
+	</script>
+	<style>
+		body {
+			display: inherit;
+			margin: 0px;
+			font-family: "Open Sans";
+		}
+
+		.perfil {
+			margin: auto;
+		}
+
+		.noline {
+			text-decoration: none;
+		}
+
+		/* Media para SmartPhones */
+		@media screen and (max-device-width: 480px) {
+			.togglesidebar {
+				display: inherit;
+			}
+
+			.menuboton {
+				display: none !important;
+			}
+		}
+		/* Media para SmartPhones */
+
+		/* Media para iPad */
+		@media(max-device-width: 1024px) and (orientation: landscape) {
+			.togglesidebar {
+				display: none !important;
+			}
+		}
+
+		@media(max-device-width: 768px) and (orientation: portrait) {
+			.togglesidebar {
+				display: none !important;
+			}
+		}
+		/* Media para iPad */
+
+		/* Media para pantallas de portatil y ordenadores */
+		@media only screen and (min-width: 1224px) {
+			.togglesidebar {
+				display: none !important;
+			}
+		}
+		/* Media para pantallas de portatil y ordenadores */
+	</style>
+</head>
+<body>
+	<!-- Header principal con título y botones -->
+	<div class="ui inverted menu fixed">
+		<div class="item">
+			<a href="{{ urlFor('principal') }}" class="noline">F1Mallorca Sim Racing</a>
+		</div>
+		<a href="{{ urlFor('principal') }}" class="item menuboton">
+			<i class="home icon"></i> Inicio
+		</a>
+		<a href="#" class="item menuboton">
+			<i class="users icon"></i> Pilotos
+		</a>
+		<a href="#" class="item menuboton">
+			<i class="list layout icon"></i> Categorías
+		</a>
+		<a href="#" class="item menuboton">
+			<i class="calendar icon"></i> Calendario
+		</a>
+		<a class="right item togglesidebar">
+			<i class="reorder icon"></i>
+		</a>
+		<a href="{{ urlFor('login') }}" class="right item">
+			<i class="sign in icon"></i>
+		</a>
+	</div>
+	<!-- Header principal con título y botones -->
+
+	<!-- Columnas de la web -->
+	<div class="five column stackable ui grid">
+		<!-- Columna con el perfil de piloto -->
+		<div class="four wide column">
+			<div class="ui blue segment">
+				<h2 class="ui center aligned header">Perfil de piloto</h2>
+				<div class="ui flitted divider"></div>
+				<img class="ui small circular image perfil" src="images/yo.jpeg">
+				<h2 class="ui center aligned header">Adrián Pérez</h2>
+				<div class="ui blue ribbon label">Escuderia Formula 1</div>
+				<p>Williams</p>
+				<div class="ui green ribbon label">Carreras disputadas</div>
+				<p>Has competido en 22 carreras</p>
+				<div class="ui red ribbon label">Infracciones cometidas</div>
+				<p>Has sido sancionado en 2 ocasiones</p>
+				<div class="ui teal ribbon label">Categorías</div>
+				<ul>
+					<li>Formula 1</li>
+					<li>Turismos SR8</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Columna con el perfil de piloto -->
+
+		<!-- Columna con las categorías -->
+		<div class="six wide column">
+			<div class="ui red segment">
+				<h2 class="ui center aligned header">Categorías</h2>
+				<div class="ui flitted divider"></div>
+				<div class="ui blue ribbon label">FORMULA 1</div>
+				<img class="ui small right floated image" src="images/yo.jpeg">
+				<p>Categoría oficial de formula 1</p>
+				<p>Plazas disponibles: 0 plazas disponibles en este momento</p>
+				<div class="ui green ribbon label">Turismos SR8</div>
+				<img class="ui small right floated image" src="images/yo.jpeg">
+				<p>Categoría oficial de Turismos</p>
+				<p>Plazas disponibles: 12 plazas disponibles en este momento</p>
+				<p>
+					<div class="ui teal button">
+						<i class="edit icon"></i> Inscribirse
+					</div>
+				</p>
+				<div class="ui red ribbon label">Formula libre</div>
+				<img class="ui small right floated image" src="images/yo.jpeg">
+				<p>Categoría secundaria de formula 1</p>
+				<p>Plazas disponibles: 17 plazas disponibles en este momento</p>
+				<p>
+					<div class="ui teal button">
+						<i class="edit icon"></i> Inscribirse
+					</div>
+				</p>
+			</div>
+		</div>
+		<!-- Columna con las categorías -->
+
+		<!-- Columna con las próximas carreras -->
+		<div class="six wide column">
+			<div class="ui green segment">
+				<h2 class="ui center aligned header">Próximas carreras</h2>
+				<div class="ui flitted divider"></div>
+				<div class="ui blue ribbon label">Proxima carrera Formula 1</div>
+				<img class="ui small right floated image" src="images/yo.jpeg">
+				<p>Gran premio de Malasia</p>
+				<p>5 días 2 horas y 40 minutos</p>
+				<div class="ui green ribbon label">Proxima carrera Turismos SR8</div>
+				<img class="ui small right floated image" src="images/yo.jpeg">
+				<p>Gran premio de Malasia</p>
+				<p>6 días 2 horas y 40 minutos</p>
+			</div>
+		</div>
+		<!-- Columna con las próximas carreras -->
+
+		<!-- Columna con los pilotos -->
+		<div class="five wide column">
+			<div class="ui orange segment">
+				<h2 class="ui center aligned header">Pilotos</h2>
+				<div class="ui flitted divider"></div>
+				<div class="ui blue ribbon label">Adrián Pérez</div>
+				<img class="ui small right floated image" src="images/yo.jpeg">
+				<p>Puntos acumulados: 22</p>
+				<p>Sanciones acumuladas: 1</p>
+				<div class="ui green ribbon label">Juanma Fernández</div>
+				<img class="ui small right floated image" src="images/yo.jpeg">
+				<p>Puntos acumulados: 19</p>
+				<p>Sanciones acumuladas: 0</p>
+				<div class="ui red ribbon label">Manuel Domingo</div>
+				<img class="ui small right floated image" src="images/yo.jpeg">
+				<p>Puntos acumulados: 38</p>
+				<p>Sanciones acumuladas: 0</p>
+			</div>
+		</div>
+		<!-- Columna con los pilotos -->
+	</div>
+	<!-- Columnas de la web -->
+
+	<!-- Sidebar con menú del sitio -->
+	<div class="ui right inverted red vertical menu sidebar">
+		<div class="header item">
+			<i class="remove icon togglesidebar"></i> Menú
+		</div>
+		<a class="item">
+			<i class="users icon"></i>Pilotos
+		</a>
+		<a class="item">
+			<i class="list layout icon"></i>Categorías
+		</a>
+		<a class="item">
+			<i class="calendar icon"></i>Calendario
+		</a>
+		<div class="field item">
+			<div class="ui icon input">
+				<i class="search icon"></i>
+				<input type="text" placeholder="Buscar...">
+			</div>
+		</div>
+	</div>
+	<!-- Sidebar con menú del sitio -->
+</body>
+</html>
