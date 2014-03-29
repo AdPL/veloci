@@ -276,6 +276,12 @@
 		if ($correcto) {
 			try {
 				echo "BIEN";
+				$insertADM = $dbh->prepare("INSERT INTO `piloto`(`id`, `nombre`, `password`, `email`, `escuderia`, `nombre_completo`, `num_sanciones`, `num_victorias`, `rol`) VALUES (null,:usrADM,:passADM,:emailADM,'Ninguna',:nombreADM,'0','0','5');");
+				$insertADM->bindValue(':usrADM', $usrADM, PDO::PARAM_STR);
+				$insertADM->bindValue(':passADM', $passADM, PDO::PARAM_STR);
+				$insertADM->bindValue(':emailADM', $emailADM, PDO::PARAM_STR);
+				$insertADM->bindValue(':nombreADM', $nombreADM, PDO::PARAM_STR);
+				$insertADM->execute() or die(print_r("Error en la creación del usuario administrador"));
 				$todocorrecto = true;
 			} catch (PDOException $e) {
 				// Si falla algo, desechamos los cambios y paramos la ejecución.
@@ -289,11 +295,9 @@
 				$ruta = $_SERVER["DOCUMENT_ROOT"] . $_SERVER["PHP_SELF"];
 				$ruta = dirname($ruta);
 
-				$fin = strripos($ruta, '/');
-				$ruta = substr($ruta, 0, $fin) . "/../config/config.php";
+				$ruta = moveDir($ruta, 2, '/config/config.php');
 
 				$fp = fopen($ruta, "w+") or die("error");
-				// Puede quedar fea una línea tan larga.. sí, pero si no, no funcionaba.
 			    $cadena = "<?php ORM::configure('mysql:host=$host;dbname=$database'); ORM::configure('username', '$usuario'); ORM::configure('password', '$password'); ORM::configure('driver_options', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));";
 			    
 			    fputs($fp,$cadena);
@@ -301,3 +305,71 @@
 			}
 		}
 	}
+
+function moveDir($ruta, $subir, $directorio = "") {
+	$i = 0;
+	while ($i < $subir) {
+		$fin = strripos($ruta, '/');
+		$ruta = substr($ruta, 0, $fin);
+		$i++;
+	}
+
+	$ruta .= $directorio;
+
+	return $ruta;
+}
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Instalador</title>
+	<meta charset="utf-8"/>
+	<link href="css/semantic.css" rel="stylesheet" type="text/css">
+	<link href="css/style.css" rel="stylesheet" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="js/semantic.js"></script>
+	<script type="text/javascript" src="js/myscript.js"></script>
+</head>
+<body>
+	<div class="ui grid">
+		<div class="ui one column grid">
+			<div class="column">
+				<div class="ui segment green">
+					<h3 class="header">Fin de la instalación</h3>
+					<p><?php
+						$error = isset($_POST['instalar']) ? true : false;
+						
+						if ($error)
+							echo "Error, no se han recibido datos.";
+						else
+							echo "<h2>¡Instalación completada con éxito!</h2>";
+							echo "Ahora ya puede acceder a su web y panel de administración: " . $usrADM . "<br/>";
+							echo "<a href='http://" . $_SERVER["SERVER_NAME"] . "' class='ui animated positive button floated left'>
+							<div class='visible content'>Ir al sitio web</div>
+							<div class='hidden content'>
+							<i class='right arrow icon'></i>
+							</div>
+							</a>";
+							echo "<a href='http://" . $_SERVER["SERVER_NAME"] . "/admin' class='ui animated positive button floated left'>
+							<div class='visible content'>Ir al panel de administración</div>
+							<div class='hidden content'>
+							<i class='right arrow icon'></i>
+							</div>
+							</a>";
+
+							if (!file_exists($ruta)) {
+								echo "<br/><br/>Parece que hubo un problema en la creación del fichero de configuración, para que la aplicación pueda funcionar
+								correctamente debe copiar el código a continuación en un fichero, guardarlo como 'config.php' y despúes copiarlo a la carpeta config
+								de su servidor donde instalo la aplicación.<br/>";
+								echo htmlspecialchars($cadena);
+							}
+						?>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
