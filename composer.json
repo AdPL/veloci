@@ -5,9 +5,8 @@
 	"slim/slim": "2.4.2",
 	"slim/extras": "2.*",
 	"slim/views": "0.*",
-        "j4mie/idiorm": "1.*",
-        "twig/twig": "1.*",
-	"semantic/ui": "dev-master",
+    "j4mie/idiorm": "1.*",
+    "twig/twig": "1.*",
 	"php": ">=5.2.2"
     },
     "authors": [
