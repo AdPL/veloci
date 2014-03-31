@@ -73,8 +73,6 @@
 				`email` VARCHAR(45) NOT NULL,
 				`escuderia` VARCHAR(45) NOT NULL,
 				`nombre_completo` VARCHAR(60) NOT NULL,
-				`num_sanciones` INT UNSIGNED NOT NULL,
-				`num_victorias` INT UNSIGNED NOT NULL,
 				`rol` INT UNSIGNED NOT NULL,
 				PRIMARY KEY (`id`),
 				UNIQUE INDEX `name_UNIQUE` (`nombre` ASC))
@@ -118,18 +116,16 @@
 			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`carrera` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`nombre` VARCHAR(45) NOT NULL,
-				`neumatico1` ENUM('Super blandos', 'Blandos', 'Medios', 'Duros') NOT NULL,
-				`neumatico2` ENUM('Super blandos', 'Blandos', 'Medios', 'Duros') NOT NULL,
+				`neumatico1` ENUM('Super blandos', 'Blandos', 'Medios', 'Duros', 'Normal') NOT NULL DEFAULT 'Normal',
+				`neumatico2` ENUM('Super blandos', 'Blandos', 'Medios', 'Duros', 'Normal') NOT NULL DEFAULT 'Normal',
 				`vueltas` VARCHAR(45) NOT NULL,
 				`fecha` DATE NOT NULL,
 				`hora` TIME NOT NULL,
 				`categoria_id` INT UNSIGNED NOT NULL,
 				`circuito_id` INT UNSIGNED NOT NULL,
-				`calendario_id` INT UNSIGNED NOT NULL,
 				PRIMARY KEY (`id`),
 				INDEX `fk_carrera_categoria1_idx` (`categoria_id` ASC),
 				INDEX `fk_carrera_circuito1_idx` (`circuito_id` ASC),
-				INDEX `fk_carrera_calendario1_idx` (`calendario_id` ASC),
 				CONSTRAINT `fk_carrera_categoria1`
 				FOREIGN KEY (`categoria_id`)
 				REFERENCES `mydb`.`categoria` (`id`)
@@ -139,35 +135,23 @@
 				FOREIGN KEY (`circuito_id`)
 				REFERENCES `mydb`.`circuito` (`id`)
 				ON DELETE NO ACTION
-				ON UPDATE NO ACTION,
-				CONSTRAINT `fk_carrera_calendario1`
-				FOREIGN KEY (`calendario_id`)
-				REFERENCES `mydb`.`calendario` (`id`)
-				ON DELETE NO ACTION
 				ON UPDATE NO ACTION)
 				ENGINE = InnoDB;");
 
 			/* Creación de tabla incidente */
 			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`incidente` (
-			`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-			`vuelta` INT NOT NULL,
-			`minuto` TIME NOT NULL,
-			`piloto_id` INT UNSIGNED NOT NULL,
-			`carrera_id` INT UNSIGNED NOT NULL,
-			PRIMARY KEY (`id`),
-			INDEX `fk_incidente_piloto1_idx` (`piloto_id` ASC),
-			INDEX `fk_incidente_carrera1_idx` (`carrera_id` ASC),
-			CONSTRAINT `fk_incidente_piloto1`
-			FOREIGN KEY (`piloto_id`)
-			REFERENCES `mydb`.`piloto` (`id`)
-			ON DELETE CASCADE
-			ON UPDATE NO ACTION,
-			CONSTRAINT `fk_incidente_carrera1`
-			FOREIGN KEY (`carrera_id`)
-			REFERENCES `mydb`.`carrera` (`id`)
-			ON DELETE NO ACTION
-			ON UPDATE NO ACTION)
-			ENGINE = InnoDB;");
+				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				`vuelta` INT NOT NULL,
+				`minuto` TIME NOT NULL,
+				`carrera_id` INT UNSIGNED NOT NULL,
+				PRIMARY KEY (`id`),
+				INDEX `fk_incidente_carrera1_idx` (`carrera_id` ASC),
+				CONSTRAINT `fk_incidente_carrera1`
+				FOREIGN KEY (`carrera_id`)
+				REFERENCES `mydb`.`carrera` (`id`)
+				ON DELETE NO ACTION
+				ON UPDATE NO ACTION)
+				ENGINE = InnoDB;");
 
 			/* Creación de tabla piloto - categoría */
 			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`piloto_categoria` (
@@ -276,7 +260,7 @@
 		if ($correcto) {
 			try {
 				echo "BIEN";
-				$insertADM = $dbh->prepare("INSERT INTO `piloto`(`id`, `nombre`, `password`, `email`, `escuderia`, `nombre_completo`, `num_sanciones`, `num_victorias`, `rol`) VALUES (null,:usrADM,:passADM,:emailADM,'Ninguna',:nombreADM,'0','0','5');");
+				$insertADM = $dbh->prepare("INSERT INTO `piloto`(`id`, `nombre`, `password`, `email`, `escuderia`, `nombre_completo`, `rol`) VALUES (null,:usrADM,:passADM,:emailADM,'Ninguna',:nombreADM,'5');");
 				$insertADM->bindValue(':usrADM', $usrADM, PDO::PARAM_STR);
 				$insertADM->bindValue(':passADM', $passADM, PDO::PARAM_STR);
 				$insertADM->bindValue(':emailADM', $emailADM, PDO::PARAM_STR);
