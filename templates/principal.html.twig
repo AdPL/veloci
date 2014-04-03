@@ -30,20 +30,22 @@
 {% block DropDownMenu %}{% endblock %}
 
 {% block login %}
-<!--<h2><i class="fa fa-question-circle"></i> No identificado</h2>-->
-<!--<img src="images/yo.jpeg" alt="avatar" class="img-circle img-responsive">
-<h2 class="text-center">Adrián Pérez</h2>-->
-<form role="form">
-	<div class="form-group">
-		<label for="inputUsuario">Nombre de usuario</label>
-		<input type="text" class="form-control" id="inputUsuario" placeholder="Usuario">
-	</div>
-	<div class="form-group">
-		<label for="inputPassword">Contraseña</label>
-		<input type="text" class="form-control" id="inputPassword" placeholder="Contraseña del usuario">
-	</div>
-	<button type="submit" class="btn btn-info">Identificarse</button>
-</form>
+{% if id %}
+	<img src="images/yo.jpeg" alt="avatar" class="img-circle img-responsive">
+	<h2 class="text-center">{{ usuario }}</h2>
+{% else %}
+	<form role="form" method="post" action="{{ urlFor('accederPrincipal') }}">
+		<div class="form-group">
+			<label for="inputUsuario">Nombre de usuario</label>
+			<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Usuario">
+		</div>
+		<div class="form-group">
+			<label for="inputPassword">Contraseña</label>
+			<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Contraseña del usuario">
+		</div>
+		<button type="submit" class="btn btn-info">Identificarse</button>
+	</form>
+{% endif %}
 {% endblock %}
 
 {% block categorias %}
