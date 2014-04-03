@@ -13,221 +13,35 @@
 
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
-<html>
-<head>
-	<title>Proyecto</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
-	<link rel="stylesheet" href="css/semantic.css" type="text/css">
-	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-	<script type="text/javascript" src="js/semantic.js"></script>
-	<script type="text/javascript">
-	$(document).ready(function() {
-		$('.opensidebar').click( function(e) {
-			$('.ui.sidebar').sidebar('toggle');	
-		});
-	});
-	</script>
-	<style>
-		body {
-			display: inherit;
-			margin: 0px;
-			font-family: "Open Sans";
-		}
 
-		.perfil {
-			margin: auto;
-		}
+{% extends "base.html.twig" %}
 
-		.noline {
-			text-decoration: none;
-		}
-
-		/* Media para SmartPhones */
-		@media screen and (max-device-width: 480px) {
-			.togglesidebar {
-				display: inherit;
-			}
-
-			.menuboton {
-				display: none !important;
-			}
-		}
-		/* Media para SmartPhones */
-
-		/* Media para iPad */
-		@media(max-device-width: 1024px) and (orientation: landscape) {
-			.togglesidebar {
-				display: none !important;
-			}
-
-			.divider {
-				display: none !important;
-			}
-		}
-
-		@media(max-device-width: 768px) and (orientation: portrait) {
-			.togglesidebar {
-				display: none !important;
-			}
-
-			.divider {
-				display: none !important;
-			}
-		}
-		/* Media para iPad */
-
-		/* Media para pantallas de portatil y ordenadores */
-		@media only screen and (min-width: 1224px) {
-			.divider {
-				display: none !important;
-			}
-
-			.togglesidebar {
-				display: none !important;
-			}
-		}
-		/* Media para pantallas de portatil y ordenadores */
-	</style>
-</head>
-<body>
-	<!-- Header principal con título y botones -->
-	<div class="ui inverted menu fixed">
-		<div class="item">
-			<a href="{{ urlFor('principal') }}" class="noline">F1Mallorca Sim Racing</a>
-		</div>
-		<a href="{{ urlFor('principal') }}" class="item menuboton">
-			<i class="home icon"></i> Inicio
-		</a>
-		<a href="#" class="item menuboton">
-			<i class="users icon"></i> Pilotos
-		</a>
-		<a href="#" class="item menuboton">
-			<i class="list layout icon"></i> Categorías
-		</a>
-		<a href="#" class="item menuboton">
-			<i class="calendar icon"></i> Calendario
-		</a>
-		<a class="right item togglesidebar">
-			<i class="reorder icon"></i>
-		</a>
-		<a href="{{ urlFor('login') }}" class="right item">
-			<i class="sign in icon"></i>
-		</a>
-	</div>
-	<!-- Header principal con título y botones -->
-
-	<div class="two column stackable ui grid">
-
-	<div class="ui horizontal styled divider">
-		<i class="user icon"></i>
-	</div>
-
-	<!-- Formulario de login -->
-	<div class="column">
-	<div class="ui form segment">
-		<h3 class="ui header">
-			Logearse
-		</h3>
-		<div class="field">
-			<label>Usuario</label>
-			<div class="ui left labeled icon input">
-				<input type="text" placeholder="Nombre de usuario">
-					<i class="user icon"></i>
-				</input>
-			</div>
-		</div>
-		<div class="field">
-			<label>Contraseña</label>
-			<div class="ui left labeled icon input">
-				<input type="password" placeholder="Contraseña del usuario">
-					<i class="lock icon"></i>
-				</input>
-			</div>
-		</div>
-		<div class="ui green submit button">Acceder</div>
-	</div>
-	</div>
-	<!-- Formulario de login -->
-	
-	<div class="ui horizontal styled divider">
-		<i class="users icon"></i>
-	</div>
-
-	<!-- Formulario de registro -->
-	<div class="column">
-	<div class="ui form segment">
-		<h3 class="ui header">
-			Registrarse
-		</h3>
-		<div class="two fields">
-			<div class="field">
-				<label>Nombre</label>
-				<div class="ui left labeled icon input">
-				<input type="text" placeholder="Nombre real">
-					<i class="user icon"></i>
-				<div class="ui corner label">
-					<i class="icon asterisk"></i>
+{% block container %}
+<div class="container-fluid">
+	<div class="col-sm-6 col-md-6 col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="col-sm-6 col-md-6 col-lg-6">
+					<h1>Iniciar sesión</h1>
+					<form role="form">
+						<div class="form-group">
+							<label for="inputUsuario">Nombre de usuario</label>
+							<input type="text" class="form-control" id="inputUsuario" placeholder="Usuario">
+						</div>
+						<div class="form-group">
+							<label for="inputPassword">Contraseña</label>
+							<input type="text" class="form-control" id="inputPassword" placeholder="Contraseña del usuario">
+						</div>
+						<button type="submit" class="btn btn-info">Identificarse</button>
+					</form>
 				</div>
-				</input>
-				</div>
-			</div>
-			<div class="field">
-				<label>Apellido</label>
-				<div class="ui left labeled icon input">
-				<input type="text" placeholder="Primer apellido">
-					<i class="user icon"></i>
-				<div class="ui corner label">
-					<i class="icon asterisk"></i>
-				</div>
-				</input>
+
+				<div class="col-sm-6 col-md-6 col-lg-6">
+					<h1>Registrarse</h1>
+					...
 				</div>
 			</div>
 		</div>
-		<div class="field">
-			<label>Usuario</label>
-			<div class="ui left labeled icon input">
-				<input type="text" placeholder="Nombre para acceder a la web">
-				<i class="user icon"></i>
-				<div class="ui corner label">
-					<i class="icon asterisk"></i>
-				</div>
-				</input>
-			</div>
-		</div>
-		<div class="field">
-			<label>Contraseña</label>
-			<div class="ui left labeled icon input">
-				<input type="password" placeholder="Contraseña para la cuenta">
-				<i class="lock icon"></i>
-				<div class="ui corner label">
-					<i class="icon asterisk"></i>
-				</div>
-				</input>
-			</div>
-		</div>
-		<div class="ui teal submit button">Registrarse</div>
 	</div>
-	</div>
-	<!-- Formulario de registro -->
-	</div>
-
-	<!-- Sidebar con menú del sitio -->
-	<div class="ui right inverted red vertical menu sidebar">
-		<div class="header item">
-			<i class="remove icon togglesidebar"></i> Menú
-		</div>
-		<a class="item">
-			<i class="reorder icon"></i>Pilotos
-		</a>
-		<a class="item">
-			<i class="reorder icon"></i>Categorías
-		</a>
-		<a class="item">
-			<i class="reorder icon"></i>Calendario
-		</a>
-	</div>
-	<!-- Sidebar con menú del sitio -->
-</body>
-</html>
+</div>
+{% endblock %}
