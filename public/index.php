@@ -17,6 +17,7 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/]. */
 
 	require_once '../vendor/autoload.php';
+	require_once '../config/config.php';
 
 	$app = new \Slim\Slim(array(
 		'view' => new \Slim\Views\Twig(),
