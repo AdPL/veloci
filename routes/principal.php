@@ -1,5 +1,4 @@
 <?php
-
 	/*  VELOCI - Web application for management races
   Copyright (C) 2014: Adrián Pérez López
 
@@ -15,30 +14,7 @@
 
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see [http://www.gnu.org/licenses/]. */
-
-	require_once '../vendor/autoload.php';
-
-	$app = new \Slim\Slim(array(
-		'view' => new \Slim\Views\Twig(),
-		'debug' => true,
-		'templates.path' => '../templates'
-	));
-
-	$view = $app->view();
-	$view->parserOptions = array(
-		'debug' => true,
-		'cache' => '../cache'
-	);
-
-	$view->parserExtensions = array(
-		new \Slim\Views\TwigExtension(),
-	);
-
-	session_cache_limiter(false);
-	session_start();
-
-	require('../routes/principal.php');
-	require('../routes/usuario.php');
-
-
-	$app->run();
+  
+$app->get('/', function() use ($app) {
+	$app->render('principal.html.twig');
+})->name('principal');
