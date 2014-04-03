@@ -14,7 +14,32 @@
 
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see [http://www.gnu.org/licenses/]. */
-  
+
 $app->get('/', function() use ($app) {
-	$app->render('principal.html.twig');
+	if(!isset($_SESSION['id'])) {
+		$app->render('principal.html.twig');
+	} else {
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo']));
+	}
 })->name('principal');
+
+$app->post('/', function() use ($app) {
+	$acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
+
+	if (!$acceso) {
+		$app->redirect($app->urlFor('principal'));
+	}
+	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo']));
+})->name('accederPrincipal');
+
+function testAccess($app, $usuario, $pass) {
+	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
+	if ($user['nombre'] == $usuario && password_verify($pass, $user['password'])) {
+		$_SESSION['id'] = $user['id'];
+		$_SESSION['nombre_completo'] = $user['nombre_completo'];
+		return true;
+	} else {
+		return false;
+	}
+
+}
