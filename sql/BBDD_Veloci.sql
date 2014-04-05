@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`piloto` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
+  `avatar` VARCHAR(30),
   `email` VARCHAR(45) NOT NULL,
   `escuderia` VARCHAR(45) NOT NULL,
   `nombre_completo` VARCHAR(60) NOT NULL,
