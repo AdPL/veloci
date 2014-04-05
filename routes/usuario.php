@@ -25,7 +25,7 @@ $app->post('/login', function() use ($app) {
     if (!$acceso) {
         $app->redirect($app->urlFor('login'));
     }
-    $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'rol' => $_SESSION['rol']));
+    $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
 })->name('accederLogin');
 
 $app->get('/registro', function() use ($app) {
@@ -45,6 +45,24 @@ $app->post('/registro', function() use ($app) {
     $app->render('registro.html.twig');
 })->name('registroUsuario');
 
+$app->get('/perfil', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->redirect($app->urlFor('principal'));
+    }
+
+    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+})->name('perfil');
+
+$app->post('/perfil', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->redirect($app->urlFor('principal'));
+    }
+
+    imagenPerfil($app, $_FILES['inputFoto']);
+
+    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+})->name('cambiarAvatar');
+
 function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $nombreCompleto) {
     if ($password == $passwordCheck) {
         $user = ORM::for_table('piloto')->create();
@@ -61,4 +79,39 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
     } else {
         return false;
     }
+}
+
+function imagenPerfil($app, $imagen) {
+    if ($_FILES['inputFoto']['error'] > 0) {
+        echo "error";
+    } else {
+        $ok = array("image/jpg", "image/jpeg", "image/gif", "image/png");
+        $limite_kb = 100;
+        
+        $ext = imgExtension($_FILES['inputFoto']['name']);
+
+        if (in_array($_FILES['inputFoto']['type'], $ok) && $_FILES['inputFoto']['size'] <= $limite_kb * 1024) {
+            $ruta = "images/" . $_SESSION['id'] . $ext;
+            
+                $resultado = @move_uploaded_file($_FILES['inputFoto']['tmp_name'], $ruta);
+                if ($resultado) {
+                    $usuario = ORM::for_table('piloto')->
+                    where('id', $_SESSION['id'])->find_one();
+
+                    $usuario->avatar = $ruta;
+                    $usuario->save();
+
+                    $_SESSION['avatar'] = $ruta;
+                } else {
+                    echo "ERROR";
+                }
+        } else {
+            echo "Archivo no permitido";
+        }
+    }
+}
+
+function imgExtension($cadena) {
+    $pos = stripos($cadena, '.');
+    return substr($_FILES['inputFoto']['name'], $pos);
 }
