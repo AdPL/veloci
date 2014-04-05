@@ -19,7 +19,7 @@ $app->get('/', function() use ($app) {
 	if(!isset($_SESSION['id'])) {
 		$app->render('principal.html.twig');
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo']));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'rol' => $_SESSION['rol']));
 	}
 })->name('principal');
 
@@ -29,7 +29,7 @@ $app->post('/', function() use ($app) {
 	if (!$acceso) {
 		$app->redirect($app->urlFor('principal'));
 	}
-	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo']));
+	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'rol' => $_SESSION['rol']));
 })->name('accederPrincipal');
 
 function testAccess($app, $usuario, $pass) {
@@ -37,9 +37,9 @@ function testAccess($app, $usuario, $pass) {
 	if ($user['nombre'] == $usuario && password_verify($pass, $user['password'])) {
 		$_SESSION['id'] = $user['id'];
 		$_SESSION['nombre_completo'] = $user['nombre_completo'];
+		$_SESSION['rol'] = $user['rol'];
 		return true;
 	} else {
 		return false;
 	}
-
 }
