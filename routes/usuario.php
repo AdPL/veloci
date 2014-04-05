@@ -19,6 +19,15 @@ $app->get('/login', function() use ($app) {
     $app->render('login.html.twig');
 })->name('login');
 
+$app->post('/login', function() use ($app) {
+    $acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
+
+    if (!$acceso) {
+        $app->redirect($app->urlFor('login'));
+    }
+    $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'rol' => $_SESSION['rol']));
+})->name('accederLogin');
+
 $app->get('/registro', function() use ($app) {
     if(isset($_SESSION['id'])) {
         $app->redirect($app->urlFor('principal'));
