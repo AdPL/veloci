@@ -1,5 +1,4 @@
 <?php
-
 	/*  VELOCI - Web application for management races
   Copyright (C) 2014: Adrián Pérez López
 
@@ -16,31 +15,20 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see [http://www.gnu.org/licenses/]. */
 
-	require_once '../vendor/autoload.php';
-	require_once '../config/config.php';
+$app->get('/admin', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $usuarios = cargarUsuarios();
 
-	$app = new \Slim\Slim(array(
-		'view' => new \Slim\Views\Twig(),
-		'debug' => true,
-		'templates.path' => '../templates'
-	));
+            $app->render('admin.html.twig', array('usuarios' => $usuarios));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('admin');
 
-	$view = $app->view();
-	$view->parserOptions = array(
-		'debug' => true,
-		'cache' => '../cache'
-	);
-
-	$view->parserExtensions = array(
-		new \Slim\Views\TwigExtension(),
-	);
-
-	session_cache_limiter(false);
-	session_start();
-
-	require('../routes/principal.php');
-	require('../routes/usuario.php');
-	require('../routes/admin.php');
-
-
-	$app->run();
+function cargarUsuarios() {
+    return ORM::for_table('piloto')->select_many('id', 'email', 'nombre_completo', 'rol')->find_many();
+}

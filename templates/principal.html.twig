@@ -57,7 +57,7 @@
 			<li><a href="{{ urlFor('perfil') }}">Perfil</a></li>
 			<li><a href="#">Otra opción</a></li>
 			{% if rol == 5 %}
-				<li><a href="#">Panel de administración</a></li>
+				<li><a href="{{ urlFor('admin') }}">Panel de administración</a></li>
 			{% endif %}
 			<li><a href="#">Salir</a></li>
 		</ul>
