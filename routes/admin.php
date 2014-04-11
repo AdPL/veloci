@@ -21,14 +21,55 @@ $app->get('/admin', function() use ($app) {
     } else {
         if($_SESSION['rol'] == 5) {
             $usuarios = cargarUsuarios();
+            $categorias = cargarCategorias();
+            
+            // Si meto categorias esto revienta
 
-            $app->render('admin.html.twig', array('usuarios' => $usuarios));
+            $app->render('admin.html.twig', array('usuarios' => $usuarios, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
     }
 })->name('admin');
 
+$app->get('/nuevacategoria', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $app->render('nuevaCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('nuevaCategoria');
+
+$app->post('/nuevacategoria', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            crearCategoria($app, $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);
+            $app->render('nuevaCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('crearCategoria');
+
 function cargarUsuarios() {
     return ORM::for_table('piloto')->select_many('id', 'email', 'nombre_completo', 'rol')->find_many();
+}
+
+function cargarCategorias() {
+    return ORM::for_table('categoria')->select_many('nombre', 'imagen', 'plazas', 'precio_inscripcion')->find_many();
+}
+
+function crearCategoria($app, $nombre, $plazas, $precio) {
+    $categoria = ORM::for_table('categoria')->create();
+    $categoria->id = null;
+    $categoria->nombre = $nombre;
+    $categoria->plazas = $plazas;
+    $categoria->precio_inscripcion = $precio;
+    $categoria->save();
 }
