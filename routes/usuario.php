@@ -65,6 +65,7 @@ $app->post('/perfil', function() use ($app) {
 
 function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $nombreCompleto) {
     if ($password == $passwordCheck) {
+        $token = generarToken(100);
         $user = ORM::for_table('piloto')->create();
         $user->id = null;
         $user->nombre = strtolower($usuario);;
@@ -72,6 +73,8 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
         $user->escuderia = 'Ninguna';
         $user->nombre_completo = $nombreCompleto;
         $user->email = $email;
+        $user->token = $token;
+        $user->activo = 0;
         $user->rol = 1;
         $user->save();
 
@@ -114,4 +117,17 @@ function imagenPerfil($app, $imagen) {
 function imgExtension($cadena) {
     $pos = stripos($cadena, '.');
     return substr($_FILES['inputFoto']['name'], $pos);
+}
+
+function generarToken($longitud) {
+    $cadena = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $token = "";
+
+    while($longitud > 0) {
+        $num = mt_rand(1,62);
+        $token .= $cadena[$num-1];
+        $longitud--;
+    }
+
+    return $token;
 }
