@@ -99,20 +99,6 @@
 				PRIMARY KEY (`id`))
 				ENGINE = InnoDB;");
 
-			/* Creación de table calendario */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`calendario` (
-				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-				`nombre` VARCHAR(45) NOT NULL,
-				`categoria_id` INT UNSIGNED NOT NULL,
-				PRIMARY KEY (`id`),
-				INDEX `fk_calendario_categoria1_idx` (`categoria_id` ASC),
-				CONSTRAINT `fk_calendario_categoria1`
-				FOREIGN KEY (`categoria_id`)
-				REFERENCES `mydb`.`categoria` (`id`)
-				ON DELETE NO ACTION
-				ON UPDATE NO ACTION)
-				ENGINE = InnoDB;");
-
 			/* Creación de tabla carrera */
 			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`carrera` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -129,12 +115,12 @@
 				INDEX `fk_carrera_circuito1_idx` (`circuito_id` ASC),
 				CONSTRAINT `fk_carrera_categoria1`
 				FOREIGN KEY (`categoria_id`)
-				REFERENCES `mydb`.`categoria` (`id`)
+				REFERENCES `$database`.`categoria` (`id`)
 				ON DELETE NO ACTION
 				ON UPDATE NO ACTION,
 				CONSTRAINT `fk_carrera_circuito1`
 				FOREIGN KEY (`circuito_id`)
-				REFERENCES `mydb`.`circuito` (`id`)
+				REFERENCES `$database`.`circuito` (`id`)
 				ON DELETE NO ACTION
 				ON UPDATE NO ACTION)
 				ENGINE = InnoDB;");
@@ -149,7 +135,7 @@
 				INDEX `fk_incidente_carrera1_idx` (`carrera_id` ASC),
 				CONSTRAINT `fk_incidente_carrera1`
 				FOREIGN KEY (`carrera_id`)
-				REFERENCES `mydb`.`carrera` (`id`)
+				REFERENCES `$database`.`carrera` (`id`)
 				ON DELETE NO ACTION
 				ON UPDATE NO ACTION)
 				ENGINE = InnoDB;");
@@ -163,12 +149,12 @@
 				INDEX `fk_pilo_cat_piloto1_idx` (`piloto_id` ASC),
 				CONSTRAINT `fk_pilo_cat_categoria1`
 				FOREIGN KEY (`categoria_id`)
-				REFERENCES `mydb`.`categoria` (`id`)
+				REFERENCES `$database`.`categoria` (`id`)
 				ON DELETE CASCADE
 				ON UPDATE NO ACTION,
 				CONSTRAINT `fk_pilo_cat_piloto1`
 				FOREIGN KEY (`piloto_id`)
-				REFERENCES `mydb`.`piloto` (`id`)
+				REFERENCES `$database`.`piloto` (`id`)
 				ON DELETE CASCADE
 				ON UPDATE NO ACTION)
 				ENGINE = InnoDB;");
@@ -185,12 +171,12 @@
 				INDEX `fk_reclamacion_incidente1_idx` (`incidente_id` ASC),
 				CONSTRAINT `fk_reclamacion_incidente1`
 				FOREIGN KEY (`incidente_id`)
-				REFERENCES `mydb`.`incidente` (`id`)
+				REFERENCES `$database`.`incidente` (`id`)
 				ON DELETE CASCADE
 				ON UPDATE NO ACTION,
 				CONSTRAINT `fk_reclamacion_piloto1`
 				FOREIGN KEY (`piloto_id`)
-				REFERENCES `mydb`.`piloto` (`id`)
+				REFERENCES `$database`.`piloto` (`id`)
 				ON DELETE CASCADE
 				ON UPDATE NO ACTION)
 				ENGINE = InnoDB;");
@@ -205,7 +191,7 @@
 				INDEX `fk_recurso_reclamacion1_idx` (`reclamacion_id` ASC),
 				CONSTRAINT `fk_recurso_reclamacion1`
 				FOREIGN KEY (`reclamacion_id`)
-				REFERENCES `mydb`.`reclamacion` (`id`)
+				REFERENCES `$database`.`reclamacion` (`id`)
 				ON DELETE CASCADE
 				ON UPDATE NO ACTION)
 				ENGINE = InnoDB;");
@@ -219,12 +205,12 @@
 				INDEX `fk_piloto_has_carrera_piloto1_idx` (`piloto_id` ASC),
 				CONSTRAINT `fk_piloto_has_carrera_piloto1`
 				FOREIGN KEY (`piloto_id`)
-				REFERENCES `mydb`.`piloto` (`id`)
+				REFERENCES `$database`.`piloto` (`id`)
 				ON DELETE NO ACTION
 				ON UPDATE NO ACTION,
 				CONSTRAINT `fk_piloto_has_carrera_carrera1`
 				FOREIGN KEY (`carrera_id`)
-				REFERENCES `mydb`.`carrera` (`id`)
+				REFERENCES `$database`.`carrera` (`id`)
 				ON DELETE NO ACTION
 				ON UPDATE NO ACTION)
 				ENGINE = InnoDB;");
@@ -233,17 +219,19 @@
 			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`piloto_incidente` (
 				`piloto_id` INT UNSIGNED NOT NULL,
 				`incidente_id` INT UNSIGNED NOT NULL,
+				`reclama` INT UNSIGNED NOT NULL,
+				`sancion` INT UNSIGNED NULL,
 				PRIMARY KEY (`piloto_id`, `incidente_id`),
 				INDEX `fk_piloto_has_incidente_incidente1_idx` (`incidente_id` ASC),
 				INDEX `fk_piloto_has_incidente_piloto1_idx` (`piloto_id` ASC),
 				CONSTRAINT `fk_piloto_has_incidente_piloto1`
 				FOREIGN KEY (`piloto_id`)
-				REFERENCES `mydb`.`piloto` (`id`)
+				REFERENCES `$database`.`piloto` (`id`)
 				ON DELETE NO ACTION
 				ON UPDATE NO ACTION,
 				CONSTRAINT `fk_piloto_has_incidente_incidente1`
 				FOREIGN KEY (`incidente_id`)
-				REFERENCES `mydb`.`incidente` (`id`)
+				REFERENCES `$database`.`incidente` (`id`)
 				ON DELETE NO ACTION
 				ON UPDATE NO ACTION)
 				ENGINE = InnoDB;");
