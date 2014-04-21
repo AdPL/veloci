@@ -22,10 +22,8 @@ $app->get('/admin', function() use ($app) {
         if($_SESSION['rol'] == 5) {
             $usuarios = cargarUsuarios();
             $categorias = cargarCategorias();
-            
-            // Si meto categorias esto revienta
 
-            $app->render('admin.html.twig', array('usuarios' => $usuarios, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->render('admin.html.twig', array('usuarios' => $usuarios, 'id' => $_SESSION['id'], 'categorias' => $categorias, 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -67,7 +65,7 @@ function cargarCategorias() {
 
 function crearCategoria($app, $nombre, $plazas, $precio) {
     $categoria = ORM::for_table('categoria')->create();
-    $categoria->id = null;
+    $categoria->id = "images/defecto.jpeg";
     $categoria->nombre = $nombre;
     $categoria->plazas = $plazas;
     $categoria->precio_inscripcion = $precio;
