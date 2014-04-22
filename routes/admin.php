@@ -23,8 +23,9 @@ $app->get('/admin', function() use ($app) {
             $usuarios = cargarUsuarios();
             $categorias = cargarCategorias();
             $circuitos = cargarCircuitos();
+            $carreras = cargarCarreras();
 
-            $app->render('admin.html.twig', array('usuarios' => $usuarios, 'id' => $_SESSION['id'], 'categorias' => $categorias, 'circuitos' => $circuitos, 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->render('admin.html.twig', array('usuarios' => $usuarios, 'id' => $_SESSION['id'], 'categorias' => $categorias, 'circuitos' => $circuitos, 'carreras' => $carreras, 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -131,6 +132,78 @@ $app->post('/nuevacarrera', function() use ($app) {
     }
 })->name('crearCarrera');
 
+$app->get('/carreras', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $carreras = cargarCarreras();
+
+            $app->render('listaCarreras.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('listaCarreras');
+
+$app->post('/carreras', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            if (isset($_POST['inputNombre'])) {
+                editarCategoria($app, $_POST['id'], $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);   
+            } else {
+                eliminarCarrera($app, $_POST['id']);
+            }
+
+            $app->Redirect('carreras');
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('editarCarreraPost');
+
+$app->get('/nuevacircuito', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $app->render('nuevoCircuito.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('nuevoCircuito');
+
+$app->post('/nuevocircuito', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            crearCircuito($app, $_POST['inputNombre'], $_POST['inputPais'], $_POST['inputDistancia']);
+            $app->Redirect('circuitos');
+            $app->render('nuevaCircuito.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('crearCircuito');
+
+$app->get('/circuitos', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $circuitos = cargarCircuitos();
+
+            $app->render('listaCircuitos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuitos' => $circuitos));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('listaCircuitos');
+
 function cargarUsuarios() {
     return ORM::for_table('piloto')->select_many('id', 'email', 'nombre_completo', 'rol')->find_many();
 }
@@ -148,7 +221,7 @@ function cargarCircuitos() {
 }
 
 function cargarCarreras() {
-    return ORM::for_table('carrera')->select_many('nombre', 'imagen', 'plazas', 'precio_inscripcion')->find_many();
+    return ORM::for_table('carrera')->find_many();
 }
 
 function crearCategoria($app, $nombre, $plazas, $precio) {
@@ -186,4 +259,18 @@ function crearCarrera($app, $nombre, $primerCompuesto, $segundoCompuesto, $vuelt
     $carrera->categoria_id = $categoria;
     $carrera->circuito_id = $circuito;
     $carrera->save();
+}
+
+function eliminarCarrera($app, $idCat) {
+    $categoria = ORM::for_table('carrera')->where('id', $idCat)->find_one();
+    $categoria->delete();
+}
+
+function crearCircuito($app, $nombre, $pais, $distancia) {
+    $circuito = ORM::for_table('circuito')->create();
+    $circuito->id = null;
+    $circuito->nombre = $nombre;
+    $circuito->pais = $pais;
+    $circuito->distancia = $distancia;
+    $circuito->save();
 }
