@@ -72,8 +72,10 @@
 				`password` VARCHAR(255) NOT NULL,
 				`avatar` VARCHAR(30),
 				`email` VARCHAR(45) NOT NULL,
+				`token` VARCHAR(100) NOT NULL,
 				`escuderia` VARCHAR(45) NOT NULL,
 				`nombre_completo` VARCHAR(60) NOT NULL,
+				`activo` INT(1) UNSIGNED NOT NULL,
 				`rol` INT UNSIGNED NOT NULL,
 				PRIMARY KEY (`id`),
 				UNIQUE INDEX `name_UNIQUE` (`nombre` ASC))
@@ -248,11 +250,13 @@
 		// Sí todo es correcto creamos el usuario de administración.
 		if ($correcto) {
 			try {
+				$token = generarToken(100);
 				echo "BIEN";
-				$insertADM = $dbh->prepare("INSERT INTO `piloto`(`id`, `nombre`, `password`, `email`, `escuderia`, `nombre_completo`, `rol`) VALUES (null,:usrADM,:passADM,:emailADM,'Ninguna',:nombreADM,'5');");
+				$insertADM = $dbh->prepare("INSERT INTO `piloto`(`id`, `nombre`, `password`, `email`, `token`, `escuderia`, `nombre_completo`, `activo`, `rol`) VALUES (null,:usrADM,:passADM,:emailADM, :token, 'Ninguna', :nombreADM, '0', '5');");
 				$insertADM->bindValue(':usrADM', $usrADM, PDO::PARAM_STR);
 				$insertADM->bindValue(':passADM', $passADM, PDO::PARAM_STR);
 				$insertADM->bindValue(':emailADM', $emailADM, PDO::PARAM_STR);
+				$insertADM->bindValue(':token', $token, PDO::PARAM_STR);
 				$insertADM->bindValue(':nombreADM', $nombreADM, PDO::PARAM_STR);
 				$insertADM->execute() or die(print_r("Error en la creación del usuario administrador"));
 				$todocorrecto = true;
@@ -290,6 +294,19 @@ function moveDir($ruta, $subir, $directorio = "") {
 	$ruta .= $directorio;
 
 	return $ruta;
+}
+
+function generarToken($longitud) {
+    $cadena = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $token = "";
+
+    while($longitud > 0) {
+        $num = mt_rand(1,62);
+        $token .= $cadena[$num-1];
+        $longitud--;
+    }
+
+    return $token;
 }
 
 ?>
