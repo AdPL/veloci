@@ -204,6 +204,20 @@ $app->get('/circuitos', function() use ($app) {
     }
 })->name('listaCircuitos');
 
+$app->get('/usuarios', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $usuarios = cargarUsuarios();
+
+            $app->render('listaUsuarios.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'usuarios' => $usuarios));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('listaUsuarios');
+
 function cargarUsuarios() {
     return ORM::for_table('piloto')->select_many('id', 'email', 'nombre_completo', 'rol')->find_many();
 }
