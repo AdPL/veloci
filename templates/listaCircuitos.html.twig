@@ -58,7 +58,7 @@
 				<tr>
 					<td>{{ circuitos['nombre'] }}</td>
 					<td>{{ circuitos['pais'] }}</td>
-					<td>{{ circuitos['distancia'] }} €</td>
+					<td>{{ circuitos['distancia'] }} Km</td>
 					<td><a href="{{ urlFor('editarCategoria', {'idCat': categoria.id}) }}" class="btn btn-info">Editar</a></td>
 					<td><form method="post" action="{{ urlFor('editarCategoriaPost') }}"><input type="text" name="id" value="{{ categoria['id'] }}" hidden><button type="submit" class="btn btn-danger">Eliminar</button></form></td>
 				</tr>
