@@ -14,119 +14,51 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
 
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Panel admin</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
-	<link rel="stylesheet" href="css/bootstrap.css" type="text/css">
-	<link rel="stylesheet" href="css/font-awesome.css" type="text/css">
-	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-	<script type="text/javascript" src="js/bootstrap.js"></script>
-	<script>
-		function rellenarSelect() {
-			var myselect = document.getElementById('inputPlazas');
-			for (var i = 2 ; i < 30; i++) {
-				myselect.innerHTML += "<option value='" + i + "'>" + i + "</option>";
-			};
-		}
-	</script>
-	{% block head %}{% endblock %}
-</head>
-<body onload="rellenarSelect()">
-	<div class="navbar navbar-default navbar-static-top" role="navigation">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" rel="home" href="{{ urlFor('principal') }}">Admin Panel</a>
-		</div>
+{% extends "admbase.html.twig" %}
 
-		<div class="collapse navbar-collapse">
-			<ul class="nav navbar-nav">
-				<li><a href="{{ urlFor('principal') }}">Inicio</a></li>
-				{% block LinksMenu %}{% endblock %}
-				<li class="dropdown">
-	              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-	              <ul class="dropdown-menu">
-	                <li><a href="#">Action</a></li>
-	                <li><a href="#">Another action</a></li>
-	                <li class="divider"></li>
-	                <li><a href="#">Separated link</a></li>
-	                <li class="divider"></li>
-	                <li><a href="#">One more separated link</a></li>
-	                {% block DropDownMenu %}{% endblock %}
-	              </ul>
-	            </li>
-			</ul>
-		
-			<div class="col-sm-2 col-md-2">
-				{% block Right %}
-				{% endblock %}
-			</div>
+{% block head %}
+<script>
+	function rellenarSelect() {
+		var myselect = document.getElementById('inputPlazas');
+		for (var i = 2 ; i < 30; i++) {
+			myselect.innerHTML += "<option value='" + i + "'>" + i + "</option>";
+		};
+	}
+</script>
+{% endblock %}
 
-			<ul class="nav navbar-nav navbar-right">
-				{% block Settings %}{%endblock %}
-			</ul>
+{% block loadJS %}
+onload="rellenarSelect()"
+{% endblock %}
+
+{% block adminCategorias %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h2>Nueva categoría <small>Creación de nueva categoría</small></h2>
+			<form method="post" action="{{ urlFor('crearCategoria') }}" role="form">
+				<div class="form-group">
+					<label for="inputNombre">Nombre de la categoría</label>
+					<input type="text" class="form-control" id="inputNombre" name="inputNombre" placeholder="Nombre de la categoría, por ejemplo 'Formula 1'" required>
+				</div>
+				<div class="form-group">
+					<label for="inputPlazas">Plazas totales</label>
+					<select class="form-control" id="inputPlazas" name="inputPlazas" onload="rellenarSelect()" required>
+						<option value="0">Seleccione el número de plazas totales para la categoría</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputPrecio">Precio de inscripción</label>
+					<input type="text" class="form-control" id="inputPrecio" name="inputPrecio" placeholder="El coste económico de participar en la categoría" required>
+				</div>
+				<button type="submit" class="btn btn-success">Crear categoría</button>
+				<a href="{{ urlFor('admin') }}" class="btn btn-danger">Volver</a>
+			</form>
 		</div>
 	</div>
-
-	{% block container %}
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-lg-3">
-				<div class="panel panel-default">
-					<div class="panel-body">
-						<ul class="nav nav-pills nav-stacked">
-							<li><a href="{{ urlFor('admin') }}">Inicio</a></li>
-							<li><a href="#">Notificaciones <span class="badge">2</span></a></li>
-							<li><a href="#">Pilotos (Usuarios)</a></li>
-							<li class="dropdown active">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">Categorías <span class="caret"></span></a>
-								<ul class="dropdown-menu">
-									<li class="active"><a href="#"><i class="fa fa-file"></i> Nueva categoría</a></li>
-									<li><a href="{{ urlFor('listaCategorias') }}"><i class="fa fa-list"></i> Lista de categorías</a></li>
-								</ul>
-							</li>
-							<li><a href="#">Carreras</a></li>
-							<li><a href="#">Circuitos</a></li>
-							<li><a href="#">Estadísticas</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-9">
-				<div class="panel panel-default">
-					<div class="panel-body">
-						<h2>Nueva categoría <small>Creación de nueva categoría</small></h2>
-						<form method="post" action="{{ urlFor('crearCategoria') }}" role="form">
-							<div class="form-group">
-								<label for="inputNombre">Nombre de la categoría</label>
-								<input type="text" class="form-control" id="inputNombre" name="inputNombre" placeholder="Nombre de la categoría, por ejemplo 'Formula 1'" required>
-							</div>
-							<div class="form-group">
-								<label for="inputPlazas">Plazas totales</label>
-								<select class="form-control" id="inputPlazas" name="inputPlazas" required>
-									<option value="0">Seleccione el número de plazas totales para la categoría</option>
-								</select>
-							</div>
-							<div class="form-group">
-								<label for="inputPrecio">Precio de inscripción</label>
-								<input type="text" class="form-control" id="inputPrecio" name="inputPrecio" placeholder="El coste económico de participar en la categoría" required>
-							</div>
-							<button type="submit" class="btn btn-success">Crear categoría</button>
-							<a href="{{ urlFor('admin') }}" class="btn btn-danger">Volver</a>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	{% endblock %}
-</body>
-</html>
+</div>
+{% endblock %}

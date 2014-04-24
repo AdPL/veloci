@@ -27,7 +27,7 @@
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	{% block head %}{% endblock %}
 </head>
-<body>
+<body {% block loadJS %}{% endblock %}>
 	<div class="navbar navbar-default navbar-static-top" role="navigation">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -63,7 +63,23 @@
 			</div>
 
 			<ul class="nav navbar-nav navbar-right">
-				{% block Settings %}{%endblock %}
+				{% block Settings %}
+					{% if rol >= 1 %}
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i><b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Perfil</a></li>
+								<li><a href="#">Otra opción</a></li>
+								{% if rol == 5 %}
+									<li><a href="{{ urlFor('admin') }}">Panel de administración</a></li>
+									<li><a href="{{ urlFor('principal') }}">Salir del panel</a></li>
+								{% endif %}
+								{% block limenu %}{% endblock %}
+								<li><a href="#">Cerrar sesión</a></li>
+							</ul>
+						</li>
+					{% endif %}
+				{% endblock %}
 			</ul>
 		</div>
 	</div>
@@ -74,25 +90,26 @@
 			<div class="col-lg-3">
 				<div class="panel panel-default">
 					<div class="panel-body">
+					{% block menuAdmin %}
 						<ul class="nav nav-pills nav-stacked">
-							<li class="active"><a href="#">Inicio</a></li>
+							<li {% block adminPrincipal %}{% endblock %}><a href="{{ urlFor('admin') }}">Inicio</a></li>
 							<li><a href="#">Notificaciones <span class="badge">2</span></a></li>
-							<li><a href="{{ urlFor('listaUsuarios') }}">Pilotos (Usuarios)</a></li>
-							<li class="dropdown">
+							<li {% block adminUsuarios %}{% endblock %}><a href="{{ urlFor('listaUsuarios') }}">Pilotos (Usuarios)</a></li>
+							<li class="dropdown {% block adminCategorias %}{% endblock %}">
 								<a class="dropdown-toggle" data-toggle="dropdown" href="#">Categorías <span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li><a href="{{ urlFor('nuevaCategoria') }}"><i class="fa fa-file"></i> Nueva categoría</a></li>
 									<li><a href="{{ urlFor('listaCategorias') }}"><i class="fa fa-list"></i> Lista de categorías</a></li>
 								</ul>
 							</li>
-							<li class="dropdown">
+							<li class="dropdown {% block adminCarreras %}{% endblock %}">
 								<a class="dropdown-toggle" data-toggle="dropdown" href="#">Carreras <span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li><a href="{{ urlFor('nuevaCarrera') }}"><i class="fa fa-file"></i> Nueva carrera</a></li>
 									<li><a href="{{ urlFor('listaCarreras') }}"><i class="fa fa-list"></i> Lista de carreras</a></li>
 								</ul>
 							</li>
-							<li class="dropdown">
+							<li class="dropdown {% block adminCircuitos %}{% endblock %}">
 								<a class="dropdown-toggle" data-toggle="dropdown" href="#">Circuitos <span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li><a href="{{ urlFor('nuevoCircuito') }}"><i class="fa fa-file"></i> Nuevo circuito</a></li>
@@ -101,135 +118,12 @@
 							</li>
 							<li><a href="#">Estadísticas</a></li>
 						</ul>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-9">
-				<div class="panel panel-default">
-					<div class="panel-body">
-						<h2>Dashboard <small>Control Panel</small></h2>
-						{% block content %}
-						<div class="col-lg-6">
-							<div class="panel panel-default">
-								<table class="table table-striped">
-									<thead>
-										<th>ID</th>
-										<th>Nombre</th>
-										<th>Email</th>
-										<th>Rol</th>
-									</thead>
-									<tbody>
-										{% for usuario in usuarios %}
-										<tr>
-											<td>{{ usuario.id }}</td>
-											<td>{{ usuario.nombre_completo }}</td>
-											<td>{{ usuario.email }}</td>
-											{% if usuario.rol == 5 %}
-												<td>Administrador</td>
-											{% elseif usuario.rol == 1 %}
-												<td>Registrado</td>
-											{% endif %}
-										</tr>
-										{% endfor %}
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									Información
-								</div>
-								<div class="panel-body">
-									Este es el panel de administración, en el cual podrás administrar la aplicación, según tu rango tendrás acceso o no a las distintas zonas del panel.
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									Reclamaciones activas
-								</div>
-								<div class="panel-body">
-									Ninguna reclamación activa
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="panel panel-default">
-								<table class="table table-striped">
-									<thead>
-										<th>Imagen</th>
-										<th>Nombre</th>
-										<th>Plazas</th>
-										<th>Precio</th>
-									</thead>
-									<tbody>
-										{% for categoria in categorias %}
-										<tr>
-											<td>{{ categoria.imagen }}</td>
-											<td>{{ categoria.nombre }}</td>
-											<td>{{ categoria.plazas }}</td>
-											<td>{{ categoria.precio_inscripcion }} €</td>
-										</tr>
-										{% else %}
-										<tr><td>No se han encontrado categorías</td></tr>
-										{% endfor %}
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="panel panel-default">
-								<table class="table table-striped">
-									<thead>
-										<th>Nombre</th>
-										<th>País</th>
-										<th>Distancia</th>
-									</thead>
-									<tbody>
-										{% for circuito in circuitos %}
-										<tr>
-											<td>{{ circuito.nombre }}</td>
-											<td>{{ circuito.pais }}</td>
-											<td>{{ circuito.distancia }} Km</td>
-										</tr>
-										{% else %}
-										<tr><td>No se han encontrado circuitos</td></tr>
-										{% endfor %}
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<div class="col-lg-6">
-							<div class="panel panel-default">
-								<table class="table table-striped">
-									<thead>
-										<th>Nombre</th>
-										<th>Primer compuesto</th>
-										<th>Segundo compuesto</th>
-										<th>Vueltas</th>
-										<th>Fecha</th>
-									</thead>
-									<tbody>
-										{% for carrera in carreras %}
-											<tr>
-												<td>{{ carrera['nombre'] }}</td>
-												<td>{{ carrera['neumatico1'] }}</td>
-												<td>{{ carrera['neumatico2'] }}</td>
-												<td>{{ carrera['vueltas'] }}</td>
-												<td>{{ carrera['fecha'] }}</td>
-											</tr>
-										{% endfor %}
-									</tbody>
-								</table>
-							</div>
 						{% endblock %}
 					</div>
 				</div>
 			</div>
+			{% block content %}{% endblock %}
 		</div>
-	</div>
 	{% endblock %}
 </body>
 </html>
