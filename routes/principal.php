@@ -24,13 +24,22 @@ $app->get('/', function() use ($app) {
 })->name('principal');
 
 $app->post('/', function() use ($app) {
-	$acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
+	if (isset($_POST['login'])) {
+		$acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);	
+	}
 
 	if (!$acceso) {
 		$app->redirect($app->urlFor('principal'));
 	}
 	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
 })->name('accederPrincipal');
+
+$app->get('/salir', function() use ($app) {
+	session_destroy();
+	$app->redirect($app->urlFor('principal'));
+
+	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+})->name('cerrarSesion');
 
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
