@@ -42,7 +42,7 @@
 		<div class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
 				<li><a href="{{ urlFor('principal') }}">Inicio</a></li>
-				<li><a href="#">Pilotos</a></li>
+				<li><a href="{{ urlFor('pilotos') }}">Pilotos</a></li>
 				<li><a href="#">Categorías</a></li>
 				<li><a href="#">Reclamaciones</a></li>
 				<li><a href="#">Asistencias</a></li>
@@ -131,6 +131,7 @@
 				</div>
 			</div>
 
+			{% block content %}
 			<div class="col-sm-6">
 				<div class="panel panel-default">
 				<div class="panel-body">
@@ -179,6 +180,7 @@
 					</div>
 				</div>
 			</div>
+			{% endblock %}
 		</div>
 	</div>
 	{% endblock %}
