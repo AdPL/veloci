@@ -219,7 +219,7 @@ $app->get('/usuarios', function() use ($app) {
 })->name('listaUsuarios');
 
 function cargarUsuarios() {
-    return ORM::for_table('piloto')->select_many('id', 'email', 'nombre_completo', 'rol')->find_many();
+    return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'rol')->find_many();
 }
 
 function cargarCategorias() {

@@ -41,6 +41,12 @@ $app->get('/salir', function() use ($app) {
 	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
 })->name('cerrarSesion');
 
+$app->get('/pilotos', function() use ($app) {
+	$usuarios = cargarUsuarios();
+
+	$app->render('pilotos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'usuarios' => $usuarios));
+})->name('pilotos');
+
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
 	if ($user['nombre'] == $usuario && password_verify($pass, $user['password'])) {
