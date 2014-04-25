@@ -47,6 +47,12 @@ $app->get('/pilotos', function() use ($app) {
 	$app->render('pilotos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'usuarios' => $usuarios));
 })->name('pilotos');
 
+$app->get('/categorias', function() use ($app) {
+	$categorias = cargarCategorias();
+
+	$app->render('categorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
+})->name('categorias');
+
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
 	if ($user['nombre'] == $usuario && password_verify($pass, $user['password'])) {
