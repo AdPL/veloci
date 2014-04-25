@@ -25,9 +25,10 @@
 	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
+	<script type="text/javascript" src="js/jsfunctions.js"></script>
 	{% block head %}{% endblock %}
 </head>
-<body>
+<body onload="generarCalendario()">
 	<div class="navbar navbar-default navbar-static-top" role="navigation">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -164,6 +165,12 @@
 			<div class="col-sm-3">
 				<div class="row">
 					<div class="col-xs-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">Calendario</div>
+							<div class="panel-body">
+								<div id="calendario"></div>
+							</div>
+						</div>
 						<div class="panel panel-default">
 							<div class="panel-heading">Categorías</div>
 							<div class="panel-body">
