@@ -44,13 +44,21 @@ $app->get('/salir', function() use ($app) {
 $app->get('/pilotos', function() use ($app) {
 	$usuarios = cargarUsuarios();
 
-	$app->render('pilotos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'usuarios' => $usuarios));
+	if(!isset($_SESSION['id'])) {
+		$app->render('pilotos.html.twig', array('usuarios' => $usuarios));
+	} else {
+		$app->render('pilotos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'usuarios' => $usuarios));
+	}
 })->name('pilotos');
 
 $app->get('/categorias', function() use ($app) {
 	$categorias = cargarCategorias();
 
-	$app->render('categorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
+	if(!isset($_SESSION['id'])) {
+		$app->render('categorias.html.twig', array('categorias' => $categorias));
+	} else {
+		$app->render('categorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
+	}
 })->name('categorias');
 
 function testAccess($app, $usuario, $pass) {
