@@ -26,9 +26,19 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/jsfunctions.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+   			$("body").popover({
+   				selector: '[data-toggle=popover]',
+   				html: true,
+   				trigger: 'hover'
+   			 });
+   		});
+	</script>
+
 	{% block head %}{% endblock %}
 </head>
-<body onload="generarCalendario()">
+<body onload="generarCalendario(1,1)">
 	<div class="navbar navbar-default navbar-static-top" role="navigation">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
