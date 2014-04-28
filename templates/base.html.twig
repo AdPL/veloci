@@ -54,8 +54,9 @@
 			<ul class="nav navbar-nav">
 				<li><a href="{{ urlFor('principal') }}">Inicio</a></li>
 				<li><a href="{{ urlFor('pilotos') }}">Pilotos</a></li>
+				<li><a href="{{ urlFor('carreras') }}">Carreras</a></li>
 				<li><a href="{{ urlFor('categorias') }}">Categorías</a></li>
-				<li><a href="#">Reclamaciones</a></li>
+				<li><a href="{{ urlFor('reclamaciones') }}">Reclamaciones</a></li>
 				<li><a href="#">Asistencias</a></li>
 				<li><a href="#">Clasificación</a></li>
 				<li><a href="#">Foro</a></li>
@@ -133,7 +134,7 @@
 						</div>
 						<hr>
 						<div class="panel panel-default">
-							<div class="panel-heading">Bloque</div>
+							<div class="panel-heading">Próxima carrera</div>
 							<div class="panel-body">
 								{% block bloque %}{% endblock %}
 							</div>

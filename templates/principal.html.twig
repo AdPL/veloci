@@ -52,3 +52,9 @@
 	</div>
 </div>
 {% endblock %}
+
+{% block bloque %}
+{% for race in carrera %}
+	<p>{{ race['nombre'] }} el {{ race['fecha']|date('d/m/Y') }} a las {{ race['hora']|date('H:i') }}</p>
+{% endfor %}
+{% endblock %}
