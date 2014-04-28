@@ -235,7 +235,7 @@ function cargarCircuitos() {
 }
 
 function cargarCarreras() {
-    return ORM::for_table('carrera')->find_many();
+    return ORM::for_table('carrera')->order_by_asc('fecha')->find_many();
 }
 
 function crearCategoria($app, $nombre, $plazas, $precio) {
