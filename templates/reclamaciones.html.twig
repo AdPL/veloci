@@ -25,6 +25,9 @@
         <h1>Reclamaciones <small>Carreras con plazo de reclamación abierto</small></h1>
       </div>
     </div>
+    {% if alert %}
+    	<div class="alert alert-danger">{{ alert }}</div>
+    {% endif %}
 	</div>
 	<table class="table table-striped">
 		<thead>
@@ -37,7 +40,7 @@
 		<tr>
 			<td>{{ carrera['nombre'] }}</td>
 			<td>{{ carrera['fecha']|date('d/m/Y') }}</td>
-			<td><button type="button" class="btn btn-success">Nueva Reclamación</button></td>
+			<td><a href="{{ urlFor('nuevaReclamacion') }}" class="btn btn-success">Nueva Reclamación</a></td>
 		</tr>
 		{% else %}
 		<tr><td>Ninguna carrera tiene el plazo de reclamación abierto</td></tr>

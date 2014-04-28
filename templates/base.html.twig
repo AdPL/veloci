@@ -83,7 +83,7 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i><b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><a href="#">Perfil</a></li>
+								<li><a href="{{ urlFor('perfil') }}">Perfil</a></li>
 								<li><a href="#">Otra opción</a></li>
 								{% if rol == 5 %}
 									<li><a href="{{ urlFor('admin') }}">Panel de administración</a></li>
@@ -111,6 +111,9 @@
 								<div class="panel-heading">Login</div>
 							{% endif %}
 							<div class="panel-body">
+								{% if alertLogin %}
+    								<div class="alert alert-danger">{{ alertLogin }}</div>
+    							{% endif %}
 								{% block login %}
 									{% if id %}
 										<img src="{{ avatar }}" alt="avatar" class="img-circle img-responsive">

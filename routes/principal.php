@@ -27,13 +27,14 @@ $app->get('/', function() use ($app) {
 
 $app->post('/', function() use ($app) {
 	if (isset($_POST['login'])) {
-		$acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);	
+		$acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
 	}
 
 	if (!$acceso) {
-		$app->redirect($app->urlFor('principal'));
+		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos'));
+	} else {
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
 	}
-	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
 })->name('accederPrincipal');
 
 $app->get('/salir', function() use ($app) {
@@ -82,6 +83,15 @@ $app->get('/reclamaciones', function() use ($app) {
 		$app->render('reclamaciones.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras));
 	}
 })->name('reclamaciones');
+
+$app->get('/reclamacion', function() use ($app) {
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
+		$carreras = cargarCarrerasReclamacion();
+		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
+	} else {
+		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+	}
+})->name('nuevaReclamacion');
 
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();

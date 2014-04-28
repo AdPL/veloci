@@ -60,7 +60,7 @@ $app->post('/perfil', function() use ($app) {
 
     imagenPerfil($app, $_FILES['inputFoto']);
 
-    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'alert' => 'Cambios guardados con éxito'));
 })->name('cambiarAvatar');
 
 function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $nombreCompleto) {
