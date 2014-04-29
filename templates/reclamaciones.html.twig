@@ -34,13 +34,15 @@
 			<th>Carrera</th>
 			<th>Fecha</th>
 			<th>Reclamar</th>
+			<th>Lista</th>
 		</thead>
 		<tbody>
 		{% for carrera in carreras %}
 		<tr>
 			<td>{{ carrera['nombre'] }}</td>
 			<td>{{ carrera['fecha']|date('d/m/Y') }}</td>
-			<td><a href="{{ urlFor('nuevaReclamacion') }}" class="btn btn-success">Nueva Reclamación</a></td>
+			<td><a href="{{ urlFor('nuevaReclamacion', {'idCarrera': carrera['id']}) }}" class="btn btn-success">Nueva Reclamación</a></td>
+			<td><a href="{{ urlFor('listaReclamaciones', {'idCarrera': carrera['id']}) }}" class="btn btn-info">Ver reclamaciones</a></td>
 		</tr>
 		{% else %}
 		<tr><td>Ninguna carrera tiene el plazo de reclamación abierto</td></tr>

@@ -84,14 +84,43 @@ $app->get('/reclamaciones', function() use ($app) {
 	}
 })->name('reclamaciones');
 
-$app->get('/reclamacion', function() use ($app) {
+$app->get('/listaReclamaciones/:idCarrera', function($idCarrera) use ($app) {
+	$carreras = cargarCarrerasReclamacion();
+
+	if(!isset($_SESSION['id'])) {
+		$app->render('reclamaciones.html.twig', array('carreras' => $carreras));
+	} else {
+		$app->render('reclamaciones.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras));
+	}
+})->name('listaReclamaciones');
+
+$app->get('/nuevaReclamacion/:idCarrera', function($idCarrera) use ($app) {
+	$carrera = cargarDatosCarrera($idCarrera);
+	$categoria = cargarCategorias($carrera['categoria_id']);
+	$pilotos = cargarUsuarios();
+
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
 	} else {
-		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos));
 	}
 })->name('nuevaReclamacion');
+
+$app->post('/reclamacion', function() use ($app) {
+	/*$carrera = cargarDatosCarrera($idCarrera);
+	$categoria = cargarCategorias($carrera['categoria_id']);
+	$pilotos = cargarUsuarios();*/
+
+	crearReclamacion($app, $_POST['inputTitulo'], $_POST['inputAclaracion'], $_POST['inputVuelta'], $_POST['inputMinuto'], '4');
+
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
+		$carreras = cargarCarrerasReclamacion();
+		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
+	} else {
+		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos));
+	}
+})->name('crearReclamacion');
 
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
@@ -107,12 +136,44 @@ function testAccess($app, $usuario, $pass) {
 }
 
 function cargarCarrera() {
-	return ORM::for_table('carrera')->where_gt('fecha', date("Y-m-d"))->order_by_asc('fecha')->limit(1)->find_many();
+	return ORM::for_table('carrera')->where_gt('fecha', date("Y-m-d"))->order_by_asc('fecha')->limit(1)->find_many();	
+}
+
+function cargarDatosCarrera($idCarrera) {
+	return ORM::for_table('carrera')->where('id', $idCarrera)->find_one();
+}
+
+function cargarDatosCategoria($idCategoria) {
+	return ORM::for_table('categoria')->where('id', $idCategoria)->find_one();
 }
 
 function cargarCarrerasReclamacion() {
     return ORM::for_table('carrera')->where_gt('fecha', date("Y-m-d"))->where_lt('fecha', calcularFecha('days', 4, date("Y-m-d")))->
     order_by_asc('fecha')->find_many();
+}
+
+function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera) {
+	$incidente = ORM::for_table('incidente')->create();
+	$incidente->id = null;
+	$incidente->vuelta = $vuelta;
+	$incidente->minuto = $minuto;
+	$incidente->carrera_id = $carrera;
+
+	$piloto_incidente = ORM::for_table('piloto_incidente')->create();
+	$piloto_incidente->piloto_id = 1;
+	$piloto_incidente->incidente_id = 1;
+	$piloto_incidente->reclama = 0;
+	$piloto_incidente->sancion = 0;
+
+	$reclamacion = ORM::for_table('reclamacion')->create();
+	$reclamacion->titulo = $titulo;
+	$reclamacion->comentario = $comentario;
+	$reclamacion->incidente_id = 1;
+	$reclamacion->piloto_id = 1;
+
+	$incidente->save();
+	$piloto_incidente->save();
+	$reclamacion->save();
 }
 
 function calcularFecha($modo, $valor, $fecha_inicio = false){
