@@ -1,0 +1,75 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "base.html.twig" %}
+
+{% block head %}
+<link rel="stylesheet" href="http://localhost/css/bootstrap.css" type="text/css">
+<link rel="stylesheet" href="http://localhost/css/font-awesome.css" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://localhost/js/bootstrap.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="col-sm-9">
+	<div class="panel panel-default">
+	<div class="panel-body">
+	<div class="row">
+      <div class="col-xs-12">
+        <h1>Nueva reclamación <small>Formulario de reclamación de incidente</small></h1>
+        <h4>Reclamación para la carrera {{ carrera['nombre'] }} de la categoría {{ categoria['nombre'] }}</h4>
+        <form method="post" action="{{ urlFor('crearReclamacion') }}" role="form">
+			<div class="form-group">
+				<label for="inputTitulo">Breve descripción</label>
+				<input type="text" class="form-control" id="inputTitulo" name="inputTitulo" required>
+			</div>
+			<div class="form-group">
+				<label for="inputPiloto">Piloto a reclamar</label>
+				<select class="form-control" id="inputPiloto" name="inputPiloto" required>
+					<option value="0">Seleccionar piloto</option>
+					{% for piloto in pilotos %}
+						<option value="{{ piloto['id'] }}">{{ piloto['nombre_completo'] }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="inputVuelta">Vuelta</label>
+				<select class="form-control" id="inputVuelta" name="inputVuelta" required>
+					<option value="0">Vuelta en la que se produjo el accidente</option>
+					{% for i in 1..carrera['vueltas'] %}
+						<option value="{{ i }}">{{ i }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="inputMinuto">Minuto</label>
+				<input type="text" class="form-control" id="inputMinuto" name="inputMinuto" placeholder="Tiempo en el que ocurre el incidente" required>
+			</div>
+			<div class="form-group">
+				<label for="inputAclaracion">Aclaración</label>
+				<textarea class="form-control" rows="3" id="inputAclaracion" name="inputAclaracion"></textarea>
+				<span class="help-block">Descripción del incidente</span>
+			</div>
+			<button type="submit" class="btn btn-success">Abrir reclamación</button>
+			<a href="{{ urlFor('reclamaciones') }}" class="btn btn-danger">Volver</a>
+		</form>
+      </div>
+    </div>
+	</div>
+	</div>
+</div>
+{% endblock %}
