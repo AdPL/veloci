@@ -108,13 +108,9 @@ $app->get('/nuevaReclamacion/:idCarrera', function($idCarrera) use ($app) {
 })->name('nuevaReclamacion');
 
 $app->post('/reclamacion', function() use ($app) {
-	/*$carrera = cargarDatosCarrera($idCarrera);
-	$categoria = cargarCategorias($carrera['categoria_id']);
-	$pilotos = cargarUsuarios();*/
-
 	crearReclamacion($app, $_POST['inputTitulo'], $_POST['inputAclaracion'], $_POST['inputVuelta'], $_POST['inputMinuto'], '4');
 
-	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
 	} else {
@@ -125,13 +121,25 @@ $app->post('/reclamacion', function() use ($app) {
 $app->get('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 	$comentarios = cargarReclamacion($idReclamacion);
 
-	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
 	} else {
-		$app->render('reclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios));
+		$app->render('reclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion));
 	}
 })->name('reclamacion');
+
+$app->post('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
+	crearComentario($app, $_POST['inputTitulo'], $_POST['inputComentario'], $_POST['inputID']);
+	$comentarios = cargarReclamacion($idReclamacion);
+
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
+		$carreras = cargarCarrerasReclamacion();
+		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
+	} else {
+		$app->render('reclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion));
+	}
+})->name('nuevoComentario');
 
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
@@ -174,8 +182,8 @@ function cargarReclamaciones($race) {
 
 function cargarReclamacion($idReclamacion) {
 	return ORM::for_table('reclamacion')->
-	join('incidente', array('incidente.id', '=', 'reclamacion.incidente_id'))->
-	join('piloto_incidente', array('incidente.id', '=', 'piloto_incidente.incidente_id'))->
+	/*join('piloto', array('reclamacion.piloto_id', '=', 'piloto.id'))->
+	join('piloto_incidente', array('piloto.id', '=', 'piloto_incidente.piloto_id'))->*/
 	where('reclamacion.incidente_id', $idReclamacion)->
 	find_many();
 }
@@ -204,7 +212,16 @@ function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera
 	$reclamacion->save();
 }
 
-function calcularFecha($modo, $valor, $fecha_inicio = false){
+function crearComentario($app, $titulo, $comentario, $id) {
+	$comentario = ORM::for_table('reclamacion')->create();
+	$comentario->titulo = $titulo;
+	$comentario->comentario = $comentario;
+	$comentario->incidente_id = $id;
+	$comentario->piloto_id = $_SESSION['id'];
+	$comentario->save();
+}
+
+function calcularFecha($modo, $valor, $fecha_inicio = false) {
  
    if ($fecha_inicio != false) {
           $fecha_base = strtotime($fecha_inicio);

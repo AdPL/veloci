@@ -33,13 +33,31 @@
 	
 	{% if comentario['reclama'] == 1 %}
 		<div class="alert alert-info">
+			<h3>{{ comentario['titulo'] }}</h3>
+			<p>{{ comentario['comentario'] }}</p>
+		</div>
 	{% else %}
 		<div class="alert alert-warning">
+			<h3>{{ comentario['titulo'] }}</h3>
+			<p>{{ comentario['comentario'] }}</p>
+		</div>
 	{% endif %}
-		{{ comentario['titulo'] }}
-		{{ comentario['comentario'] }}
-	</div>
+		
 	{% endfor %}
+		<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}">
+		<input type="hidden" name="inputID" value="{{ idReclamacion }}">
+			<div class="form-group">
+				<label for="inputTitulo">Título</label>
+				<input type="text" name="inputTitulo" id="inputTitulo" class="form-control">
+			</div>
+			<div class="form-group">
+				<label for="inputComentario">Comentario</label>
+				<textarea name="inputComentario" id="inputComentario" rows="3" class="form-control"></textarea>
+			</div>
+			<input type="submit" value="Enviar" class="btn btn-success">
+			<a href="{{ urlFor('reclamaciones') }}" class="btn btn-danger">Volver</a>
+		</form>
+	</div>
 	</div>
 	</div>
 </div>
