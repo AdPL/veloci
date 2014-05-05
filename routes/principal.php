@@ -85,12 +85,12 @@ $app->get('/reclamaciones', function() use ($app) {
 })->name('reclamaciones');
 
 $app->get('/listaReclamaciones/:idCarrera', function($idCarrera) use ($app) {
-	$carreras = cargarCarrerasReclamacion();
+	$reclamaciones = cargarReclamaciones($idCarrera);
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('reclamaciones.html.twig', array('carreras' => $carreras));
+		$app->render('reclamaciones.html.twig', array('carreras' => $reclamaciones));
 	} else {
-		$app->render('reclamaciones.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras));
+		$app->render('listaReclamaciones.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'reclamaciones' => $reclamaciones));
 	}
 })->name('listaReclamaciones');
 
@@ -122,6 +122,17 @@ $app->post('/reclamacion', function() use ($app) {
 	}
 })->name('crearReclamacion');
 
+$app->get('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
+	$comentarios = cargarReclamacion($idReclamacion);
+
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
+		$carreras = cargarCarrerasReclamacion();
+		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
+	} else {
+		$app->render('reclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios));
+	}
+})->name('reclamacion');
+
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
 	if ($user['nombre'] == $usuario && password_verify($pass, $user['password'])) {
@@ -150,6 +161,23 @@ function cargarDatosCategoria($idCategoria) {
 function cargarCarrerasReclamacion() {
     return ORM::for_table('carrera')->where_gt('fecha', date("Y-m-d"))->where_lt('fecha', calcularFecha('days', 4, date("Y-m-d")))->
     order_by_asc('fecha')->find_many();
+}
+
+function cargarReclamaciones($race) {
+	return ORM::for_table('incidente')->
+	join('reclamacion', array('incidente.id', '=', 'reclamacion.incidente_id'))->
+	join('piloto_incidente', array('incidente.id', '=', 'piloto_incidente.incidente_id'))->
+	join('piloto', array('piloto.id', '=', 'piloto_incidente.piloto_id'))->
+	where('carrera_id', $race)->where('piloto_incidente.reclama', 1)->order_by_asc('vuelta')->
+	select_many('reclamacion.incidente_id', 'vuelta', 'minuto', 'reclama', 'nombre_completo', 'titulo')->find_many();
+}
+
+function cargarReclamacion($idReclamacion) {
+	return ORM::for_table('reclamacion')->
+	join('incidente', array('incidente.id', '=', 'reclamacion.incidente_id'))->
+	join('piloto_incidente', array('incidente.id', '=', 'piloto_incidente.incidente_id'))->
+	where('reclamacion.incidente_id', $idReclamacion)->
+	find_many();
 }
 
 function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera) {
