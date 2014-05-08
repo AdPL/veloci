@@ -28,7 +28,10 @@
     {% if alert %}
     	<div class="alert alert-danger">{{ alert }}</div>
     {% endif %}
-
+    	<div class="alert alert-info">
+    		<h3>Pilotos bajo investigación:</h3>
+    		<p>{{ pilotosR['nombre_completo'] }}</p>
+    	</div>
 	{% for comentario in comentarios %}
 	
 	{% if comentario['reclama'] == 1 %}
