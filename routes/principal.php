@@ -103,18 +103,21 @@ $app->get('/nuevaReclamacion/:idCarrera', function($idCarrera) use ($app) {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
 	} else {
-		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos));
+		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos, 'idRace' => $idCarrera));
 	}
 })->name('nuevaReclamacion');
 
 $app->post('/reclamacion', function() use ($app) {
-	crearReclamacion($app, $_POST['inputTitulo'], $_POST['inputAclaracion'], $_POST['inputVuelta'], $_POST['inputMinuto'], '4');
-
+	$nIncidente = crearReclamacion($app, $_POST['inputTitulo'], $_POST['inputAclaracion'], $_POST['inputVuelta'], $_POST['inputMinuto'], $_POST['inputIdCarrera'], $_POST['inputIdUsuario'], $_POST['inputPiloto']);
+	$carrera = cargarDatosCarrera($_POST['inputIdCarrera']);
+	$categoria = cargarCategorias(1);
+	$pilotos = cargarUsuarios();
+echo $nIncidente;
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
 	} else {
-		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos));
+		$app->redirect('/reclamacion/' . $nIncidente);
 	}
 })->name('crearReclamacion');
 
@@ -188,37 +191,51 @@ function cargarReclamacion($idReclamacion) {
 	find_many();
 }
 
-function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera) {
+function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera, $reclama, $sereclama) {
+	$nincidentes = ORM::for_table('incidente')->max('id');
+	$nincidentes++;
+	
 	$incidente = ORM::for_table('incidente')->create();
 	$incidente->id = null;
 	$incidente->vuelta = $vuelta;
 	$incidente->minuto = $minuto;
 	$incidente->carrera_id = $carrera;
 
-	$piloto_incidente = ORM::for_table('piloto_incidente')->create();
-	$piloto_incidente->piloto_id = 1;
-	$piloto_incidente->incidente_id = 1;
-	$piloto_incidente->reclama = 0;
-	$piloto_incidente->sancion = 0;
-
 	$reclamacion = ORM::for_table('reclamacion')->create();
 	$reclamacion->titulo = $titulo;
 	$reclamacion->comentario = $comentario;
-	$reclamacion->incidente_id = 1;
-	$reclamacion->piloto_id = 1;
+	$reclamacion->incidente_id = $nincidentes;
+	$reclamacion->piloto_id = $reclama;
+
+	$piloto_incidente = ORM::for_table('piloto_incidente')->create();
+	$piloto_incidente->piloto_id = $reclama;
+	$piloto_incidente->incidente_id = $nincidentes;
+	$piloto_incidente->reclama = 1;
+	$piloto_incidente->sancion = 0;
 
 	$incidente->save();
-	$piloto_incidente->save();
 	$reclamacion->save();
+	$piloto_incidente->save();
+
+	$piloto_incidente = ORM::for_table('piloto_incidente')->create();
+	$piloto_incidente->piloto_id = $sereclama;
+	$piloto_incidente->incidente_id = $nincidentes;
+	$piloto_incidente->reclama = 0;
+	$piloto_incidente->sancion = 0;
+
+	$piloto_incidente->save();
+
+	return $nincidentes;
 }
 
 function crearComentario($app, $titulo, $comentario, $id) {
-	$comentario = ORM::for_table('reclamacion')->create();
-	$comentario->titulo = $titulo;
-	$comentario->comentario = $comentario;
-	$comentario->incidente_id = $id;
-	$comentario->piloto_id = $_SESSION['id'];
-	$comentario->save();
+	$comment = ORM::for_table('reclamacion')->create();
+	$comment->titulo = $titulo;
+	$comment->comentario = $comentario;
+	$comment->incidente_id = $id;
+	$comment->piloto_id = $_SESSION['id'];
+
+	$comment->save();
 }
 
 function calcularFecha($modo, $valor, $fecha_inicio = false) {

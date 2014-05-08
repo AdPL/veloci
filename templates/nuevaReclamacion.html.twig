@@ -33,6 +33,8 @@
         <h1>Nueva reclamación <small>Formulario de reclamación de incidente</small></h1>
         <h4>Reclamación para la carrera {{ carrera['nombre'] }} de la categoría {{ categoria['nombre'] }}</h4>
         <form method="post" action="{{ urlFor('crearReclamacion') }}" role="form">
+			<input type="hidden" name="inputIdUsuario" value="{{ idRace }}">
+        	<input type="hidden" name="inputIdCarrera" value="{{ idRace }}">
 			<div class="form-group">
 				<label for="inputTitulo">Breve descripción</label>
 				<input type="text" class="form-control" id="inputTitulo" name="inputTitulo" required>
