@@ -116,6 +116,7 @@
 									<li><a href="{{ urlFor('listaCircuitos') }}"><i class="fa fa-list"></i> Lista de circuitos</a></li>
 								</ul>
 							</li>
+							<li class="{% block adminAsistencia %}{% endblock %}"><a href="{{ urlFor('controlAsistencia') }}">Asistencias</a></li>
 							<li><a href="#">Estadísticas</a></li>
 						</ul>
 						{% endblock %}

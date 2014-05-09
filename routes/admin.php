@@ -218,6 +218,21 @@ $app->get('/usuarios', function() use ($app) {
     }
 })->name('listaUsuarios');
 
+$app->get('/controlAsistencias', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $circuitos = cargarCircuitos();
+            $pilotos = cargarUsuarios();
+            
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuitos' => $circuitos, 'pilotos' => $pilotos));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('controlAsistencia');
+
 function cargarUsuarios() {
     return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'rol')->find_many();
 }
