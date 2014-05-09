@@ -1,0 +1,67 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block head %}
+<style type="text/css">
+	.img-circle {
+		height: 100px;
+		width: 100px;
+		margin: 0 auto;
+	}
+</style>
+{% endblock %}
+
+{% block adminAsistencia %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<table class="table table-striped">
+			<thead>
+				<th>Piloto/Circuito</th>
+				{% for circuito in circuitos %}
+					<th>{{ circuito['nombre'] }}</th>
+				{% endfor %}
+			</thead>
+			<tbody>
+				{% for piloto in pilotos %}
+				<tr>
+					<td>{{ piloto['nombre_completo'] }}</td>
+					{% for circuito in circuitos %}
+						<td>
+							<select>
+								<option value="0">Selección</option>
+								<option value="1">Asiste</option>
+								<option value="2">Justifica falta</option>
+								<option value="3">Falta sin justificar</option>
+								<option value="4">Sanción</option>
+							</select>
+						</td>
+					{% endfor %}				
+				</tr>
+				{% else %}
+				<tr><td>Todavía no se pueden pasar faltas</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<a href="#" class="btn btn-success">Guardar faltas</a>
+</div>
+{% endblock %}
