@@ -172,7 +172,8 @@ function cargarDatosCategoria($idCategoria) {
 }
 
 function cargarCarrerasReclamacion() {
-    return ORM::for_table('carrera')->where_gt('fecha', date("Y-m-d"))->where_lt('fecha', calcularFecha('days', 4, date("Y-m-d")))->
+    return ORM::for_table('carrera')->
+    where_lt('fecha', calcularFecha('days', 4, date("Y-m-d")))->
     order_by_asc('fecha')->find_many();
 }
 
