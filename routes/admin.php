@@ -223,15 +223,32 @@ $app->get('/controlAsistencias', function() use ($app) {
         $app->render('principal.html.twig');
     } else {
         if($_SESSION['rol'] == 5) {
-            $circuitos = cargarCircuitos();
+            $carreras = cargarCarreras();
             $pilotos = cargarUsuarios();
             
-            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuitos' => $circuitos, 'pilotos' => $pilotos));
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
     }
 })->name('controlAsistencia');
+
+$app->post('/controlAsistencias', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $carreras = cargarCarreras();
+            $pilotos = cargarUsuarios();
+            
+            guardarAsistencias($_POST);
+
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('controlAsistenciaGuardar');
 
 function cargarUsuarios() {
     return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'rol')->find_many();
@@ -302,4 +319,31 @@ function crearCircuito($app, $nombre, $pais, $distancia) {
     $circuito->pais = $pais;
     $circuito->distancia = $distancia;
     $circuito->save();
+}
+
+function controlAsistencia($piloto_id, $carrera_id, $estado) {
+    $asistencia = ORM::for_table('piloto_carrera')->create();
+    $asistencia->id = null;
+    $asistencia->piloto_id = $piloto_id;
+    $asistencia->carrera_id = $carrera_id;
+    $asistencia->estado = $estado;
+    $asistencia->save();
+}
+
+function guardarAsistencias($formulario) {
+    $npilotos = ORM::for_table('piloto')->max('id');
+    $ncarreras = ORM::for_table('carrera')->max('id');
+
+    for ($i=1 ; $i <= $npilotos; $i++) {
+        for ($j=1 ; $j <= $ncarreras; $j++) {
+            $cadena = $i . "-" . $j;
+            echo "cadena: " . $cadena . "<br/>";
+            
+            if (isset($_POST[$cadena])) {
+                echo $cadena . "<br/>";
+                controlAsistencia($i, $j, $_POST[$cadena]);
+            }
+        }
+        $j = 0;
+    }
 }

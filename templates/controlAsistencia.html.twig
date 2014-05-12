@@ -33,20 +33,21 @@ active
 {% block content %}
 <div class="col-lg-9">
 	<div class="panel panel-default">
+		<form method="post" action="{{ urlFor('controlAsistenciaGuardar') }}">
 		<table class="table table-striped">
 			<thead>
 				<th>Piloto/Circuito</th>
-				{% for circuito in circuitos %}
-					<th>{{ circuito['nombre'] }}</th>
+				{% for carrera in carreras %}
+					<th>{{ carrera['nombre'] }}</th>
 				{% endfor %}
 			</thead>
 			<tbody>
 				{% for piloto in pilotos %}
 				<tr>
 					<td>{{ piloto['nombre_completo'] }}</td>
-					{% for circuito in circuitos %}
+					{% for carrera in carreras %}
 						<td>
-							<select>
+							<select name="{{ piloto.id }}-{{ carrera.id }}">
 								<option value="0">Selección</option>
 								<option value="1">Asiste</option>
 								<option value="2">Justifica falta</option>
@@ -61,7 +62,8 @@ active
 				{% endfor %}
 			</tbody>
 		</table>
+			<input type="submit" class="btn btn-success" value="Guardar faltas"/>
+		</form>
 	</div>
-	<a href="#" class="btn btn-success">Guardar faltas</a>
 </div>
 {% endblock %}
