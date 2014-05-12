@@ -38,8 +38,8 @@
 		<tbody>
 		{% for usuario in usuarios %}
 		<tr>
-			<td><img src="{{ usuario['avatar'] }}" alt="Avatar {{ usuario['nombre_completo'] }}"/></td>
-			<td>{{ usuario['nombre_completo'] }}</td>
+			<td><a href="/perfil/{{ usuario['id'] }}"><img src="{{ usuario['avatar'] }}" alt="Avatar {{ usuario['nombre_completo'] }}" height="125px" width="125px"/></a></td>
+			<td><a href="/perfil/{{ usuario['id'] }}">{{ usuario['nombre_completo'] }}</a></td>
 		</tr>
 		{% else %}
 		<tr><td>No se han encontrado usuarios</td></tr>
