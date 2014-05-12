@@ -63,6 +63,20 @@ $app->post('/perfil', function() use ($app) {
     $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'alert' => 'Cambios guardados con éxito'));
 })->name('cambiarAvatar');
 
+$app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
+    $usuario = datosUsuario($idUsuario);
+    $competidas = nCarreras($idUsuario, 0);
+    $justificadas = nCarreras($idUsuario, 2);
+    $injustificadas = nCarreras($idUsuario, 3);
+    $sancionado = nCarreras($idUsuario, 4);
+
+    if(!isset($_SESSION['id'])) {
+        $app->redirect($app->urlFor('principal'));
+    }
+
+    $app->render('perfilUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado));
+})->name('perfilUsuario');
+
 function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $nombreCompleto) {
     if ($password == $passwordCheck) {
         $token = generarToken(100);
@@ -70,6 +84,7 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
         $user->id = null;
         $user->nombre = strtolower($usuario);;
         $user->password = password_hash($password, PASSWORD_DEFAULT);
+        $user->avatar = 'images/default.png';
         $user->escuderia = 'Ninguna';
         $user->nombre_completo = $nombreCompleto;
         $user->email = $email;
@@ -130,4 +145,18 @@ function generarToken($longitud) {
     }
 
     return $token;
+}
+
+function datosUsuario($id) {
+    return ORM::for_table('piloto')->find_one($id);
+}
+
+function nCarreras($id, $estado) {
+    if ($estado == 0) {
+        return ORM::for_table('piloto_carrera')->where('piloto_id', $id)->count();
+    }
+    
+    return ORM::for_table('piloto_carrera')->
+    where('piloto_id', $id)->
+    where('estado', $estado)->count();
 }
