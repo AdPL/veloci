@@ -58,7 +58,7 @@ $app->post('/nuevacategoria', function() use ($app) {
     }
 })->name('crearCategoria');
 
-$app->get('/categorias', function() use ($app) {
+$app->get('/listaCategorias', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -86,7 +86,7 @@ $app->get('/editar/:idCat', function($idCat) use ($app) {
     }
 })->name('editarCategoria');
 
-$app->post('/categorias', function() use ($app) {
+$app->post('/listaCategorias', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -97,7 +97,7 @@ $app->post('/categorias', function() use ($app) {
                 eliminarCategoria($app, $_POST['id']);
             }
 
-            $app->Redirect('categorias');
+            $app->Redirect('listaCategorias');
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -132,7 +132,7 @@ $app->post('/nuevacarrera', function() use ($app) {
     }
 })->name('crearCarrera');
 
-$app->get('/carreras', function() use ($app) {
+$app->get('/listaCarreras', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -146,7 +146,7 @@ $app->get('/carreras', function() use ($app) {
     }
 })->name('listaCarreras');
 
-$app->post('/carreras', function() use ($app) {
+$app->post('/listaCarreras', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -157,7 +157,7 @@ $app->post('/carreras', function() use ($app) {
                 eliminarCarrera($app, $_POST['id']);
             }
 
-            $app->Redirect('carreras');
+            $app->Redirect('listaCarreras');
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
