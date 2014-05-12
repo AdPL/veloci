@@ -1,0 +1,77 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "base.html.twig" %}
+
+{% block head %}
+<style type="text/css">
+	.img-circle {
+		height: 100px;
+		width: 100px;
+		margin: 0 auto;
+	}
+</style>
+{% endblock %}
+
+{% block Settings %}
+{% if rol >= 1 %}
+	<li class="dropdown">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i><b class="caret"></b></a>
+		<ul class="dropdown-menu">
+			<li><a href="#">Perfil</a></li>
+			<li><a href="#">Otra opción</a></li>
+			{% if rol == 5 %}
+				<li><a href="{{ urlFor('admin') }}">Panel de administración</a></li>
+			{% endif %}
+			<li><a href="#">Salir</a></li>
+		</ul>
+	</li>
+{% endif %}
+{% endblock %}
+
+{% block container %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-3 col-lg-3 col-lg-offset-2">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<img src="/{{ user.avatar }}" alt="avatar" class="img-circle img-responsive">
+					<h2 class="text-center">{{ user.nombre_completo }}</h2>
+					<ul>
+						<li>Carreras disputadas: {{ competidas }} </li>
+						<li>Ausencias justificadas: {{ justificadas }} </li>
+						<li>Ausencias injustificadas: {{ injustificadas }} </li>
+						<li>Sanciones: {{ sancionado }} </li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-3 col-lg-5">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					{% if alert %}
+						<div class="alert alert-success">
+							{{ alert }}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
