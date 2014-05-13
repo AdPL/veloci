@@ -42,7 +42,7 @@ $app->post('/registro', function() use ($app) {
     } else {
         // MENSAJE DE REGISTRO INCORRECTO
     }
-    $app->render('registro.html.twig');
+    $app->render('principal.html.twig', array('alertLogin' => 'Registro completado con éxito'));
 })->name('registroUsuario');
 
 $app->get('/perfil', function() use ($app) {
