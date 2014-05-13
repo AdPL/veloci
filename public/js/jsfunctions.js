@@ -1,3 +1,7 @@
+$('#registerModal').click( function() {
+	$('#registerModal').modal();
+});
+
 function generarCalendario(dia, mes) {
 	var fecha = new Date();
 	var dias = new Array('L', 'M', 'X', 'J', 'V', 'S', 'D');
@@ -63,3 +67,4 @@ function generarCalendario(dia, mes) {
 
 	document.getElementById('calendario').innerHTML = cadena;
 }
+
