@@ -22,11 +22,15 @@
 	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
 	<link rel="stylesheet" href="/css/style.css" type="text/css">
 	<link rel="stylesheet" href="/css/bootstrap.css" type="text/css">
+	<link rel="stylesheet" href="/css/alertify.bootstrap.css" type="text/css">
+	<link rel="stylesheet" href="/css/alertify.core.css" type="text/css">
+	<link rel="stylesheet" href="/css/alertify.default.css" type="text/css">
 	<link rel="stylesheet" href="/css/font-awesome.css" type="text/css">
 	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="/js/bootstrap.js"></script>
 	<script type="text/javascript" src="/js/jsfunctions.js"></script>
+	<script type="text/javascript" src="/js/alertify.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
    			$("body").popover({
@@ -115,6 +119,14 @@
 			</div>
 		</div>
 	</div>
+	<div class="jumbotron cabecera">
+      <div class="container">
+        <h1>Veloci</h1>
+        <p>Bienvenido</p>
+        <p>Aplicación web para la gestión de campeonatos de carreras Online.</p>
+        <!--<p><a class="btn btn-primary btn-lg" role="button">Learn more »</a></p>-->
+      </div>
+    </div>
 
 	{% block container %}
 	<div class="container-fluid">
@@ -157,7 +169,6 @@
 			        <p class="lead pull-right"><button class="btn btn-info">Read More</button></p>
 			      </div>
 			    </div>
-			    <hr>
 				</div>
 				</div>
 			</div>
@@ -177,7 +188,6 @@
 								{% block categorias %}{% endblock %}
 							</div>
 						</div>
-						<hr>
 						<div class="panel panel-default">
 							<div class="panel-heading">Bloque</div>
 							<div class="panel-body">
@@ -192,7 +202,74 @@
 	</div>
 	{% endblock %}
 
-	{% block modal %}{% endblock %}
-	{% block modal2 %}{% endblock %}
+{% block modal %}
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Registro de usuario</h4>
+      </div>
+      <form method="post" action="{{ urlFor('registroUsuario') }}" role="form">
+      <div class="modal-body">
+			<div class="form-group">
+				<label for="inputUsuario">Nombre de usuario</label>
+				<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Nombre que se utilizará para acceder a la web" required>
+			</div>
+			<div class="form-group">
+				<label for="inputPassword">Contraseña</label>
+				<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Contraseña del usuario de acceso a la web" required>
+			</div>
+			<div class="form-group">
+				<label for="inputPassword2">Repita la contraseña</label>
+				<input type="password" class="form-control" id="inputPassword2" name="inputPassword2" required>
+			</div>
+			<div class="form-group">
+				<label for="inputNombreCompleto">Nombre completo</label>
+				<input type="text" class="form-control" id="inputNombreCompleto" name="inputNombreCompleto" placeholder="Nombre público, por ejemplo: Fernando Alonso (¡Nombre REAL!)" required>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail">Email</label>
+				<input type="text" class="form-control" id="inputEmail" name="inputEmail" placeholder="Email, necesario para confirmar la cuenta" required>
+			</div>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+        <button type="submit" class="btn btn-success">Registrarme</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block modal2 %}
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Login</h4>
+      </div>
+		<form role="form" method="post" action="{{ urlFor('accederPrincipal') }}">
+		<div class="modal-body">
+			<div class="form-group">
+				<label for="inputUsuario">Nombre de usuario</label>
+				<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Usuario">
+			</div>
+			<div class="form-group">
+				<label for="inputPassword">Contraseña</label>
+				<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Contraseña del usuario">
+			</div>
+		</div>
+		<div class="modal-footer">
+      		<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+        	<button type="submit" class="btn btn-success" name="login">Login</button>
+      	</div>
+		</form>
+    </div>
+  </div>
+</div>
+{% endblock %}
 </body>
 </html>

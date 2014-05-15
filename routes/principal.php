@@ -32,8 +32,10 @@ $app->post('/', function() use ($app) {
 
 	if (!$acceso) {
 		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos'));
+		echo "<script type='text/javascript'>alertify.error('Error: usuario o contraseña incorrectos');</script>";
 	} else {
 		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+		echo "<script type='text/javascript'>alertify.success('Usuario identificado correctamente');</script>";
 	}
 })->name('accederPrincipal');
 

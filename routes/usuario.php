@@ -60,7 +60,8 @@ $app->post('/perfil', function() use ($app) {
 
     imagenPerfil($app, $_FILES['inputFoto']);
 
-    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'alert' => 'Cambios guardados con éxito'));
+    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+    echo "<script type='text/javascript'>alertify.success('Cambios guardados con éxito');</script>";
 })->name('cambiarAvatar');
 
 $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
@@ -101,7 +102,7 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
 
 function imagenPerfil($app, $imagen) {
     if ($_FILES['inputFoto']['error'] > 0) {
-        echo "error";
+        //echo "error";
     } else {
         $ok = array("image/jpg", "image/jpeg", "image/gif", "image/png");
         $limite_kb = 100;
@@ -121,10 +122,10 @@ function imagenPerfil($app, $imagen) {
 
                     $_SESSION['avatar'] = $ruta;
                 } else {
-                    echo "ERROR";
+                    //echo "ERROR";
                 }
         } else {
-            echo "Archivo no permitido";
+            //echo "Archivo no permitido";
         }
     }
 }
