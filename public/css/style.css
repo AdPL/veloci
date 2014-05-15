@@ -9,3 +9,16 @@
 	width: 50px;
 	margin-right: 3px;
 }
+
+.navbar {
+	margin-bottom: 0px !important;
+}
+
+.cabecera {
+	background: url('/images/cabecera.jpg') center center;
+	background-size: cover;
+}
+
+.container {
+	color: #ffffff;
+}
