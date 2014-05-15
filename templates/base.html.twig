@@ -253,9 +253,10 @@
       </div>
 		<form role="form" method="post" action="{{ urlFor('accederPrincipal') }}">
 		<div class="modal-body">
-			<div class="form-group">
+			<div class="form-group" id="pepito">
 				<label for="inputUsuario">Nombre de usuario</label>
-				<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Usuario" title="Introduzca su nombre de usuario" required>
+				<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Usuario" title="Introduzca su nombre de usuario" onKeyUp="compruebaNombre(this.value);" autocomplete="off" required>
+				<div id="pepe"></div>
 			</div>
 			<div class="form-group">
 				<label for="inputPassword">Contraseña</label>
