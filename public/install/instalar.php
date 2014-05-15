@@ -144,9 +144,10 @@
 
 			/* Creación de tabla piloto - categoría */
 			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`piloto_categoria` (
+				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`categoria_id` INT UNSIGNED NOT NULL,
 				`piloto_id` INT UNSIGNED NOT NULL,
-				PRIMARY KEY (`categoria_id`, `piloto_id`),
+				PRIMARY KEY (`id`, `categoria_id`, `piloto_id`),
 				INDEX `fk_pilo_cat_categoria1_idx` (`categoria_id` ASC),
 				INDEX `fk_pilo_cat_piloto1_idx` (`piloto_id` ASC),
 				CONSTRAINT `fk_pilo_cat_categoria1`
@@ -200,9 +201,11 @@
 
 			/* Creación de tabla piloto - carrera */
 			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`piloto_carrera` (
+				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`piloto_id` INT UNSIGNED NOT NULL,
 				`carrera_id` INT UNSIGNED NOT NULL,
-				PRIMARY KEY (`piloto_id`, `carrera_id`),
+				`estado` INT UNSIGNED NOT NULL,
+				PRIMARY KEY (`id`,`piloto_id`, `carrera_id`),
 				INDEX `fk_piloto_has_carrera_carrera1_idx` (`carrera_id` ASC),
 				INDEX `fk_piloto_has_carrera_piloto1_idx` (`piloto_id` ASC),
 				CONSTRAINT `fk_piloto_has_carrera_piloto1`
@@ -219,11 +222,12 @@
 
 			/* Creación de tabla piloto - incidente */
 			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`piloto_incidente` (
+				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`piloto_id` INT UNSIGNED NOT NULL,
 				`incidente_id` INT UNSIGNED NOT NULL,
 				`reclama` INT UNSIGNED NOT NULL,
-				`sancion` INT UNSIGNED NULL,
-				PRIMARY KEY (`piloto_id`, `incidente_id`),
+				`sancion` INT UNSIGNED NOT NULL,
+				PRIMARY KEY (`id`, `piloto_id`, `incidente_id`),
 				INDEX `fk_piloto_has_incidente_incidente1_idx` (`incidente_id` ASC),
 				INDEX `fk_piloto_has_incidente_piloto1_idx` (`piloto_id` ASC),
 				CONSTRAINT `fk_piloto_has_incidente_piloto1`
