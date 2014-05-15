@@ -88,19 +88,17 @@ function generarCalendario(dia, mes) {
 	document.getElementById('calendario').innerHTML = cadena;
 }
 
-function compruebaNombre(valor)
+function compruebaNombre(campo)
 {
     var request;
     request = $.ajax({
         url: "/ajax.php",
         type: "GET",
-        data: {val: valor}
+        data: {val: campo.value}
     });
 
     request.done(function(response, textStatus, jqXHR)
     {
-        document.getElementById("pepito").className = response;
-        document.getElementById("pepe").innerHTML = response;
-
+        document.getElementById(campo.name).className = response;
     });
 }
