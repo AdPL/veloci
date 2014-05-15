@@ -1,0 +1,11 @@
+#bloquePerfil {
+	min-height: 50px;
+	max-height: 50px !important;
+}
+
+#imgPerfil {
+	border-radius: 4px;
+	height: 50px;
+	width: 50px;
+	margin-right: 3px;
+}
