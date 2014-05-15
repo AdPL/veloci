@@ -2,6 +2,10 @@ $('#registerModal').click( function() {
 	$('#registerModal').modal();
 });
 
+$('#loginModal').click( function() {
+	$('#loginModal').modal();
+});
+
 function generarCalendario(dia, mes) {
 	var fecha = new Date();
 	var dias = new Array('L', 'M', 'X', 'J', 'V', 'S', 'D');

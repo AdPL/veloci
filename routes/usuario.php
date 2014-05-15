@@ -23,7 +23,7 @@ $app->post('/login', function() use ($app) {
     $acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
 
     if (!$acceso) {
-        $app->redirect($app->urlFor('login'));
+        $app->redirect($app->urlFor('princial'));
     }
     $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
 })->name('accederLogin');

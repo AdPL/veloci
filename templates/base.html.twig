@@ -98,7 +98,7 @@
 									</li>
 									<li role="presentation" class="divider"></li>
 									<li role="presentation">
-										<a class="menuitem" href="#" data-toggle="modal" data-target="#registerModal" data-backdrop="static">
+										<a class="menuitem" href="#" data-toggle="modal" data-target="#loginModal" data-backdrop="static">
 											<i class="fa fa-rocket"></i> Login
 										</a>
 									</li>
@@ -122,40 +122,6 @@
 			<div class="col-sm-3">
 				<div class="row">
 					<div class="col-xs-12">
-						<div class="panel panel-primary">
-							{% if id %}
-								<div class="panel-heading">Identificado</div>
-							{% else %}
-								<div class="panel-heading">Login</div>
-							{% endif %}
-							<div class="panel-body">
-								{% if alertLogin %}
-    								<div class="alert alert-danger">{{ alertLogin }}</div>
-    							{% endif %}
-								{% block login %}
-									{% if id %}
-										<img src="{{ avatar }}" alt="avatar" class="img-circle img-responsive">
-										<h2 class="text-center">Bienvenido {{ usuario }}</h2>
-									{% else %}
-										<form role="form" method="post" action="{{ urlFor('accederPrincipal') }}">
-											<div class="form-group">
-												<label for="inputUsuario">Nombre de usuario</label>
-												<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Usuario">
-											</div>
-											<div class="form-group">
-												<label for="inputPassword">Contraseña</label>
-												<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Contraseña del usuario">
-											</div>
-											<button type="submit" name="login" class="btn btn-info">Identificarse</button>
-											<a href="#" class="btn btn-primary" data-toggle="modal" data-target="#registerModal" data-backdrop="static">
-												Registro
-											</a>
-										</form>
-									{% endif %}
-								{% endblock %}
-							</div>
-						</div>
-						<hr>
 						<div class="panel panel-default">
 							<div class="panel-heading">Próxima carrera</div>
 							<div class="panel-body">
@@ -227,5 +193,6 @@
 	{% endblock %}
 
 	{% block modal %}{% endblock %}
+	{% block modal2 %}{% endblock %}
 </body>
 </html>

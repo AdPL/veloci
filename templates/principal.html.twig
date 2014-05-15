@@ -99,3 +99,32 @@
   </div>
 </div>
 {% endblock %}
+
+{% block modal2 %}
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Login</h4>
+      </div>
+		<form role="form" method="post" action="{{ urlFor('accederPrincipal') }}">
+		<div class="modal-body">
+			<div class="form-group">
+				<label for="inputUsuario">Nombre de usuario</label>
+				<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Usuario">
+			</div>
+			<div class="form-group">
+				<label for="inputPassword">Contraseña</label>
+				<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Contraseña del usuario">
+			</div>
+		</div>
+		<div class="modal-footer">
+      		<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+        	<button type="submit" class="btn btn-success" name="login">Login</button>
+      	</div>
+		</form>
+    </div>
+  </div>
+</div>
+{% endblock %}
