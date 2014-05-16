@@ -256,7 +256,7 @@
 			try {
 				$token = generarToken(100);
 				echo "BIEN";
-				$insertADM = $dbh->prepare("INSERT INTO `piloto`(`id`, `nombre`, `password`, `email`, `token`, `escuderia`, `nombre_completo`, `activo`, `rol`) VALUES (null,:usrADM,:passADM,:emailADM, :token, 'Ninguna', :nombreADM, '0', '5');");
+				$insertADM = $dbh->prepare("INSERT INTO `piloto`(`id`, `nombre`, `password`, `avatar`, `email`, `token`, `escuderia`, `nombre_completo`, `activo`, `rol`) VALUES (null,:usrADM,:passADM,'/images/default.png',:emailADM, :token, 'Ninguna', :nombreADM, '0', '5');");
 				$insertADM->bindValue(':usrADM', $usrADM, PDO::PARAM_STR);
 				$insertADM->bindValue(':passADM', $passADM, PDO::PARAM_STR);
 				$insertADM->bindValue(':emailADM', $emailADM, PDO::PARAM_STR);
