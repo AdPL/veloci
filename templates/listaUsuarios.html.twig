@@ -53,7 +53,7 @@ class="active"
 					{% elseif usuario['rol'] == 1 %}
 						<td>Registrado</td>
 					{% endif %}
-					<td><a href="{{ urlFor('editarCategoria', {'idCat': categoria.id}) }}" class="btn btn-info">Editar</a></td>
+					<td><a href="{{ urlFor('editarUsuario', {'idUser': usuario.id}) }}" class="btn btn-info">Editar</a></td>
 					<td><form method="post" action="{{ urlFor('editarCategoriaPost') }}"><input type="text" name="id" value="{{ categoria['id'] }}" hidden><button type="submit" class="btn btn-danger">Eliminar</button></form></td>
 				</tr>
 				{% else %}
