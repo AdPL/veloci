@@ -22,3 +22,7 @@
 .container {
 	color: #ffffff;
 }
+
+.navbar-me {
+	margin-bottom: 20px !important;
+}
