@@ -32,7 +32,7 @@ $app->get('/admin', function() use ($app) {
     }
 })->name('admin');
 
-$app->get('/nuevacategoria', function() use ($app) {
+$app->get('/categorias/nueva', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -44,7 +44,7 @@ $app->get('/nuevacategoria', function() use ($app) {
     }
 })->name('nuevaCategoria');
 
-$app->post('/nuevacategoria', function() use ($app) {
+$app->post('/categorias/nueva', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -58,7 +58,7 @@ $app->post('/nuevacategoria', function() use ($app) {
     }
 })->name('crearCategoria');
 
-$app->get('/listaCategorias', function() use ($app) {
+$app->get('/categorias/lista', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -104,7 +104,7 @@ $app->post('/listaCategorias', function() use ($app) {
     }
 })->name('editarCategoriaPost');
 
-$app->get('/nuevacarrera', function() use ($app) {
+$app->get('/carreras/nueva', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -118,7 +118,7 @@ $app->get('/nuevacarrera', function() use ($app) {
     }
 })->name('nuevaCarrera');
 
-$app->post('/nuevacarrera', function() use ($app) {
+$app->post('/carreras/nueva', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -132,7 +132,7 @@ $app->post('/nuevacarrera', function() use ($app) {
     }
 })->name('crearCarrera');
 
-$app->get('/listaCarreras', function() use ($app) {
+$app->get('/carreras/lista', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -146,7 +146,7 @@ $app->get('/listaCarreras', function() use ($app) {
     }
 })->name('listaCarreras');
 
-$app->post('/listaCarreras', function() use ($app) {
+$app->post('/carreras/lista', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -164,7 +164,7 @@ $app->post('/listaCarreras', function() use ($app) {
     }
 })->name('editarCarreraPost');
 
-$app->get('/nuevacircuito', function() use ($app) {
+$app->get('/circuitos/nuevo', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -176,7 +176,7 @@ $app->get('/nuevacircuito', function() use ($app) {
     }
 })->name('nuevoCircuito');
 
-$app->post('/nuevocircuito', function() use ($app) {
+$app->post('/circuitos/nuevo', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -190,7 +190,7 @@ $app->post('/nuevocircuito', function() use ($app) {
     }
 })->name('crearCircuito');
 
-$app->get('/circuitos', function() use ($app) {
+$app->get('/circuitos/lista', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -218,7 +218,7 @@ $app->get('/usuarios', function() use ($app) {
     }
 })->name('listaUsuarios');
 
-$app->get('/controlAsistencias', function() use ($app) {
+$app->get('/asistencias/control', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -233,7 +233,7 @@ $app->get('/controlAsistencias', function() use ($app) {
     }
 })->name('controlAsistencia');
 
-$app->post('/controlAsistencias', function() use ($app) {
+$app->post('/asistencias/control', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -249,6 +249,42 @@ $app->post('/controlAsistencias', function() use ($app) {
         }
     }
 })->name('controlAsistenciaGuardar');
+
+$app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $piloto = cargarUsuario($idUser);
+            
+            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('editarUsuario');
+
+$app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            if (isset($_POST['inputSubmit'])) {
+                //editarCategoria($app, $_POST['id'], $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);   
+            } else {
+                //eliminarCategoria($app, $_POST['id']);
+            }
+
+            $app->Redirect('listaCategorias');
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('editarUsuarioPost');
+
+function cargarUsuario($idUser) {
+    return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol')->find_one();
+}
 
 function cargarUsuarios() {
     return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'rol')->find_many();
