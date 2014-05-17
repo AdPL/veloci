@@ -30,27 +30,17 @@
 {% block DropDownMenu %}{% endblock %}
 
 {% block categorias %}
+{% for categoria in categorias %}
 <div class="media">
 	<a class="pull-left" href="#">
-		<img class="media-object" src="" alt="...">
+		<img class="media-object img40" src="/{{ categoria['imagen'] }}" alt="{{ categoria['nombre'] }}">
 	</a>
 	<div class="media-body">
-		<h4 class="media-heading">Formula 1</h4>
-		<p>Categoría reina de F1Mallorca.</p>
+		<h4 class="media-heading">{{ categoria['nombre'] }}</h4>
 		<small>0 plazas disponibles.</small>
 	</div>
 </div>
-<div class="media">
-	<a class="pull-left" href="#">
-		<img class="media-object" src="" alt="...">
-	</a>
-	<div class="media-body">
-		<h4 class="media-heading">Turismos SR8</h4>
-		<p>Categoría de turismos rápidos.</p>
-		<small>13 plazas disponibles.</small>
-		<button type="button" class="btn btn-info btn-xs">Inscribirse</button>
-	</div>
-</div>
+{% endfor %}
 {% endblock %}
 
 {% block bloque %}

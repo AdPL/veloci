@@ -28,13 +28,14 @@
         
       </div>
     </div>
-    <hr>
+
 	</div>
 	<table class="table table-striped">
 		<thead>
 			<th>ID</th>
 			<th>Avatar</th>
 			<th>Nombre</th>
+			<th>Escuderia</th>
 		</thead>
 		<tbody>
 		{% for usuario in usuarios %}
@@ -42,6 +43,7 @@
 			<td>{{ usuario['id'] }}</td>
 			<td><a href="/perfil/{{ usuario['id'] }}"><img src="{{ usuario['avatar'] }}" alt="Avatar {{ usuario['nombre_completo'] }}" height="50px" width="50px"/></a></td>
 			<td><a href="/perfil/{{ usuario['id'] }}">{{ usuario['nombre_completo'] }}</a></td>
+			<td>{{ usuario['escuderia'] }}</td>
 		</tr>
 		{% else %}
 		<tr><td>No se han encontrado usuarios</td></tr>
