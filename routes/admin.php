@@ -282,6 +282,34 @@ $app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
     }
 })->name('editarUsuarioPost');
 
+$app->get('/noticias/lista', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        $noticias = cargarNoticias();
+        $app->render('listaNoticias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias));
+    }
+})->name('listaNoticias');
+
+$app->get('/noticias/nueva', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        $noticias = cargarNoticias();
+        $app->render('nuevaNoticia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias));
+    }
+})->name('nuevaNoticia');
+
+$app->post('/noticias/lista', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        crearNoticia($_POST['inputTitulo'], $_POST['inputTexto'], $_POST['inputRango'], $_POST['inputEstado']);
+        $noticias = cargarNoticias();
+        $app->render('listaNoticias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias));
+    }
+})->name('crearNoticia');
+
 function cargarUsuario($idUser) {
     return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol')->find_one();
 }
@@ -304,6 +332,31 @@ function cargarCircuitos() {
 
 function cargarCarreras() {
     return ORM::for_table('carrera')->order_by_asc('fecha')->find_many();
+}
+
+function cargarNoticias() {
+    return ORM::for_Table('noticia')->
+    join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
+    select_many('noticia.id', 'titulo', 'texto', 'fecha_publicacion', 'rango_requerido', 'estado', 'piloto.nombre_completo')->
+    order_by_desc('fecha_publicacion')->find_many();
+}
+
+function cargarNoticia($idNoticia) {
+    return ORM::for_Table('noticia')->
+    join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
+    select_many('noticia.id', 'titulo', 'texto', 'fecha_publicacion', 'rango_requerido', 'estado', 'piloto.nombre_completo')->
+    where('id', $idNoticia)->find_one();
+}
+
+function crearNoticia($titulo, $texto, $rango, $estado) {
+    $noticia = ORM::for_table('noticia')->create();
+    $noticia->id = null;
+    $noticia->titulo = $titulo;
+    $noticia->texto = $texto;
+    $noticia->fecha_publicacion = date("Y-n-d H:i");
+    $noticia->rango_requerido = $rango;
+    $noticia->estado = $estado;
+    $noticia->save();
 }
 
 function crearCategoria($app, $nombre, $plazas, $precio) {
