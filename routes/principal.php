@@ -17,24 +17,28 @@
 
 $app->get('/', function() use ($app) {
 	$carrera = cargarCarrera();
+	$noticias = cargarNoticias();
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('principal.html.twig');
+		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias));
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias));
 	}
 })->name('principal');
 
 $app->post('/', function() use ($app) {
+	$carrera = cargarCarrera();
+	$noticias = cargarNoticias();
+
 	if (isset($_POST['login'])) {
 		$acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
 	}
 
 	if (!$acceso) {
-		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos'));
+		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos', 'carrera' => $carrera, 'noticias' => $noticias));
 		echo "<script type='text/javascript'>alertify.error('Error: usuario o contraseña incorrectos');</script>";
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias));
 		echo "<script type='text/javascript'>alertify.success('Usuario identificado correctamente');</script>";
 	}
 })->name('accederPrincipal');
@@ -147,6 +151,13 @@ $app->post('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 		$app->render('reclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR));
 	}
 })->name('nuevoComentario');
+
+$app->get('/noticia/:idNoticia', function($idNoticia) use ($app) {
+	$noticias = cargarNoticias();
+	$noticia = cargarNoticia($idNoticia);
+
+	$app->render('noticia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia));
+})->name('noticia');
 
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();

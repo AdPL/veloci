@@ -146,6 +146,7 @@
 
 			{% block content %}
 			<div class="col-sm-6">
+			{% for noticia in noticias %}
 				<div class="panel panel-default">
 				<div class="panel-body">
 				<div class="row">
@@ -155,22 +156,30 @@
 			        	<span class="label label-default">tag</span>
 			        	<span class="label label-default">post</span>
 			        </p>
-			        <h2>Noticia demo <span class="label label-success">Nueva</span></h2>
-
+			        <h2>{{ noticia['titulo'] }} <!--<span class="label label-success">Nueva</span>--></h2>
 			        <ul class="list-inline">
+			        	<li>Publicado por: {{ noticia['nombre_completo'] }}</li>
 			        	<li><a href="#"><i class="fa fa-calendar"></i> Hace 1 día</a></li>
 			        	<li><a href="#"><i class="fa fa-comment"></i> 0 Comentarios</a></li>
 			        	<li><a href="#"><i class="fa fa-share"></i> Compartido 1 vez</a></li></ul>
-			        	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate. 
-			          		Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis 
-			          		dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan. 
-			          		Aliquam in felis sit amet augue.
-			          	</p>
+			        	<p>{{ noticia['texto'] }}</p>
+			        <p class="lead pull-right"><a href="noticia/{{ noticia['id'] }}" class="btn btn-info">Leer más</a></p>
+			      </div>
+			    </div>
+				</div>
+				</div>
+			{% else %}
+				<div class="panel panel-default">
+				<div class="panel-body">
+				<div class="row">
+			      <div class="col-xs-12">
+			        <h2>Bienvenido a tu nuevo sitio <span class="label label-success">Nueva</span></h2>
 			        <p class="lead pull-right"><button class="btn btn-info">Read More</button></p>
 			      </div>
 			    </div>
 				</div>
 				</div>
+			{% endfor %}
 			</div>
 
 			<div class="col-sm-3">
