@@ -200,13 +200,14 @@ function cargarReclamaciones($race) {
 	join('piloto_incidente', array('incidente.id', '=', 'piloto_incidente.incidente_id'))->
 	join('piloto', array('piloto.id', '=', 'piloto_incidente.piloto_id'))->
 	where('carrera_id', $race)->where('piloto_incidente.reclama', 1)->order_by_asc('vuelta')->
-	select_many('reclamacion.incidente_id', 'vuelta', 'minuto', 'reclama', 'nombre_completo', 'titulo')->find_many();
+	group_by('piloto_incidente.id')->
+	select_many('reclamacion.incidente_id', 'vuelta', 'minuto', 'nombre_completo', 'reclama', 'titulo')->find_many();
 }
 
 function cargarReclamacion($idReclamacion) {
 	return ORM::for_table('reclamacion')->
-	//join('incidente', array('incidente.id', '=', 'reclamacion.incidente_id'))->
-	//join('piloto_incidente', array('piloto_incidente.incidente_id', '=', 'incidente.id'))->
+	join('piloto', array('piloto.id', '=', 'reclamacion.piloto_id'))->
+	join('piloto_incidente', array('piloto_incidente.incidente_id', '=', 'reclamacion.incidente_id'))->group_by('reclamacion.id')->
 	where('reclamacion.incidente_id', $idReclamacion)->
 	find_many();
 }
@@ -263,7 +264,6 @@ function pilotosReclamados($idReclamacion) {
 	join('piloto_incidente', array('piloto.id', '=', 'piloto_incidente.piloto_id'))->
 	where('piloto_incidente.reclama', '0')->
 	where('piloto_incidente.incidente_id', $idReclamacion)->
-	select_many('piloto.nombre_completo')->
 	find_many();
 }
 

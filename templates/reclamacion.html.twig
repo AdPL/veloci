@@ -30,17 +30,23 @@
     {% endif %}
     	<div class="alert alert-info">
     		<h3>Pilotos bajo investigación:</h3>
-    		<p>{{ pilotosR['nombre_completo'] }}</p>
+    		<ul>
+    		{% for pilotoR in pilotosR %}
+    			<li>{{ pilotoR['nombre_completo'] }}</li>
+    		{% endfor %}
+    		</ul>
     	</div>
 	{% for comentario in comentarios %}
 	
 	{% if comentario['reclama'] == 1 %}
 		<div class="alert alert-info">
+		{{ comentario['nombre_completo'] }}
 			<h3>{{ comentario['titulo'] }}</h3>
 			<p>{{ comentario['comentario'] }}</p>
 		</div>
 	{% else %}
 		<div class="alert alert-warning">
+		{{ comentario['nombre_completo'] }}
 			<h3>{{ comentario['titulo'] }}</h3>
 			<p>{{ comentario['comentario'] }}</p>
 		</div>
