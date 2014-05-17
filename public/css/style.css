@@ -10,6 +10,21 @@
 	margin-right: 3px;
 }
 
+.img100 {
+	height: 100px;
+	width: 100px;
+}
+
+.img50 {
+	height: 50px;
+	width: 50px;
+}
+
+.img40 {
+	height: 40px;
+	width: 40px;
+}
+
 .navbar {
 	margin-bottom: 0px !important;
 }
