@@ -55,19 +55,19 @@ active
 					</select>
 				</div>
 				<div class="form-group">
-					<label for="inputPrecio">Vueltas</label>
+					<label for="inputVueltas">Vueltas</label>
 					<input type="text" class="form-control" id="inputVueltas" name="inputVueltas" placeholder="Vueltas de la carrera" required>
 				</div>
 				<div class="form-group">
-					<label for="inputPrecio">Fecha</label>
+					<label for="inputFecha">Fecha</label>
 					<input type="text" class="form-control" id="inputFecha" name="inputFecha" placeholder="Día que se disputa la carrera" required>
 				</div>
 				<div class="form-group">
-					<label for="inputPrecio">Hora</label>
+					<label for="inputHora">Hora</label>
 					<input type="text" class="form-control" id="inputHora" name="inputHora" placeholder="Hora a la que se disputa la carrera" required>
 				</div>
 				<div class="form-group">
-					<label for="inputPlazas">Categoría</label>
+					<label for="inputCategoria">Categoría</label>
 					<select class="form-control" id="inputCategoria" name="inputCategoria" required>
 						<option value="0">No asignar categoría</option>
 						{% for categoria in categorias %}
@@ -76,7 +76,7 @@ active
 					</select>
 				</div>
 				<div class="form-group">
-					<label for="inputPlazas">Circuito</label>
+					<label for="inputCircuito">Circuito</label>
 					<select class="form-control" id="inputCircuito" name="inputCircuito" required>
 						<option value="0">No asignar circuito</option>
 						{% for circuito in circuitos %}
