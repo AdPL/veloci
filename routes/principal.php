@@ -17,18 +17,19 @@
 
 $app->get('/', function() use ($app) {
 	$carrera = cargarCarrera();
-	$noticias = cargarNoticias();
+	$noticias = cargarNoticiasPaginacion(5,0);
+	$categorias = cargarCategorias();
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias));
+		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias));
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias));
 	}
 })->name('principal');
 
 $app->post('/', function() use ($app) {
 	$carrera = cargarCarrera();
-	$noticias = cargarNoticias();
+	$noticias = cargarNoticiasPaginacion(5,1);
 
 	if (isset($_POST['login'])) {
 		$acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
@@ -186,7 +187,10 @@ function cargarDatosCategoria($idCategoria) {
 
 function cargarCarrerasReclamacion() {
     return ORM::for_table('carrera')->
-    where_lt('fecha', calcularFecha('days', 4, date("Y-m-d")))->
+    where_lte('fecha', date("Y-m-d"))->
+    where_gte('fecha_limite', date("Y-m-d"))->
+    where_lt('hora', date("H:M:s"))->
+    where_gt('hora_limite', date("H:m:s"))->
     order_by_asc('fecha')->find_many();
 }
 

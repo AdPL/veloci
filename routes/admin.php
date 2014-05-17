@@ -304,7 +304,7 @@ $app->post('/noticias/lista', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
-        crearNoticia($_POST['inputTitulo'], $_POST['inputTexto'], $_POST['inputRango'], $_POST['inputEstado']);
+        crearNoticia($_POST['inputTitulo'], $_POST['inputTexto'], $_POST['inputRango'], $_POST['inputEstado'], $_SESSION['id']);
         $noticias = cargarNoticias();
         $app->render('listaNoticias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias));
     }
@@ -315,7 +315,7 @@ function cargarUsuario($idUser) {
 }
 
 function cargarUsuarios() {
-    return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'rol')->find_many();
+    return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'escuderia', 'nombre_completo', 'rol')->find_many();
 }
 
 function cargarCategorias() {
@@ -341,6 +341,13 @@ function cargarNoticias() {
     order_by_desc('fecha_publicacion')->find_many();
 }
 
+function cargarNoticiasPaginacion($nNoticias, $pagina) {
+    return ORM::for_Table('noticia')->
+    join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
+    select_many('noticia.id', 'titulo', 'texto', 'fecha_publicacion', 'rango_requerido', 'estado', 'piloto.nombre_completo')->
+    order_by_desc('fecha_publicacion')->limit($nNoticias)->offset($pagina * $nNoticias)->find_many();
+}
+
 function cargarNoticia($idNoticia) {
     return ORM::for_Table('noticia')->
     join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
@@ -348,14 +355,15 @@ function cargarNoticia($idNoticia) {
     where('id', $idNoticia)->find_one();
 }
 
-function crearNoticia($titulo, $texto, $rango, $estado) {
+function crearNoticia($titulo, $texto, $rango, $estado, $usuarioID) {
     $noticia = ORM::for_table('noticia')->create();
     $noticia->id = null;
     $noticia->titulo = $titulo;
     $noticia->texto = $texto;
-    $noticia->fecha_publicacion = date("Y-n-d H:i");
+    $noticia->fecha_publicacion = date("Y-n-d H:i:s");
     $noticia->rango_requerido = $rango;
     $noticia->estado = $estado;
+    $noticia->usuario_id = $usuarioID;
     $noticia->save();
 }
 
