@@ -94,8 +94,9 @@ $app->get('/reclamaciones', function() use ($app) {
 $app->get('/listaReclamaciones/:idCarrera', function($idCarrera) use ($app) {
 	$reclamaciones = cargarReclamaciones($idCarrera);
 
-	if(!isset($_SESSION['id'])) {
-		$app->render('reclamaciones.html.twig', array('carreras' => $reclamaciones));
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
+		$carreras = cargarCarrerasReclamacion();
+		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
 	} else {
 		$app->render('listaReclamaciones.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'reclamaciones' => $reclamaciones));
 	}
