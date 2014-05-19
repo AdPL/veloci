@@ -242,6 +242,20 @@
 				ON UPDATE NO ACTION)
 				ENGINE = InnoDB;");
 
+			/* Creación de tabla Noticias */
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`noticia` (
+				`id` INT unsigned NOT NULL AUTO_INCREMENT,
+				`titulo` varchar(45) NOT NULL,
+				`texto` text NOT NULL,
+				`fecha_publicacion` datetime NOT NULL,
+				`rango_requerido` INT unsigned NOT NULL,
+				`estado` INT NOT NULL,
+				`usuario_id` INT unsigned NOT NULL,
+				PRIMARY KEY (`id`),
+				CONSTRAINT `usuario_id` FOREIGN KEY (`id`) REFERENCES `piloto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+				) ENGINE=InnoDB;");
+
+
 			$correcto = true; // Si todo ha ido correcto permitiremos la ejecución.
 
 		} catch (PDOException $e) {
