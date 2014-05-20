@@ -310,8 +310,28 @@ $app->post('/noticias/lista', function() use ($app) {
     }
 })->name('crearNoticia');
 
+$app->get('/categorias/asignar/:idUser', function($idUser) use ($app) {
+    $piloto = cargarUsuario($idUser);
+    $categorias = cargarCategorias();
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        $app->render('asignarCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'piloto' => $piloto));
+    }
+})->name('asignarCategorias');
+
+$app->post('/categorias/asignar', function() use ($app) {
+    $categorias = cargarCategorias();
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        asignarCategorias($_POST['idUser'], $_POST['idCategoria']);
+        $app->render('asignarCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
+    }
+})->name('asignaCategorias');
+
 function cargarUsuario($idUser) {
-    return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol')->find_one();
+    return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol')->find_one($idUser);
 }
 
 function cargarUsuarios() {
@@ -442,5 +462,15 @@ function guardarAsistencias($formulario) {
             }
         }
         $j = 0;
+    }
+}
+
+function asignarCategorias($idUser, $categorias) {
+    for ($i=0; $i < count($categorias); $i++) { 
+        $catPiloto = ORM::for_table('piloto_categoria')->create();
+        $catPiloto->id = null;
+        $catPiloto->categoria_id = $categorias[$i];
+        $catPiloto->piloto_id = $idUser;
+        $catPiloto->save();
     }
 }

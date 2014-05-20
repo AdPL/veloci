@@ -102,3 +102,15 @@ function compruebaNombre(campo)
         document.getElementById(campo.name).className = response;
     });
 }
+
+function seleccionar(idUsuario) {
+	var botones = document.getElementsByClassName('btn-action');
+	var nBotones = botones.length;
+
+	for (var i = 0; i < nBotones; i++) {
+		var boton = botones[i];
+		var fin = boton.href.lastIndexOf("/");
+		var enlace = boton.href.substr(0, fin) + "/" + idUsuario;
+		boton.href = enlace;
+	}
+}		
