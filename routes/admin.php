@@ -326,12 +326,20 @@ $app->post('/categorias/asignar', function() use ($app) {
         $app->render('principal.html.twig');
     } else {
         asignarCategorias($_POST['idUser'], $_POST['idCategoria']);
-        $app->render('asignarCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
+        $piloto = cargarUsuario($_POST['idUser']);
+        $app->render('asignarCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'piloto' => $piloto));
     }
 })->name('asignaCategorias');
 
 function cargarUsuario($idUser) {
-    return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol')->find_one($idUser);
+    return ORM::for_table('piloto')->
+    //join('piloto_categoria', array('piloto.id', '=', 'piloto_categoria.piloto_id'))->
+    //join('categoria', array('piloto_categoria.categoria_id', '=', 'categoria.id'))->
+    select_many('piloto.id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol')->find_one($idUser);
+}
+
+function cargarCategoriasUsuario($idUser) {
+    return ORM::for_table('piloto_categoria')->where('piloto_id', $idUser)->find_many();
 }
 
 function cargarUsuarios() {
