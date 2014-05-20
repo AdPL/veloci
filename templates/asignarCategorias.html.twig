@@ -1,0 +1,63 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block head %}
+<style type="text/css">
+	.img-circle {
+		height: 100px;
+		width: 100px;
+		margin: 0 auto;
+	}
+</style>
+{% endblock %}
+
+{% block adminUsuarios %}
+class="active"
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<form method="post" action="{{ urlFor('asignaCategorias') }}">
+	<div class="panel panel-default">
+		<div class="panel panel-body">
+			<h3>Piloto seleccionado: {{ piloto['nombre_completo'] }}</h3><input type="hidden" name="idUser" value="{{ piloto['id'] }}">
+			<p>Seleccione las categorías en las que participa este piloto</p>
+			<input type="submit" class="btn btn-success" value="Asignar">
+			<a href="{{ urlFor('listaUsuarios') }}" class="btn btn-danger">Volver</a>
+		</div>
+		
+		<table class="table table-striped">
+			<thead>
+				<th>Seleccionar</th>
+				<th>Categoría</th>
+			</thead>
+			<tbody>
+				{% for categoria in categorias %}
+				<tr>
+					<td><input type="checkbox" name="idCategoria[]" value="{{ categoria['id'] }}"></td>
+					<td>{{ categoria['nombre'] }}</td>
+				</tr>
+				{% else %}
+				<tr><td>No se han encontrado categorías</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	</form>
+</div>
+{% endblock %}
