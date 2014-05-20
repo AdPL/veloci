@@ -49,7 +49,11 @@ class="active"
 			<tbody>
 				{% for categoria in categorias %}
 				<tr>
-					<td><input type="checkbox" name="idCategoria[]" value="{{ categoria['id'] }}"></td>
+					{% if categoria['piloto_id'] == piloto['id'] %}
+						<td><input type="checkbox" name="idCategoria[]" value="{{ categoria['id'] }}" checked="true"></td>
+					{% else %}
+						<td><input type="checkbox" name="idCategoria[]" value="{{ categoria['id'] }}"></td>
+					{% endif %}
 					<td>{{ categoria['nombre'] }}</td>
 				</tr>
 				{% else %}
