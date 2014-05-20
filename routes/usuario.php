@@ -72,10 +72,14 @@ $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
     $sancionado = nCarreras($idUsuario, 4);
 
     if(!isset($_SESSION['id'])) {
-        $app->redirect($app->urlFor('principal'));
+        if($usuario['privacidad_perfil'] == 1) {
+            $app->render('perfilUsuario.html.twig', array('user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado));
+        } else {
+            $app->render('perfilUsuario.html.twig', array('user' => $usuario['nombre_completo'], 'alert' => "El perfil de este usuario es privado"));
+        }
+    } else {
+        $app->render('perfilUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado));
     }
-
-    $app->render('perfilUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado));
 })->name('perfilUsuario');
 
 function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $nombreCompleto) {
