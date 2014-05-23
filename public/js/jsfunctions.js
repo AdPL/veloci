@@ -23,6 +23,27 @@ $('#loginModal').click( function() {
 });
 
 function generarCalendario(dia, mes) {
+	var request;
+    request = $.ajax({
+        url: "/calendar.php",
+        type: "GET",
+        //data: {val: campo.value}
+    });
+
+    request.done(function(response, textStatus, jqXHR) {
+		carreras = JSON.parse(response);
+		dia = new Array();
+		mes = new Array();
+		for (var i = 0; i < carreras.length; i++) {
+			arreglo = carreras[i]['fecha'].substr(5,10);
+			dia[i] = arreglo[3] + "" + arreglo[4];
+			mes[i] = arreglo[0] + "" + arreglo[1];
+			console.log(carreras[i]['nombre'] + " dia " + dia[i] + " mes " + mes[i]);
+		};
+		return [
+			dia, mes
+		];
+    });
 	var fecha = new Date();
 	var dias = new Array('L', 'M', 'X', 'J', 'V', 'S', 'D');
 	var diasMes = new Array('31', '28', '31', '30', '31', '30', '31', '31', '30', '31', '30', '31');
@@ -68,9 +89,9 @@ function generarCalendario(dia, mes) {
 			cadena += "</tr><tr>";
 			i = 0;
 		};
-		
-		if(j == hoy)
-			cadena += "<td class='info' aling='right' data-container='body' data-placement='top' data-toggle='popover' title='Día " + j + " de marzo' data-content='20:00  -  Gran Premio de Montmelo<br/>23:00  -  Gran Premio de China'><a href='#'>" + j + "</a></td>";
+		console.log(j + " vs " + dia[i]);
+		if(j == dia[i])
+			cadena += "<td class='info' align='right' data-container='body' data-placement='top' data-toggle='popover' title='Día " + j + " de marzo' data-content='20:00  -  Gran Premio de Montmelo<br/>23:00  -  Gran Premio de China'><a href='#'>" + j + "</a></td>";
 		else
 			cadena += "<td align='right'>" + j + "</td>";
 
@@ -88,8 +109,7 @@ function generarCalendario(dia, mes) {
 	document.getElementById('calendario').innerHTML = cadena;
 }
 
-function compruebaNombre(campo)
-{
+function compruebaNombre(campo) {
     var request;
     request = $.ajax({
         url: "/ajax.php",

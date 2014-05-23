@@ -21,9 +21,9 @@
     //switch($_REQUEST['peticion'])
     //{
       //  case 1:
-            $idem = ORM::for_table('piloto')->where('nombre',$_GET['val'])->find_one();
+            $idem = ORM::for_table('carrera')->select_many('nombre', 'fecha')->find_array();
             if(!empty($idem))
-                 echo "form-group has-error";
+                 echo json_encode($idem);
     //}
 
 ?>
