@@ -113,4 +113,11 @@ function seleccionar(idUsuario) {
 		var enlace = boton.href.substr(0, fin) + "/" + idUsuario;
 		boton.href = enlace;
 	}
-}		
+}
+
+function seleccionado(ruta) {
+	alert(ruta.indexOf(':idUser'));
+	if (ruta.indexOf(':idUser')) {
+		document.stop();
+	};
+}

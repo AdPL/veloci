@@ -47,13 +47,33 @@ active
 					<td>{{ piloto['nombre_completo'] }}</td>
 					{% for carrera in carreras %}
 						<td>
-							<select name="{{ piloto.id }}-{{ carrera.id }}">
-								<option value="0">Selección</option>
-								<option value="1">Asiste</option>
-								<option value="2">Justifica falta</option>
-								<option value="3">Falta sin justificar</option>
-								<option value="4">Sanción</option>
-							</select>
+							{% set test = false %}
+							{% for estado in estados %}
+								{% if carrera['id'] == estado['carrera_id'] %}
+									{% if  piloto['id'] == estado['piloto_id'] %}
+										{% if estado['estado'] == 1 %}
+											Asiste
+										{% elseif estado['estado'] == 2 %}
+											Justifica falta
+										{% elseif estado['estado'] == 3 %}
+											Falta sin justificar
+										{% elseif estado['estado'] == 4 %}
+											Sanción
+										{% endif %}
+										</select>
+										{% set test = true %}
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+							{% if test == false %}
+								<select name="{{ piloto.id }}-{{ carrera.id }}">
+									<option value="0">Selección</option>
+									<option value="1">Asiste</option>
+									<option value="2">Justifica falta</option>
+									<option value="3">Falta sin justificar</option>
+									<option value="4">Sanción</option>
+								</select>
+							{% endif %}
 						</td>
 					{% endfor %}				
 				</tr>

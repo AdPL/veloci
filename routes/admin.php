@@ -225,13 +225,18 @@ $app->get('/asistencias/control', function() use ($app) {
         if($_SESSION['rol'] == 5) {
             $carreras = cargarCarreras();
             $pilotos = cargarUsuarios();
+            $estados = carreraControlAsistencia();
             
-            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos));
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
     }
 })->name('controlAsistencia');
+
+function carreraControlAsistencia() {
+    return ORM::for_table('piloto_carrera')->find_many();
+}
 
 $app->post('/asistencias/control', function() use ($app) {
     if(!isset($_SESSION['id'])) {
