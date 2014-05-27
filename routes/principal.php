@@ -28,7 +28,7 @@ $app->get('/', function() use ($app) {
 	}
 })->name('principal');
 
-$app->get('/:idPagina', function($idPagina) use ($app) {
+$app->get('/i:idPagina', function($idPagina) use ($app) {
 	$carrera = cargarCarrera();
 	$noticias = cargarNoticiasPaginacion(4,$idPagina-1);
 	$nNoticias = cargarNnoticias(4);
@@ -51,10 +51,10 @@ $app->post('/', function() use ($app) {
 	}
 
 	if (!$acceso) {
-		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos', 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina));
+		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos', 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => 1));
 		echo "<script type='text/javascript'>alertify.error('Error: usuario o contraseña incorrectos');</script>";
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => 1));
 		echo "<script type='text/javascript'>alertify.success('Usuario identificado correctamente');</script>";
 	}
 })->name('accederPrincipal');
@@ -63,7 +63,7 @@ $app->get('/salir', function() use ($app) {
 	session_destroy();
 	$app->redirect($app->urlFor('principal'));
 
-	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'pagina' => 1));
 })->name('cerrarSesion');
 
 $app->get('/pilotos', function() use ($app) {
