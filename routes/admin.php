@@ -374,11 +374,16 @@ function cargarNoticias() {
     order_by_desc('fecha_publicacion')->find_many();
 }
 
-function cargarNoticiasPaginacion($nNoticias, $pagina) {
+function cargarNoticiasPaginacion($nNoticias = 5, $pagina = 0) {
     return ORM::for_Table('noticia')->
     join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
     select_many('noticia.id', 'titulo', 'texto', 'fecha_publicacion', 'rango_requerido', 'estado', 'piloto.nombre_completo')->
     order_by_desc('fecha_publicacion')->limit($nNoticias)->offset($pagina * $nNoticias)->find_many();
+}
+
+function cargarNnoticias($porPagina) {
+    $total = ORM::for_Table('noticia')->count();
+    return round($total / $porPagina, 0, PHP_ROUND_HALF_UP);
 }
 
 function cargarNoticia($idNoticia) {

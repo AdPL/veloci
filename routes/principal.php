@@ -17,29 +17,44 @@
 
 $app->get('/', function() use ($app) {
 	$carrera = cargarCarrera();
-	$noticias = cargarNoticiasPaginacion(5,0);
+	$noticias = cargarNoticiasPaginacion(4,0);
+	$nNoticias = cargarNnoticias(4);
 	$categorias = cargarCategorias();
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias));
+		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1));
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1));
 	}
 })->name('principal');
 
+$app->get('/:idPagina', function($idPagina) use ($app) {
+	$carrera = cargarCarrera();
+	$noticias = cargarNoticiasPaginacion(4,$idPagina-1);
+	$nNoticias = cargarNnoticias(4);
+	$categorias = cargarCategorias();
+
+	if(!isset($_SESSION['id'])) {
+		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina));
+	} else {
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina));
+	}
+})->name('principalPaginada');
+
 $app->post('/', function() use ($app) {
 	$carrera = cargarCarrera();
-	$noticias = cargarNoticiasPaginacion(5,1);
+	$noticias = cargarNoticiasPaginacion(4,1);
+	$nNoticias = cargarNnoticias(4);
 
 	if (isset($_POST['login'])) {
 		$acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
 	}
 
 	if (!$acceso) {
-		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos', 'carrera' => $carrera, 'noticias' => $noticias));
+		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos', 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina));
 		echo "<script type='text/javascript'>alertify.error('Error: usuario o contraseña incorrectos');</script>";
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina));
 		echo "<script type='text/javascript'>alertify.success('Usuario identificado correctamente');</script>";
 	}
 })->name('accederPrincipal');
@@ -158,7 +173,11 @@ $app->get('/noticia/:idNoticia', function($idNoticia) use ($app) {
 	$noticias = cargarNoticias();
 	$noticia = cargarNoticia($idNoticia);
 
-	$app->render('noticia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia));
+	if(!isset($_SESSION['id'])) {
+		$app->render('noticia.html.twig', array('noticias' => $noticias, 'noticia' => $noticia));
+	} else {
+		$app->render('noticia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia));
+	}
 })->name('noticia');
 
 function testAccess($app, $usuario, $pass) {
@@ -175,7 +194,7 @@ function testAccess($app, $usuario, $pass) {
 }
 
 function cargarCarrera() {
-	return ORM::for_table('carrera')->where_gt('fecha', date("Y-m-d"))->order_by_asc('fecha')->limit(1)->find_many();	
+	return ORM::for_table('carrera')->where_gt('fecha', date("Y-m-d"))->order_by_asc('fecha')->limit(1)->find_many();
 }
 
 function cargarDatosCarrera($idCarrera) {

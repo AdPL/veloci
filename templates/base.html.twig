@@ -193,6 +193,12 @@
 				</div>
 				</div>
 			{% endfor %}
+			<ul class="pagination pull-right">
+				<li><a href="{{ urlFor('principal') }}">&laquo;</a></li>
+				{% for i in 1..nNoticias %}
+				<li {% if pagina == i %} class="active" {% endif %}><a href="{{ urlFor('principalPaginada', {idPagina: i}) }}">{{ i }} <span class="sr-only">(current)</span></a></li>
+				{% endfor %}
+			</ul>
 			</div>
 
 			<div class="col-sm-3">
