@@ -59,19 +59,17 @@
 
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav navbar-left">
-					<li><a href="{{ urlFor('principal') }}">Inicio</a></li>
 					<li><a href="{{ urlFor('pilotos') }}">Pilotos</a></li>
 					<li><a href="{{ urlFor('carreras') }}">Carreras</a></li>
 					<li><a href="{{ urlFor('categorias') }}">Categorías</a></li>
-					<li><a href="{{ urlFor('reclamaciones') }}">Reclamaciones</a></li>
 					<li><a href="#">Asistencias</a></li>
-					<li><a href="#">Clasificación</a></li>
+					<li><a href="http://f1mresultados.webcindario.com/F12014/HTML-Export/Calendar.html" target="_blank">Clasificación</a></li>
 					<li><a href="#">Foro</a></li>
 					{% block LinksMenu %}{% endblock %}
 		            </li>
 				</ul>
 
-				<ul class="nav navbar-nav navbar-right">
+				<ul class="nav navbar-nav navbar-right notablet">
 					{% block Settings %}
 						{% if rol >= 1 %}
 							<li class="dropdown">
@@ -134,7 +132,15 @@
 		<div class="row">
 			<div class="col-sm-3">
 				<div class="row">
-					<div class="col-xs-12">
+					<div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+						<div class="panel panel-default">
+							<div class="panel-heading">test</div>
+							<div class="panel-body">
+
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
 						<div class="panel panel-default">
 							<div class="panel-heading">Próxima carrera</div>
 							<div class="panel-body">
@@ -147,7 +153,7 @@
 						</div>
 					</div>
 
-					<div class="col-xs-12">
+					<div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
 						<div class="panel panel-default">
 							<div class="panel-heading">Últimas reclamaciones<span><a href="{{ urlFor('reclamaciones') }}" class="btn btn-success btn-xs pull-right">Nueva reclamación</a></span></div>
 							<div class="panel-body">
@@ -162,7 +168,7 @@
 						</div>
 					</div>
 
-					<div class="col-xs-12">
+					<div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
 						<div class="panel panel-default">
 							<div class="panel-heading">Servidor TeamSpeak</div>
 							<div class="panel-body">
@@ -182,7 +188,7 @@ ts3v_display.init(ts3v_url_1, 1005719, 100);
 			</div>
 
 			{% block content %}
-			<div class="col-sm-6">
+			<div class="col-lg-6 col-xs-12">
 			{% for noticia in noticias %}
 				<div class="panel panel-default">
 				<div class="panel-body">
@@ -199,7 +205,8 @@ ts3v_display.init(ts3v_url_1, 1005719, 100);
 			        	<li><a href="#"><i class="fa fa-calendar"></i> Hace 1 día</a></li>
 			        	<li><a href="#"><i class="fa fa-comment"></i> 0 Comentarios</a></li>
 			        	<li><a href="http://www.facebook.com/sharer.php?u=link que queremos compratir">Compártelo en Facebook</a></li>
-			        	<li><a href="http://twitter.com/share?text=Veloci {{ noticia['titulo'] }}: {{ noticia['texto'] }}&url=http://localhost/7">Compártelo en Twitter</a></ul>
+			        	<li><a href="http://twitter.com/share?text=Veloci {{ noticia['titulo'] }}: {{ noticia['texto'] }}&url=http://localhost/7">Compártelo en Twitter</a></li>
+			        </ul>
 			        	<p>{{ noticia['texto'] }}</p>
 			        <p class="lead pull-right"><a href="noticia/{{ noticia['id'] }}" class="btn btn-info">Leer más</a></p>
 			      </div>
@@ -218,7 +225,7 @@ ts3v_display.init(ts3v_url_1, 1005719, 100);
 				</div>
 				</div>
 			{% endfor %}
-			<ul class="pagination pull-right">
+			<ul class="pagination pull-right" style="font-weight: bold;">
 				<li><a href="{{ urlFor('principal') }}">&laquo;</a></li>
 				{% for i in 1..nNoticias %}
 				<li {% if pagina == i %} class="active" {% endif %}><a href="{{ urlFor('principalPaginada', {idPagina: i}) }}">{{ i }} <span class="sr-only">(current)</span></a></li>
