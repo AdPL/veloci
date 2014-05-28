@@ -352,7 +352,10 @@ function cargarUsuarios() {
 }
 
 function cargarCategorias() {
-    return ORM::for_table('categoria')->select_many('id', 'nombre', 'imagen', 'plazas', 'precio_inscripcion')->order_by_asc('nombre')->find_many();
+    return ORM::for_table('categoria')->select_many('categoria.id', 'nombre', 'imagen', 'plazas', 'precio_inscripcion')->
+    join('piloto_categoria', array('categoria.id', '=', 'piloto_categoria.categoria_id'))->
+    group_by('categoria.id')->
+    order_by_asc('nombre')->find_many();
 }
 
 function cargarCategoria($idCat) {
