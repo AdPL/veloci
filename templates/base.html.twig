@@ -145,11 +145,32 @@
 
 					<div class="col-xs-12">
 						<div class="panel panel-default">
-							<div class="panel-heading">Últimas reclamaciones</div>
+							<div class="panel-heading">Últimas reclamaciones<span><a href="{{ urlFor('reclamaciones') }}" class="btn btn-success btn-xs pull-right">Nueva reclamación</a></span></div>
 							<div class="panel-body">
 								{% for reclamacion in reclamaciones %}
+								<a href={{ urlFor('reclamacion', {'idReclamacion': reclamacion['incidente_id']}) }} class="btn btn-info btn-block">
 									{{ reclamacion['titulo'] }}
+								</a>
+								{% else %}
+									<p>Ninguna reclamación activa en este momento</p>
 								{% endfor %}
+							</div>
+						</div>
+					</div>
+
+					<div class="col-xs-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">Servidor TeamSpeak</div>
+							<div class="panel-body">
+							<div id="ts3viewer_1005719" style="width:; background-color:; margin: 0 auto;">
+							<div class="ts3v"><div id="ts3_h_s1"><img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_server_pass.png" title="" alt="" align="top"> <span class="ts3v_server" title=""><a href="ts3server://188.165.123.243?port=9987" title="">F1MallorcaSimRacing</a></span> <div><span class="ts3v_info"><a href="http://www.tsviewer.com/index.php?page=ts_viewer&amp;ID=1005719" target="_blank" title="TSViewer TeamSpeak 3"><img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_info.png" title="" alt="" align="top"> TS 3 Info</a></span></div></div><div id="ts3_h_s1_ch1"><img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_tree_end.gif" title="" alt="" align="top"><img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_channel_open.png" title="" alt="" align="top"> <span class="ts3v_channel" title="Topic: Default Channel has no topic | Codec: Unknown | Quality: 6">Default Channel</span> <img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_channel_flag_default.png" title="Default Channel" alt="" align="top"> </div><div style="margin-top:5px; margin-left:16px; margin-bottom:16px;"><a href="http://www.tsviewer.com/" target="_blank" title="TSViewer for TeamSpeak 3"><img src="http://static.tsviewer.com//images/teamspeak3/default/tsv20100409.png" alt=""></a></div></div><style type="text/css"><!--.ts3v {display: block;color: #525284;font-family: Arial, Helvetica, sans-serif;font-size: 13px;width:100%;text-align: left !important;line-height: 16px;white-space:nowrap;overflow: auto;}.ts3v span.ts3v_server a:link, .ts3v span.ts3v_server a:visited {color: #525284 !important;display: inline !important;text-align: left !important;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: bold;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v span.ts3v_server a:active, .ts3v span.ts3v_server a:hover {color: #525284 !important;display: inline !important;text-align: left !important;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: bold;font-style: normal;font-variant: normal;text-decoration: underline;}.ts3v_channel {color: #;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: normal;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v_channel:hover {color: #525284;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: normal;font-style: normal;font-variant: normal;text-decoration: underline;}.ts3v_user {color: #;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: bold;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v_user:hover {color: #525284;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: bold;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v_info, .ts3v_info a:link, .ts3v_info a:visited, .ts3v_info a:active {color: #525284 !important;display: inline !important;text-align: left !important;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: normal;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v_info:hover, .ts3v_info:hover a:hover {color: #525284 !important;display: inline !important;text-align: left !important;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: normal;font-style: normal;font-variant: normal;text-decoration: underline;}.ts3v img {display: inline !important;float: none !important;border: 0 !important;padding: 0 !important;margin: 0 !important;}--></style><!--[if IE]> <style type="text/css"> .ts3v { overflow:visible; overflow-x:auto; overflow-y:hidden; padding-bottom:15px; } </style> <![endif]--></div>
+								<script type="text/javascript" src="http://static.tsviewer.com/short_expire/js/ts3viewer_loader.js"></script>
+								<script type="text/javascript">
+<!--
+var ts3v_url_1 = "http://www.tsviewer.com/ts3viewer.php?ID=1005719&text=525284&text_size=13&text_family=1&js=1&text_s_weight=bold&text_s_style=normal&text_s_variant=normal&text_s_decoration=none&text_s_color_h=525284&text_s_weight_h=bold&text_s_style_h=normal&text_s_variant_h=normal&text_s_decoration_h=underline&text_i_weight=normal&text_i_style=normal&text_i_variant=normal&text_i_decoration=none&text_i_color_h=525284&text_i_weight_h=normal&text_i_style_h=normal&text_i_variant_h=normal&text_i_decoration_h=underline&text_c_weight=normal&text_c_style=normal&text_c_variant=normal&text_c_decoration=none&text_c_color_h=525284&text_c_weight_h=normal&text_c_style_h=normal&text_c_variant_h=normal&text_c_decoration_h=underline&text_u_weight=bold&text_u_style=normal&text_u_variant=normal&text_u_decoration=none&text_u_color_h=525284&text_u_weight_h=bold&text_u_style_h=normal&text_u_variant_h=normal&text_u_decoration_h=none";
+ts3v_display.init(ts3v_url_1, 1005719, 100);
+-->
+</script>
 							</div>
 						</div>
 					</div>
