@@ -8,6 +8,11 @@
 	
 }
 
+.texto_cabecera {
+	font-weight: bold;
+	text-shadow: 3px 3px 7px #000;
+}
+
 #bloquePerfil {
 	min-height: 50px;
 	max-height: 50px !important;
