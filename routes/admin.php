@@ -336,6 +336,55 @@ $app->post('/categorias/asignar', function() use ($app) {
     }
 })->name('asignaCategorias');
 
+$app->get('/configuracion', function() use ($app) {
+    $configuracion = datosApp();
+
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $app->render('configuracionDelSitio.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion));
+        } else {
+            $app->render('admin.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('configuracionDelSitio');
+
+$app->post('/configuracion/guardar', function() use ($app) {
+    actualizarConfiguracion($_POST['inputNombre'], $_POST['inputDescripcion'], $_POST['activacion'], $_POST['normativa'], $_POST['pago'],
+        $_POST['inputTeamspeak'], $_POST['inputTwitter'], $_POST['inputFacebook'], $_POST['inputYoutube'], $_POST['inputVimeo']);
+
+    $configuracion = datosApp();
+    
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $app->render('configuracionDelSitio.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion));
+        } else {
+            $app->render('admin.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('guardarConfiguracion');
+
+function datosApp() {
+    return ORM::for_Table('configuracion')->find_one(1);
+}
+
+function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pago, $teamspeak, $twitter, $facebook, $youtube, $vimeo) {
+    $datos = ORM::for_table('configuracion')->find_one(1);
+    $datos->nombre = $titulo;
+    $datos->descripcion = $slogan;
+    $datos->requiere_activacion = $activacion;
+    $datos->requiere_normativa = $normativa;
+    $datos->teamspeak = $teamspeak;
+    $datos->twitter = $twitter;
+    $datos->facebook = $facebook;
+    $datos->youtube = $youtube;
+    $datos->vimeo = $vimeo;
+    $datos->save();
+}
+
 function cargarUsuario($idUser) {
     return ORM::for_table('piloto')->
     //join('piloto_categoria', array('piloto.id', '=', 'piloto_categoria.piloto_id'))->
