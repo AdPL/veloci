@@ -54,7 +54,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" rel="home" href="{{ urlFor('principal') }}">Veloci</a>
+				<a class="navbar-brand" rel="home" href="{{ urlFor('principal') }}">{{ configuracion['nombre'] }}</a>
 			</div>
 
 			<div class="collapse navbar-collapse">
@@ -120,9 +120,8 @@
 	</div>
 	<div class="jumbotron cabecera">
       <div class="container">
-        <h1>Veloci</h1>
-        <p>Bienvenido</p>
-        <p>Aplicación web para la gestión de campeonatos de carreras Online.</p>
+        <h1 class="texto_cabecera">{{ configuracion['nombre'] }}</h1>
+        <p class="texto_cabecera">{{ configuracion['descripcion'] }}</p>
         <!--<p><a class="btn btn-primary btn-lg" role="button">Learn more »</a></p>-->
       </div>
     </div>

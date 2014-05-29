@@ -16,6 +16,7 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/]. */
 
 $app->get('/', function() use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$noticias = cargarNoticiasPaginacion(4,0);
 	$nNoticias = cargarNnoticias(4);
@@ -23,9 +24,9 @@ $app->get('/', function() use ($app) {
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones));
+		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('principal');
 

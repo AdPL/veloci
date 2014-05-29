@@ -124,6 +124,7 @@
 					{% block menuAdmin %}
 						<ul class="nav nav-pills nav-stacked">
 							<li {% block adminPrincipal %}{% endblock %}><a href="{{ urlFor('admin') }}">Inicio</a></li>
+							<li {% block configSite %}{% endblock %}><a href="{{ urlFor('configuracionDelSitio') }}">Configuración del sitio</a></li>
 							<li><a href="#">Notificaciones <span class="badge">2</span></a></li>
 							<li {% block adminUsuarios %}{% endblock %}><a href="{{ urlFor('listaUsuarios') }}">Pilotos (Usuarios)</a></li>
 							<li class="dropdown {% block adminCategorias %}{% endblock %}">
