@@ -131,14 +131,29 @@
 		<div class="row">
 			<div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
 				<div class="row">
+					{% if configuracion['twitter'] != ""  or configuracion['facebook'] != "" or configuracion['youtube'] != "" or configuracion['vimeo'] != ""%}
 					<div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
 						<div class="panel panel-default">
-							<div class="panel-heading">test</div>
+							<div class="panel-heading">Redes sociales</div>
 							<div class="panel-body">
-
+								<div class="social">
+									{% if configuracion['twitter'] != "" %}
+									<a href="{{ configuracion['twitter'] }}" target="_blank" class="twitter"><i class="fa fa-twitter fa-2x"></i></a>
+									{% endif %}
+									{% if configuracion['facebook'] %}
+									<a href="{{ configuracion['facebook'] }}" target="_blank" class="facebook"><i class="fa fa-facebook fa-2x"></i></a>
+									{% endif %}
+									{% if configuracion['youtube'] %}
+									<a href="{{ configuracion['youtube'] }}" target="_blank" class="youtube"><i class="fa fa-youtube-play fa-2x"></i></a>
+									{% endif %}
+									{% if configuracion['vimeo'] %}
+									<a href="{{ configuracion['vimeo'] }}" target="_blank" class="vimeo"><i class="fa fa-vimeo-square fa-2x"></i></a>
+									{% endif %}
+								</div>
 							</div>
 						</div>
 					</div>
+					{% endif %}
 					<div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
 						<div class="panel panel-default">
 							<div class="panel-heading">Próxima carrera</div>

@@ -56,3 +56,44 @@
 .navbar-me {
 	margin-bottom: 20px !important;
 }
+
+.social {
+	text-align: center;
+}
+
+.social > a {
+	color: #000;
+	margin-left: 3%;
+	margin-right: 3%;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 15px;
+	padding-bottom: 5px;
+}
+
+.social > a.facebook {
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.social > a.twitter:hover {
+	color: #fff;
+	background-color: #2e8ece;
+}
+
+.social > a.facebook:hover {
+	color: #fff;
+	background-color: #4c66a4;
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.social > a.youtube:hover {
+	color: #fff;
+	background-color: #cc181e;
+}
+
+.social > a.vimeo:hover {
+	color: #fff;
+	background-color: #33454E;
+}
