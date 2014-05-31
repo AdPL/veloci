@@ -7,7 +7,8 @@
 	"slim/views": "0.*",
     "j4mie/idiorm": "1.*",
     "twig/twig": "1.*",
-	"php": ">=5.2.2"
+	"php": ">=5.2.2",
+        "phpdocumentor/phpdocumentor": "2.*"
     },
     "authors": [
         {
