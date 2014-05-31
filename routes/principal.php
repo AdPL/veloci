@@ -31,6 +31,7 @@ $app->get('/', function() use ($app) {
 })->name('principal');
 
 $app->get('/i:idPagina', function($idPagina) use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$noticias = cargarNoticiasPaginacion(4,$idPagina-1);
 	$nNoticias = cargarNnoticias(4);
@@ -38,13 +39,14 @@ $app->get('/i:idPagina', function($idPagina) use ($app) {
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina, 'reclamaciones' => $reclamaciones));
+		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina, 'reclamaciones' => $reclamaciones));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => $idPagina, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('principalPaginada');
 
 $app->post('/', function() use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$noticias = cargarNoticiasPaginacion(4,1);
 	$nNoticias = cargarNnoticias(4);
@@ -55,83 +57,90 @@ $app->post('/', function() use ($app) {
 	}
 
 	if (!$acceso) {
-		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos', 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones));
+		$app->render('principal.html.twig', array('alertLogin' => 'Usuario o contraseña incorrectos', 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 		echo "<script type='text/javascript'>alertify.error('Error: usuario o contraseña incorrectos');</script>";
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 		echo "<script type='text/javascript'>alertify.success('Usuario identificado correctamente');</script>";
 	}
 })->name('accederPrincipal');
 
 $app->get('/salir', function() use ($app) {
+	$configuracion = datosApp();
 	$reclamaciones = cargarReclamacionesRecientes();
 	session_destroy();
 	$app->redirect($app->urlFor('principal'));
 
-	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'pagina' => 1, 'reclamaciones' => $reclamaciones));
+	$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 })->name('cerrarSesion');
 
 $app->get('/pilotos', function() use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$usuarios = cargarUsuarios();
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('pilotos.html.twig', array('carrera' => $carrera, 'usuarios' => $usuarios));
+		$app->render('pilotos.html.twig', array('carrera' => $carrera, 'usuarios' => $usuarios, 'configuracion' => $configuracion));
 	} else {
-		$app->render('pilotos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'usuarios' => $usuarios, 'reclamaciones' => $reclamaciones, 'carrera' => $carrera));
+		$app->render('pilotos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'usuarios' => $usuarios, 'reclamaciones' => $reclamaciones, 'carrera' => $carrera, 'configuracion' => $configuracion));
 	}
 })->name('pilotos');
 
 $app->get('/categorias', function() use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$categorias = cargarCategorias();
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('categorias.html.twig', array('carrera' => $carrera, 'categorias' => $categorias));
+		$app->render('categorias.html.twig', array('carrera' => $carrera, 'categorias' => $categorias, 'configuracion' => $configuracion));
 	} else {
-		$app->render('categorias.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'reclamaciones' => $reclamaciones));
+		$app->render('categorias.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('categorias');
 
 $app->get('/carreras', function() use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$carreras = cargarCarreras();
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('carreras.html.twig', array('carrera' => $carrera, 'carreras' => $carreras));
+		$app->render('carreras.html.twig', array('carrera' => $carrera, 'carreras' => $carreras, 'configuracion' => $configuracion));
 	} else {
-		$app->render('carreras.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'reclamaciones' => $reclamaciones));
+		$app->render('carreras.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('carreras');
 
 $app->get('/reclamaciones', function() use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$carreras = cargarCarrerasReclamacion();
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'carreras' => $carreras));
+		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'carreras' => $carreras, 'configuracion' => $configuracion));
 	} else {
-		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'reclamaciones' => $reclamaciones));
+		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('reclamaciones');
 
 $app->get('/listaReclamaciones/:idCarrera', function($idCarrera) use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$reclamaciones = cargarReclamaciones($idCarrera);
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
 		$carreras = cargarCarrerasReclamacion();
-		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras));
+		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'configuracion' => $configuracion));
 	} else {
-		$app->render('listaReclamaciones.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'reclamaciones' => $reclamaciones));
+		$app->render('listaReclamaciones.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('listaReclamaciones');
 
 $app->get('/nuevaReclamacion/:idCarrera', function($idCarrera) use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarDatosCarrera($idCarrera);
 	$categoria = cargarCategorias($carrera['categoria_id']);
 	$pilotos = cargarUsuarios();
@@ -139,13 +148,14 @@ $app->get('/nuevaReclamacion/:idCarrera', function($idCarrera) use ($app) {
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
 		$carreras = cargarCarrerasReclamacion();
-		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones));
+		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	} else {
-		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos, 'idRace' => $idCarrera, 'reclamaciones' => $reclamaciones));
+		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos, 'idRace' => $idCarrera, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('nuevaReclamacion');
 
 $app->post('/reclamacion', function() use ($app) {
+	$configuracion = datosApp();
 	$nIncidente = crearReclamacion($app, $_POST['inputTitulo'], $_POST['inputAclaracion'], $_POST['inputVuelta'], $_POST['inputMinuto'], $_POST['inputIdCarrera'], $_POST['inputIdUsuario'], $_POST['inputPiloto']);
 	$carrera = cargarDatosCarrera($_POST['inputIdCarrera']);
 	$categoria = cargarCategorias(1);
@@ -154,13 +164,14 @@ $app->post('/reclamacion', function() use ($app) {
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
-		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones));
+		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	} else {
 		$app->redirect('/reclamacion/' . $nIncidente);
 	}
 })->name('crearReclamacion');
 
 $app->get('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$comentarios = cargarReclamacion($idReclamacion);
 	$pilotosR = pilotosReclamados($idReclamacion);
@@ -168,13 +179,14 @@ $app->get('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
-		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones));
+		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	} else {
-		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones));
+		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('reclamacion');
 
 $app->post('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
+	$configuracion = datosApp();
 	crearComentario($app, $_POST['inputTitulo'], $_POST['inputComentario'], $_POST['inputID']);
 	$carrera = cargarCarrera();
 	$comentarios = cargarReclamacion($idReclamacion);
@@ -183,13 +195,14 @@ $app->post('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
-		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones));
+		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	} else {
-		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones));
+		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('nuevoComentario');
 
 $app->get('/noticia/:idNoticia', function($idNoticia) use ($app) {
+	$configuracion = datosApp();
 	$noticias = cargarNoticias();
 	$noticia = cargarNoticia($idNoticia);
 	$carrera = cargarCarrera();
@@ -197,13 +210,14 @@ $app->get('/noticia/:idNoticia', function($idNoticia) use ($app) {
 	$nComentarios = numeroComentarios($idNoticia);
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('noticia.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios));
+		$app->render('noticia.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
 	} else {
-		$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios));
+		$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
 	}
 })->name('noticia');
 
 $app->post('/noticia/:idNoticia', function($idNoticia) use ($app) {
+	$configuracion = datosApp();
 	$noticias = cargarNoticias();
 	$noticia = cargarNoticia($idNoticia);
 	$carrera = cargarCarrera();
@@ -212,9 +226,9 @@ $app->post('/noticia/:idNoticia', function($idNoticia) use ($app) {
 	$nComentarios = numeroComentarios($idNoticia);
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('noticia.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios));
+		$app->render('noticia.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
 	} else {
-		$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios));
+		$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
 	}
 })->name('comentar');
 

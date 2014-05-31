@@ -50,7 +50,8 @@ $app->get('/perfil', function() use ($app) {
         $app->redirect($app->urlFor('principal'));
     }
 
-    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+    $configuracion = datosApp();
+    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion));
 })->name('perfil');
 
 $app->post('/perfil', function() use ($app) {
@@ -60,7 +61,8 @@ $app->post('/perfil', function() use ($app) {
 
     imagenPerfil($app, $_FILES['inputFoto']);
 
-    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+    $configuracion = datosApp();
+    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion));
     echo "<script type='text/javascript'>alertify.success('Cambios guardados con éxito');</script>";
 })->name('cambiarAvatar');
 
@@ -70,10 +72,11 @@ $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
     $justificadas = nCarreras($idUsuario, 2);
     $injustificadas = nCarreras($idUsuario, 3);
     $sancionado = nCarreras($idUsuario, 4);
-
+    $configuracion = datosApp();
+    
     if(!isset($_SESSION['id'])) {
         if($usuario['privacidad_perfil'] == 1) {
-            $app->render('perfilUsuario.html.twig', array('user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado));
+            $app->render('perfilUsuario.html.twig', array('user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado, 'configuracion' => $configuracion));
         } else {
             $app->render('perfilUsuario.html.twig', array('user' => $usuario['nombre_completo'], 'alert' => "El perfil de este usuario es privado"));
         }
