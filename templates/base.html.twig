@@ -118,6 +118,7 @@
 			</div>
 		</div>
 	</div>
+	{% block cabecera %}
 	<div class="jumbotron cabecera">
       <div class="container">
         <h1 class="texto_cabecera">{{ configuracion['nombre'] }}</h1>
@@ -125,12 +126,63 @@
         <!--<p><a class="btn btn-primary btn-lg" role="button">Learn more »</a></p>-->
       </div>
     </div>
+    {% endblock %}
 
 	{% block container %}
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
 				<div class="row">
+					{% if rol >= 1 %}
+					<div class="col-lg-12 col-md-6 col-sm-12 col-xs-12 hidden-lg hidden-md">
+					<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="col-lg-12 col-md-6 col-sm-6 col-xs-12 hidden-lg hidden-md">
+							<div class="panel panel-default">
+								<div class="panel-body">
+									<img src="{{ avatar }}" alt="avatar" class="img-circle img-responsive">
+									<h2 class="text-center">{{ usuario }}</h2>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-12 col-md-6 col-sm-6 col-xs-12 hidden-lg hidden-md">
+							<div class="panel panel-default">
+								<div class="panel-body">
+									<a href="{{ urlFor('perfil') }}" class="btn btn-info btn-block">Mi perfil</a>
+									{% if rol == 5 %}
+										<a href="{{ urlFor('admin') }}" class="btn btn-success btn-block">Panel de administración</a>
+									{% endif %}
+									<a href="{{ urlFor('cerrarSesion') }}" class="btn btn-danger btn-block">Cerrar sesión</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					</div>
+					</div>
+					{% else %}
+					<div class="col-lg-12 col-md-6 col-sm-12 col-xs-12 hidden-lg hidden-md">
+						<div class="panel panel-default">
+							<div class="panel-heading">Identificarse</div>
+							<div class="panel-body">
+								<form role="form" method="post" action="{{ urlFor('accederPrincipal') }}">
+									<div class="form-group" id="pepito">
+										<label for="inputUsuario">Nombre de usuario</label>
+										<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Usuario" title="Introduzca su nombre de usuario" autocomplete="off" required>
+										<div id="pepe"></div>
+									</div>
+									<div class="form-group">
+										<label for="inputPassword">Contraseña</label>
+										<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Contraseña del usuario" title="Introduzca su contraseña" required>
+									</div>
+									<div class="form-group">
+										<label><input type="checkbox"/> Recordarme</label>
+									</div>
+						        	<button type="submit" class="btn btn-success btn-block" name="login">Acceder</button>
+								</form>
+							</div>
+						</div>
+					</div>
+					{% endif %}
 					{% if configuracion['twitter'] != ""  or configuracion['facebook'] != "" or configuracion['youtube'] != "" or configuracion['vimeo'] != ""%}
 					<div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
 						<div class="panel panel-default">
