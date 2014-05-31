@@ -101,3 +101,13 @@
 .tcomentarios {
 	color: #008cba;
 }
+
+.neumatico {
+	width: 30%;
+}
+
+.img-circle {
+	height: 100px;
+	width: 100px;
+	margin: 0 auto;
+}
