@@ -193,13 +193,30 @@ $app->get('/noticia/:idNoticia', function($idNoticia) use ($app) {
 	$noticias = cargarNoticias();
 	$noticia = cargarNoticia($idNoticia);
 	$carrera = cargarCarrera();
+	$comentarios = cargarComentarios($idNoticia);
+	$nComentarios = numeroComentarios($idNoticia);
 
 	if(!isset($_SESSION['id'])) {
-		$app->render('noticia.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'noticia' => $noticia));
+		$app->render('noticia.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios));
 	} else {
-		$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia));
+		$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios));
 	}
 })->name('noticia');
+
+$app->post('/noticia/:idNoticia', function($idNoticia) use ($app) {
+	$noticias = cargarNoticias();
+	$noticia = cargarNoticia($idNoticia);
+	$carrera = cargarCarrera();
+	enviarComentario($_POST['inputComentario'], $_POST['inputResponde'], $_SESSION['id'], $_POST['inputNoticia']);
+	$comentarios = cargarComentarios($idNoticia);
+	$nComentarios = numeroComentarios($idNoticia);
+
+	if(!isset($_SESSION['id'])) {
+		$app->render('noticia.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios));
+	} else {
+		$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios));
+	}
+})->name('comentar');
 
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
@@ -335,4 +352,26 @@ function calcularFecha($modo, $valor, $fecha_inicio = false) {
    $calculo = strtotime("$valor $modo","$fecha_base");
  
    return date("Y-m-d", $calculo);
+}
+
+function enviarComentario($comentario, $responde_a, $usuario, $noticia) {
+	$comment = ORM::for_table('comentario')->create();
+	$comment->id = null;
+	$comment->comentario = $comentario;
+	$comment->responde_a = $responde_a;
+	$comment->fecha = date("Y-n-d H:i:s");
+	$comment->usuario_id = $usuario;
+	$comment->noticia_id = $noticia;
+	$comment->save();
+}
+
+function cargarComentarios($noticia) {
+	return ORM::for_table('comentario')->
+	join('piloto', array('comentario.usuario_id', '=', 'piloto.id'))->
+	where('noticia_id', $noticia)->
+	select_many('piloto.id', 'comentario.id', 'nombre_completo', 'avatar', 'noticia_id', 'comentario', 'fecha', 'usuario_id')->find_many();
+}
+
+function numeroComentarios($idNoticia) {
+	return ORM::for_table('comentario')->where('noticia_id', $idNoticia)->count();
 }

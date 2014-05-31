@@ -217,7 +217,7 @@ ts3v_display.init(ts3v_url_1, 1005719, 100);
 			        <ul class="list-inline">
 			        	<li>Publicado por: {{ noticia['nombre_completo'] }}</li>
 			        	<li><a href="#"><i class="fa fa-calendar"></i> Hace 1 día</a></li>
-			        	<li><a href="#"><i class="fa fa-comment"></i> 0 Comentarios</a></li>
+			        	<li><a href="noticia/{{ noticia['id'] }}"><i class="fa fa-comment"></i> {{ nComentarios }} Comentarios</a></li>
 			        	<li><a href="http://www.facebook.com/sharer.php?u=link que queremos compratir">Compártelo en Facebook</a></li>
 			        	<li><a href="http://twitter.com/share?text=Veloci {{ noticia['titulo'] }}: {{ noticia['texto'] }}&url=http://localhost/7">Compártelo en Twitter</a></li>
 			        </ul>

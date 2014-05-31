@@ -141,3 +141,14 @@ function seleccionado(ruta) {
 		document.stop();
 	};
 }
+
+function responder(idComentario, usuario) {
+	document.getElementById('tcomentarios').innerHTML = "<i class='fa fa-pencil-square-o fa-3x'></i> Responder a " + usuario
+	+ "<button class='btn btn-danger pull-right btn-sm' onclick='cancelaRespuesta()'>Cancelar respuesta</button>";
+	document.getElementById('responde').value = idComentario;
+}
+
+function cancelaRespuesta() {
+	document.getElementById('tcomentarios').innerHTML = "<i class='fa fa-comment fa-3x'></i> Nuevo comentario</h4>";
+	document.getElementById('responde').value = 0;
+}

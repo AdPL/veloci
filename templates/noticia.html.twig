@@ -49,11 +49,43 @@
 
 				        <ul class="list-inline">
 				        	<li><a href="#"><i class="fa fa-calendar"></i> Hace 1 día</a></li>
-				        	<li><a href="#"><i class="fa fa-comment"></i> 0 Comentarios</a></li>
+				        	<li><a href="#"><i class="fa fa-comment"></i> {{ nComentarios }} Comentarios</a></li>
 				        	<li><a href="#"><i class="fa fa-share"></i> Compartido 1 vez</a></li>
 				        </ul>
 				        	<p>Publicado por: {{ noticia['nombre_completo'] }}</p>
 				        	<p>{{ noticia['texto'] }}</p>
+				        	<hr>
+				        	{% for comentario in comentarios %}
+				        		<div class="panel panel-default">
+				        			<div class="panel-body">
+				        				<img src="/{{ comentario['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+				        				{{ comentario['nombre_completo'] }} <span class="pull-right">{{ comentario['fecha'] }}</span><hr>
+				        				{{ comentario['comentario'] }}<hr>
+				        				{% if comentario['usuario_id'] == id %}
+				        					<a class="btn btn-danger btn-sm pull-right" 
+				        					onclick="responder({{ comentario['id'] }}, '{{ comentario['nombre_completo'] }}')">Eliminar comentario</a>
+				        				{% else %}
+				        					<a href="#comment" class="btn btn-info btn-sm pull-right" 
+					        				onclick="responder({{ comentario['id'] }}, '{{ comentario['nombre_completo'] }}')">Responder</a>
+					        			{% endif %}
+				        			</div>
+				        		</div>
+				        	{% endfor %}
+				        	<a name="comment"></a>
+				        	<hr>
+				        	<h4 id="tcomentarios" class="tcomentarios"><i class="fa fa-comment fa-3x"></i> Nuevo comentario</h4>
+				        	{% if id %}
+				        		<form method="post" action="{{ noticia['id'] }}">
+				        			<input type="hidden" name="inputNoticia" value="{{ noticia['id'] }}">
+				        			<input type="hidden" id="responde" name="inputResponde" value="0">
+				        			<div class="form-group">
+										<textarea type="email" class="form-control" name="inputComentario" rows="5"></textarea>
+									</div>
+									<input type="submit" class="btn btn-success pull-right" name="enviarComentario" value="Comentar">
+								</form>
+				        	{% else %}
+				        		<div class="alert alert-danger">Debe estar identificado para comentar</div>
+				        	{% endif %}
 				      </div>
 					</div>
 				</div>
