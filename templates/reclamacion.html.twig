@@ -37,22 +37,19 @@
     		</ul>
     	</div>
 	{% for comentario in comentarios %}
-	
-	{% if comentario['reclama'] == 1 %}
-		<div class="alert alert-info">
-		{{ comentario['nombre_completo'] }}
-			<h3>{{ comentario['titulo'] }}</h3>
-			<p>{{ comentario['comentario'] }}</p>
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<h2 class="pull-left">{{ comentario['titulo'] }}</h2>
+				<span class="pull-right">
+					{{ comentario['nombre_completo'] }}
+					<img src="/{{ comentario['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+				</span><hr style="clear: both;">
+				{{ comentario['comentario'] }}
+			</div>
 		</div>
-	{% else %}
-		<div class="alert alert-warning">
-		{{ comentario['nombre_completo'] }}
-			<h3>{{ comentario['titulo'] }}</h3>
-			<p>{{ comentario['comentario'] }}</p>
-		</div>
-	{% endif %}
-		
 	{% endfor %}
+		<hr>
+		<h2>Responder a la reclamación</h2>
 		<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}">
 		<input type="hidden" name="inputID" value="{{ idReclamacion }}">
 			<div class="form-group">
