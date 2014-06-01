@@ -36,7 +36,11 @@
     		{% endfor %}
     		</ul>
     	</div>
+    	{% set resolucion = false %}
 	{% for comentario in comentarios %}
+		{% if comentario['sancion'] != 0 %}
+			{% set resolucion = true %}
+		{% endif %}
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<h2 class="pull-left">{{ comentario['titulo'] }}</h2>
@@ -48,21 +52,35 @@
 			</div>
 		</div>
 	{% endfor %}
-		<hr>
-		<h2>Responder a la reclamación</h2>
-		<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}">
-		<input type="hidden" name="inputID" value="{{ idReclamacion }}">
-			<div class="form-group">
-				<label for="inputTitulo">Título</label>
-				<input type="text" name="inputTitulo" id="inputTitulo" class="form-control">
-			</div>
-			<div class="form-group">
-				<label for="inputComentario">Comentario</label>
-				<textarea class="form-control" rows="3" name="inputComentario" id="inputComentario" rows="3"></textarea>
-			</div>
-			<input type="submit" value="Enviar" class="btn btn-success">
-			<a href="{{ urlFor('reclamaciones') }}" class="btn btn-danger">Volver</a>
-		</form>
+		{% if resolucion == true %}
+			<hr>
+			<h2>Resolución de la reclamación</h2>
+			<ul>
+			{% for sancionado in sancionados %}
+				<li>{{ sancionado['nombre_completo'] }}: {{ sancionado['nota'] }}</li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<hr>
+			<h2>Responder a la reclamación</h2>
+			<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}">
+			<input type="hidden" name="inputID" value="{{ idReclamacion }}">
+				<div class="form-group">
+					<label for="inputTitulo">Título</label>
+					<input type="text" name="inputTitulo" id="inputTitulo" class="form-control">
+				</div>
+				<div class="form-group">
+					<label for="inputComentario">Comentario</label>
+					<textarea class="form-control" rows="3" name="inputComentario" id="inputComentario" rows="3"></textarea>
+				</div>
+				<input type="submit" value="Enviar" class="btn btn-success">
+				{% if rol == 2 %}
+				<a href="#" class="btn btn-info">No sancionar</a>
+				<a href="#" class="btn btn-warning">Sanción</a>
+				{% endif %}
+				<a href="{{ urlFor('reclamaciones') }}" class="btn btn-danger">Volver</a>
+			</form>
+		{% endif %}
 	</div>
 	</div>
 	</div>
