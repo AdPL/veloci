@@ -232,6 +232,15 @@ $app->post('/noticia/:idNoticia', function($idNoticia) use ($app) {
 	}
 })->name('comentar');
 
+$app->get('/asistencias', function() use ($app) {
+	$configuracion = datosApp();
+    $carreras = cargarCarreras();
+    $pilotos = cargarUsuarios();
+    $estados = carreraControlAsistencia();
+        
+    $app->render('asistencias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'configuracion' => $configuracion));
+})->name('asistencias');
+
 function testAccess($app, $usuario, $pass) {
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
 	if ($user['nombre'] == $usuario && password_verify($pass, $user['password'])) {

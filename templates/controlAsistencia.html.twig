@@ -53,20 +53,33 @@ active
 									{% if  piloto['id'] == estado['piloto_id'] %}
 										{% if estado['estado'] == 1 %}
 											Asiste
+											{% set test = true %}
 										{% elseif estado['estado'] == 2 %}
 											Justifica falta
+											{% set test = true %}
 										{% elseif estado['estado'] == 3 %}
 											Falta sin justificar
+											{% set test = true %}
 										{% elseif estado['estado'] == 4 %}
 											Sanción
+											{% set test = true %}
+										{% else %}
+											{% if test == false %}
+												<select name="{{ piloto['id'] }}-{{ carrera['id'] }}">
+													<option value="0">Selección</option>
+													<option value="1">Asiste</option>
+													<option value="2">Justifica falta</option>
+													<option value="3">Falta sin justificar</option>
+													<option value="4">Sanción</option>
+												</select>
+											{% endif %}
 										{% endif %}
-										</select>
 										{% set test = true %}
 									{% endif %}
 								{% endif %}
 							{% endfor %}
 							{% if test == false %}
-								<select name="{{ piloto.id }}-{{ carrera.id }}">
+								<select name="{{ piloto['id'] }}-{{ carrera['id'] }}">
 									<option value="0">Selección</option>
 									<option value="1">Asiste</option>
 									<option value="2">Justifica falta</option>
@@ -75,6 +88,7 @@ active
 								</select>
 							{% endif %}
 						</td>
+						{% set test = false %}
 					{% endfor %}				
 				</tr>
 				{% else %}
@@ -82,7 +96,9 @@ active
 				{% endfor %}
 			</tbody>
 		</table>
+		<div class="panel panel-body">
 			<input type="submit" class="btn btn-success" value="Guardar faltas"/>
+		</div>
 		</form>
 	</div>
 </div>

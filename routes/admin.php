@@ -247,8 +247,9 @@ $app->post('/asistencias/control', function() use ($app) {
             $pilotos = cargarUsuarios();
             
             guardarAsistencias($_POST);
+            $estados = carreraControlAsistencia();
 
-            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos));
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -509,12 +510,14 @@ function crearCircuito($app, $nombre, $pais, $distancia) {
 }
 
 function controlAsistencia($piloto_id, $carrera_id, $estado) {
-    $asistencia = ORM::for_table('piloto_carrera')->create();
-    $asistencia->id = null;
-    $asistencia->piloto_id = $piloto_id;
-    $asistencia->carrera_id = $carrera_id;
-    $asistencia->estado = $estado;
-    $asistencia->save();
+    if ($estado != 0) {
+        $asistencia = ORM::for_table('piloto_carrera')->create();
+        $asistencia->id = null;
+        $asistencia->piloto_id = $piloto_id;
+        $asistencia->carrera_id = $carrera_id;
+        $asistencia->estado = $estado;
+        $asistencia->save();
+    }
 }
 
 function guardarAsistencias($formulario) {
@@ -524,10 +527,8 @@ function guardarAsistencias($formulario) {
     for ($i=1 ; $i <= $npilotos; $i++) {
         for ($j=1 ; $j <= $ncarreras; $j++) {
             $cadena = $i . "-" . $j;
-            echo "cadena: " . $cadena . "<br/>";
             
             if (isset($_POST[$cadena])) {
-                echo $cadena . "<br/>";
                 controlAsistencia($i, $j, $_POST[$cadena]);
             }
         }
