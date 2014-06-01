@@ -132,10 +132,10 @@ $app->get('/listaReclamaciones/:idCarrera', function($idCarrera) use ($app) {
 	$reclamaciones = cargarReclamaciones($idCarrera);
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
+		$app->render('listaReclamaciones.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
+	} else {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'configuracion' => $configuracion));
-	} else {
-		$app->render('listaReclamaciones.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('listaReclamaciones');
 
@@ -147,10 +147,10 @@ $app->get('/nuevaReclamacion/:idCarrera', function($idCarrera) use ($app) {
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 1) {
+		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos, 'idRace' => $idCarrera, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
+	} else {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
-	} else {
-		$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos, 'idRace' => $idCarrera, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('nuevaReclamacion');
 
@@ -242,6 +242,7 @@ $app->get('/asistencias', function() use ($app) {
 })->name('asistencias');
 
 function testAccess($app, $usuario, $pass) {
+	$usuario = strtolower($usuario);
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
 	if ($user['nombre'] == $usuario && password_verify($pass, $user['password'])) {
 		$_SESSION['id'] = $user['id'];
