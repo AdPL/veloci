@@ -15,6 +15,10 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see [http://www.gnu.org/licenses/]. */
 
+/**
+*  @author Adrián Pérez <adrianpelopez@gmail.com>
+*/
+
 $app->get('/admin', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
@@ -386,6 +390,15 @@ function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pag
     $datos->save();
 }
 
+/**
+* Obtiene los datos del usuario especificado
+* 
+* @category Usuarios
+* @example admin.php cargarUsuario(9)
+* @param integer $idUser ID del usuario del cual se recogerá la información.
+*
+* @return object
+*/
 function cargarUsuario($idUser) {
     return ORM::for_table('piloto')->
     //join('piloto_categoria', array('piloto.id', '=', 'piloto_categoria.piloto_id'))->
@@ -393,14 +406,39 @@ function cargarUsuario($idUser) {
     select_many('piloto.id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol')->find_one($idUser);
 }
 
+/**
+* Obtiene las categorías del usuario especificado
+* 
+* @category Usuarios
+* @example admin.php cargarCategoriasUsuario(9)
+* @param integer $idUser ID del usuario del cual se recogerá la información.
+*
+* @return object
+*/
 function cargarCategoriasUsuario($idUser) {
     return ORM::for_table('piloto_categoria')->where('piloto_id', $idUser)->find_many();
 }
 
+/**
+* Obtiene todos los usuarios de la BBDD
+* 
+* @category Usuarios
+* @example admin.php cargarUsuarios())
+*
+* @return object
+*/
 function cargarUsuarios() {
     return ORM::for_table('piloto')->select_many('id', 'email', 'avatar', 'escuderia', 'nombre_completo', 'rol')->find_many();
 }
 
+/**
+* Carga los datos del usuario especificado
+* 
+* @category Usuarios
+* @example admin.php cargarCategorias()
+*
+* @return object
+*/
 function cargarCategorias() {
     return ORM::for_table('categoria')->select_many('categoria.id', 'nombre', 'imagen', 'plazas', 'precio_inscripcion')->
     join('piloto_categoria', array('categoria.id', '=', 'piloto_categoria.categoria_id'))->
@@ -408,18 +446,51 @@ function cargarCategorias() {
     order_by_asc('nombre')->find_many();
 }
 
+/**
+* Carga los datos de la categoría especificada
+* 
+* @category Categorías
+* @example admin.php cargarCategoria(9)
+* @param integer $idCat ID de la categoría.
+*
+* @return object
+*/
 function cargarCategoria($idCat) {
     return ORM::for_table('categoria')->select_many('id', 'nombre', 'imagen', 'plazas', 'precio_inscripcion')->where('id', $idCat)->find_one();
 }
 
+/**
+* Obtiene los datos de todos los circuitos de la BBDD
+* 
+* @category Circuitos
+* @example admin.php cargarCircuitos()
+*
+* @return object
+*/
 function cargarCircuitos() {
     return ORM::for_table('circuito')->select_many('id', 'nombre', 'pais', 'distancia')->order_by_asc('nombre')->find_many();   
 }
 
+/**
+* Otiene los datos de todas las carreras de la BBDD ordenados por fecha.
+* 
+* @category Carreras
+* @example admin.php cargarCarreras()
+*
+* @return object
+*/
 function cargarCarreras() {
     return ORM::for_table('carrera')->order_by_asc('fecha')->find_many();
 }
 
+/**
+* Obtiene todas las noticias almacenadas en la BBDD ordenadas por fecha.
+* 
+* @category Noticias
+* @example admin.php cargarNoticias()
+*
+* @return object
+*/
 function cargarNoticias() {
     return ORM::for_Table('noticia')->
     join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
@@ -427,6 +498,18 @@ function cargarNoticias() {
     order_by_desc('fecha_publicacion')->find_many();
 }
 
+/**
+* Obtiene todas las noticias de la BBDD, con paginación.
+* 
+* Devuelve las noticias paginadas con los parámetros configurados en la aplicación.
+*
+* @category Noticias
+* @example admin.php cargarNoticiasPaginacion(6, 2)
+* @param integer $nNoticias Número de noticias por página.
+* @param integer $pagina Página a mostrar.
+*
+* @return object
+*/
 function cargarNoticiasPaginacion($nNoticias = 5, $pagina = 0) {
     return ORM::for_Table('noticia')->
     join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
@@ -434,11 +517,32 @@ function cargarNoticiasPaginacion($nNoticias = 5, $pagina = 0) {
     order_by_desc('fecha_publicacion')->limit($nNoticias)->offset($pagina * $nNoticias)->find_many();
 }
 
+/**
+* Calcula el número de páginas para las noticias
+* 
+* Devuelve el número de páginas en el que serán divididas las noticias según
+* la páginación asignada por el administrador
+*
+* @category Noticias
+* @example admin.php cargarNnoticias(7)
+* @param integer $porPagina Número de noticias por página
+*
+* @return integer
+*/
 function cargarNnoticias($porPagina) {
     $total = ORM::for_Table('noticia')->count();
     return round($total / $porPagina, 0, PHP_ROUND_HALF_UP);
 }
 
+/**
+* Obtiene una noticia determinada a traves de su ID
+*
+* @category Noticias
+* @example admin.php cargarNoticia(6)
+* @param integer $idNoticia ID de la noticia a obtener la información
+*
+* @return object
+*/
 function cargarNoticia($idNoticia) {
     return ORM::for_Table('noticia')->
     join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
@@ -446,6 +550,20 @@ function cargarNoticia($idNoticia) {
     where('id', $idNoticia)->find_one();
 }
 
+/**
+* Creación de una nueva noticia
+* 
+* Recoge los parámetros de un formulario para procesarlos y crear una nueva noticia
+*
+* @category Noticias
+* @example admin.php crearNoticia('Bienvenido a la web', 'Hoy se puede ver la documentación', '0', '1', '1')
+* @param string $titulo Título de la noticia.
+* @param string $texto Contenido, cuerpo de la noticia.
+* @param integer $rango Permisos requeridos para visualizar la noticia.
+* @param integer $estado 0 : 1 - No publicada o publicada
+*
+* @return @void
+*/
 function crearNoticia($titulo, $texto, $rango, $estado, $usuarioID) {
     $noticia = ORM::for_table('noticia')->create();
     $noticia->id = null;
@@ -458,6 +576,19 @@ function crearNoticia($titulo, $texto, $rango, $estado, $usuarioID) {
     $noticia->save();
 }
 
+/**
+* Creación de una nueva categoría
+* 
+* Recoge los parámetros de un formulario para procesarlos y crear una nueva categoría
+*
+* @category Categorías
+* @example admin.php crearCategoria('Formula 1', 24, 15)
+* @param string $nombre Nombre de la categoría
+* @param integer $plazas Plazas totales de la categoría
+* @param integer $precio Coste de inscripción en la categoría
+*
+* @return @void
+*/
 function crearCategoria($app, $nombre, $plazas, $precio) {
     $categoria = ORM::for_table('categoria')->create();
     $categoria->id = null;
@@ -468,6 +599,20 @@ function crearCategoria($app, $nombre, $plazas, $precio) {
     $categoria->save();
 }
 
+/**
+* Edición de una categoría
+* 
+* Recoge los parámetros de un formulario para procesarlos y editar una categoría determinada
+*
+* @category Categorías
+* @example admin.php editarCategoria(1, 'Nueva formula 1', 24, 20)
+* @param integer $idCat ID de la categoría
+* @param string $nombre Nuevo nombre de la categoría
+* @param integer $plazas Nuevas plazas totales de la categoría
+* @param integer $precio Nuevo coste de inscripción en la categoría
+*
+* @return @void
+*/
 function editarCategoria($app, $idCat, $nombre, $plazas, $precio) {
     $categoria = ORM::for_table('categoria')->where('id', $idCat)->find_one();
     $categoria->nombre = $nombre;
@@ -476,11 +621,36 @@ function editarCategoria($app, $idCat, $nombre, $plazas, $precio) {
     $categoria->save();
 }
 
+/**
+* Borrado de una categoría
+* 
+* Recoge el identificador de la categoría y la borra.
+*
+* @category Categorías
+* @example admin.php eliminarCategoria(9)
+* @param integer $idCat ID de la categoría
+*
+* @return @void
+*/
 function eliminarCategoria($app, $idCat) {
     $categoria = ORM::for_table('categoria')->where('id', $idCat)->find_one();
     $categoria->delete();
 }
 
+/**
+* Creación de una carrera
+* 
+* Recoge los parámetros de un formulario para procesarlos y crear una carrera
+*
+* @category Carreras
+* @example admin.php crearCarrera(1, 'Nueva formula 1', 24, 20)
+* @param integer $idCat ID de la categoría
+* @param string $nombre Nuevo nombre de la categoría
+* @param integer $plazas Nuevas plazas totales de la categoría
+* @param integer $precio Nuevo coste de inscripción en la categoría
+*
+* @return @void
+*/
 function crearCarrera($app, $nombre, $primerCompuesto, $segundoCompuesto, $vueltas, $fecha, $hora, $categoria, $circuito) {
     $carrera = ORM::for_table('carrera')->create();
     $carrera->id = null;
@@ -495,11 +665,35 @@ function crearCarrera($app, $nombre, $primerCompuesto, $segundoCompuesto, $vuelt
     $carrera->save();
 }
 
-function eliminarCarrera($app, $idCat) {
-    $categoria = ORM::for_table('carrera')->where('id', $idCat)->find_one();
+/**
+* Borrado de una carrera
+* 
+* Recoge el identificador de la carrera y la borra.
+*
+* @category Carreras
+* @example admin.php eliminarCarrera(9)
+* @param integer $idRace ID de la carrera
+*
+* @return @void
+*/
+function eliminarCarrera($app, $idRace) {
+    $categoria = ORM::for_table('carrera')->where('id', $idRace)->find_one();
     $categoria->delete();
 }
 
+/**
+* Creación de un circuito
+* 
+* Recoge los parámetros de un formulario para procesarlos y crear un circuito
+*
+* @category Circuitos
+* @example admin.php crearCircuito('Circuito de Montmelo', 'España', 4627)
+* @param string $nombre Nombre del circuito
+* @param string $pais País donde se encuentra del circuito
+* @param integer $distancia Distancia en KilóMetros del circuito
+*
+* @return @void
+*/
 function crearCircuito($app, $nombre, $pais, $distancia) {
     $circuito = ORM::for_table('circuito')->create();
     $circuito->id = null;
@@ -509,6 +703,17 @@ function crearCircuito($app, $nombre, $pais, $distancia) {
     $circuito->save();
 }
 
+/**
+* Controla la asistencia y sanciones de los pilotos
+*
+* @category Asistencias
+* @example admin.php controlAsistencia(1, 2, 1)
+* @param integer $piloto_id ID del piloto
+* @param integer $carrera_id ID de la carrera
+* @param integer $estado Estado del piloto para la carrera (Asiste, no justifica...)
+*
+* @return @void
+*/
 function controlAsistencia($piloto_id, $carrera_id, $estado) {
     if ($estado != 0) {
         $asistencia = ORM::for_table('piloto_carrera')->create();
@@ -520,6 +725,15 @@ function controlAsistencia($piloto_id, $carrera_id, $estado) {
     }
 }
 
+/**
+* Guarga la asistencia
+*
+* @category Asistencias
+* @example admin.php guardarAsistencias(this)
+* @param object $formulario Formulario que contiene todos los datos de asistencia
+*
+* @return @void
+*/
 function guardarAsistencias($formulario) {
     $npilotos = ORM::for_table('piloto')->max('id');
     $ncarreras = ORM::for_table('carrera')->max('id');
@@ -536,6 +750,18 @@ function guardarAsistencias($formulario) {
     }
 }
 
+/**
+* Asignación de categorías a pilotos
+* 
+* Asigna de forma recursiva las categorías seleccionadas al piloto seleccionado
+*
+* @category Categorías
+* @example admin.php asignarCategorias(3, [3, 5, 7])
+* @param integer $idUser ID del piloto
+* @param Array $categorias Categorías
+*
+* @return @void
+*/
 function asignarCategorias($idUser, $categorias) {
     for ($i=0; $i < count($categorias); $i++) { 
         $catPiloto = ORM::for_table('piloto_categoria')->create();
