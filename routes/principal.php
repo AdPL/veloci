@@ -238,8 +238,12 @@ $app->get('/asistencias', function() use ($app) {
     $carreras = cargarCarreras();
     $pilotos = cargarUsuarios();
     $estados = carreraControlAsistencia();
-        
-    $app->render('asistencias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'configuracion' => $configuracion));
+    
+    if(!isset($_SESSION['id'])) {
+		$app->render('asistencias.html.twig', array('carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'configuracion' => $configuracion));
+	} else {
+		$app->render('asistencias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'configuracion' => $configuracion));
+	}   
 })->name('asistencias');
 
 function testAccess($app, $usuario, $pass) {
@@ -318,9 +322,11 @@ function cargarReclamacion($idReclamacion) {
 }
 
 function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera, $reclama, $sereclama) {
+	$i = 0;
+
 	$nincidentes = ORM::for_table('incidente')->max('id');
 	$nincidentes++;
-	
+
 	$incidente = ORM::for_table('incidente')->create();
 	$incidente->id = null;
 	$incidente->vuelta = $vuelta;
@@ -343,13 +349,19 @@ function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera
 	$reclamacion->save();
 	$piloto_incidente->save();
 
-	$piloto_incidente = ORM::for_table('piloto_incidente')->create();
-	$piloto_incidente->piloto_id = $sereclama;
-	$piloto_incidente->incidente_id = $nincidentes;
-	$piloto_incidente->reclama = 0;
-	$piloto_incidente->sancion = 0;
+	while ($i < count($sereclama)) {
+		if ($sereclama[$i] != 0) {
 
-	$piloto_incidente->save();
+			$piloto_incidente = ORM::for_table('piloto_incidente')->create();
+			$piloto_incidente->piloto_id = $sereclama[$i];
+			$piloto_incidente->incidente_id = $nincidentes;
+			$piloto_incidente->reclama = 0;
+			$piloto_incidente->sancion = 0;
+
+			$piloto_incidente->save();
+			$i++;
+		}
+	}
 
 	return $nincidentes;
 }

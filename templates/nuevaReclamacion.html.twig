@@ -33,20 +33,20 @@
         <h1>Nueva reclamación <small>Formulario de reclamación de incidente</small></h1>
         <h4>Reclamación para la carrera {{ carrera['nombre'] }} de la categoría {{ categoria['nombre'] }}</h4>
         <form method="post" action="{{ urlFor('crearReclamacion') }}" role="form">
-			<input type="hidden" name="inputIdUsuario" value="{{ idRace }}">
+			<input type="hidden" name="inputIdUsuario" value="{{ id }}">
         	<input type="hidden" name="inputIdCarrera" value="{{ idRace }}">
 			<div class="form-group">
 				<label for="inputTitulo">Breve descripción</label>
 				<input type="text" class="form-control" id="inputTitulo" name="inputTitulo" required>
 			</div>
 			<div class="form-group">
-				<label for="inputPiloto">Piloto a reclamar</label>
-				<select class="form-control" id="inputPiloto" name="inputPiloto" required>
-					<option value="0">Seleccionar piloto</option>
+				<label for="inputPiloto">Pilotos a reclamar</label>
+				<select class="form-control" id="inputPiloto" name="inputPiloto[]" multiple required>
 					{% for piloto in pilotos %}
 						<option value="{{ piloto['id'] }}">{{ piloto['nombre_completo'] }}</option>
 					{% endfor %}
 				</select>
+				<p class="help-block">Mantenga presionada la tecla control y haga click en los pilotos a reclamar</p>
 			</div>
 			<div class="form-group">
 				<label for="inputVuelta">Vuelta</label>
