@@ -30,17 +30,18 @@
     {% endif %}
     	<div class="alert alert-info">
     		<h3>Pilotos bajo investigación:</h3>
-    		<ul>
     		{% for pilotoR in pilotosR %}
-    			<li>{{ pilotoR['nombre_completo'] }}</li>
+    			{% if pilotoR['sancion'] == 0 %}
+    				<div class="alert alert-warning">{{ pilotoR['nombre_completo'] }}: Este piloto todavía se encuentra bajo investigación</div>
+    			{% elseif pilotoR['sancion'] == 1  %}
+    				<div class="alert alert-danger">{{ pilotoR['nombre_completo'] }} ha sido sancionado con: {{ pilotoR['nota'] }}</div>
+    			{% else %}
+    				<div class="alert alert-success">{{ pilotoR['nombre_completo'] }} no sufre sanción</div>
+    			{% endif %}
     		{% endfor %}
-    		</ul>
     	</div>
-    	{% set resolucion = false %}
+    
 	{% for comentario in comentarios %}
-		{% if comentario['sancion'] != 0 %}
-			{% set resolucion = true %}
-		{% endif %}
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<h2 class="pull-left">{{ comentario['titulo'] }}</h2>
@@ -52,35 +53,45 @@
 			</div>
 		</div>
 	{% endfor %}
-		{% if resolucion == true %}
-			<hr>
-			<h2>Resolución de la reclamación</h2>
-			<ul>
-			{% for sancionado in sancionados %}
-				<li>{{ sancionado['nombre_completo'] }}: {{ sancionado['nota'] }}</li>
-			{% endfor %}
-			</ul>
-		{% else %}
-			<hr>
-			<h2>Responder a la reclamación</h2>
-			<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}">
+
+	{% if reclamaciones['abierto'] == 0 %}
+		<hr>
+		<h2>Responder a la reclamación</h2>
+		<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}">
+		<input type="hidden" name="inputID" value="{{ idReclamacion }}">
+			<div class="form-group">
+				<label for="inputTitulo">Título</label>
+				<input type="text" name="inputTitulo" id="inputTitulo" class="form-control">
+			</div>
+			<div class="form-group">
+				<label for="inputComentario">Comentario</label>
+				<textarea class="form-control" rows="3" name="inputComentario" id="inputComentario" rows="3"></textarea>
+			</div>
+			<input type="submit" value="Enviar" class="btn btn-success">
+			<a href="{{ urlFor('reclamaciones') }}" class="btn btn-danger">Volver</a>
+		</form>
+		<hr>
+		{% if rol == 2 %}
+		<h2>Panel de la FIA <small>Resolución de la incidencia</small></h2>
+		<form role="form" methos="post" action="#">
 			<input type="hidden" name="inputID" value="{{ idReclamacion }}">
-				<div class="form-group">
-					<label for="inputTitulo">Título</label>
-					<input type="text" name="inputTitulo" id="inputTitulo" class="form-control">
-				</div>
-				<div class="form-group">
-					<label for="inputComentario">Comentario</label>
-					<textarea class="form-control" rows="3" name="inputComentario" id="inputComentario" rows="3"></textarea>
-				</div>
-				<input type="submit" value="Enviar" class="btn btn-success">
-				{% if rol == 2 %}
-				<a href="#" class="btn btn-info">No sancionar</a>
-				<a href="#" class="btn btn-warning">Sanción</a>
-				{% endif %}
-				<a href="{{ urlFor('reclamaciones') }}" class="btn btn-danger">Volver</a>
-			</form>
+			<div class="form-group">
+			<select class="form-control" id="inputPiloto" name="inputPiloto[]" required>
+				{% for pilotoR in pilotosR %}
+					<option value="{{ pilotoR['id'] }}">{{ pilotoR['nombre_completo'] }}</option>
+				{% endfor %}
+			</select>
+			</div>
+			<div class="form-group">
+				<label for="inputSancion">Sanción para el piloto</label>
+				<input type="text" name="inputSancion" id="inputSancion" class="form-control" placeholder="En caso de recibir sanción, indicar la sanción en este campo">
+			</div>
+			<a href="#" class="btn btn-success">No sancionar</a>
+			<a href="#" class="btn btn-danger">Sanción</a>
+			<a href="#" class="btn btn-info">Cerrar reclamación</a>
+		</form>
 		{% endif %}
+	{% endif %}
 	</div>
 	</div>
 	</div>
