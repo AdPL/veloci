@@ -33,24 +33,26 @@ active
 {% block content %}
 <div class="col-lg-9">
 	<div class="panel panel-default">
+	<div class="panel panel-body pull-right">
+		<a href="{{ urlFor('editarCategoria', {'idCat': categoria.id}) }}" class="btn btn-info">Editar</a>
+		<a href="#" class="btn btn-danger">Eliminar</a>
+	</div>
 		<table class="table table-striped">
 			<thead>
+				<th>Seleccionar</th>
 				<th>Imagen</th>
 				<th>Nombre</th>
 				<th>Plazas</th>
 				<th>Precio</th>
-				<th>Edición</th>
-				<th>Borrado</th>
 			</thead>
 			<tbody>
 				{% for categoria in categorias %}
 				<tr>
+					<td><input type="radio" name="rCategoria" value="{{ categoria['id'] }}"></td>
 					<td>{{ categoria['imagen'] }}</td>
 					<td>{{ categoria['nombre'] }}</td>
 					<td>{{ categoria['plazas'] }}</td>
 					<td>{{ categoria['precio_inscripcion'] }} €</td>
-					<td><a href="{{ urlFor('editarCategoria', {'idCat': categoria.id}) }}" class="btn btn-info">Editar</a></td>
-					<td><form method="post" action="{{ urlFor('editarCategoriaPost') }}"><input type="text" name="id" value="{{ categoria['id'] }}" hidden><button type="submit" class="btn btn-danger">Eliminar</button></form></td>
 				</tr>
 				{% else %}
 				<tr><td>No se han encontrado categorías</td></tr>

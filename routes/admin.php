@@ -54,8 +54,8 @@ $app->post('/categorias/nueva', function() use ($app) {
     } else {
         if($_SESSION['rol'] == 5) {
             crearCategoria($app, $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);
-            $app->Redirect('categorias');
-            $app->render('nuevaCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $categorias = cargarCategorias();
+            $app->render('listaCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -266,8 +266,9 @@ $app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
     } else {
         if($_SESSION['rol'] == 5) {
             $piloto = cargarUsuario($idUser);
+            $categorias = cargarCategorias();
             
-            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto));
+            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto, 'categorias' => $categorias));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -440,10 +441,7 @@ function cargarUsuarios() {
 * @return object
 */
 function cargarCategorias() {
-    return ORM::for_table('categoria')->select_many('categoria.id', 'nombre', 'imagen', 'plazas', 'precio_inscripcion')->
-    join('piloto_categoria', array('categoria.id', '=', 'piloto_categoria.categoria_id'))->
-    group_by('categoria.id')->
-    order_by_asc('nombre')->find_many();
+    return ORM::for_table('categoria')->order_by_asc('nombre')->find_many();
 }
 
 /**
