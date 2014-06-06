@@ -33,22 +33,24 @@ active
 {% block content %}
 <div class="col-lg-9">
 	<div class="panel panel-default">
+	<div class="panel panel-body pull-right">
+		<a class="btn btn-info btn-action" onclick="seleccionado('{{ urlFor('editarCircuito') }}', 'rCircuito')">Editar</a>
+		<a class="btn btn-danger btn-action">Eliminar</a>
+	</div>
 		<table class="table table-striped">
 			<thead>
+				<th>Seleccionar</th>
 				<th>Nombre</th>
 				<th>País</th>
 				<th>Distancia</th>
-				<th>Editar</th>
-				<th>Borrar</th>
 			</thead>
 			<tbody>
-				{% for circuitos in circuitos %}
+				{% for circuito in circuitos %}
 				<tr>
-					<td>{{ circuitos['nombre'] }}</td>
-					<td>{{ circuitos['pais'] }}</td>
-					<td>{{ circuitos['distancia'] }} Km</td>
-					<td><a href="{{ urlFor('editarCategoria', {'idCat': categoria.id}) }}" class="btn btn-info">Editar</a></td>
-					<td><form method="post" action="{{ urlFor('editarCategoriaPost') }}"><input type="text" name="id" value="{{ categoria['id'] }}" hidden><button type="submit" class="btn btn-danger">Eliminar</button></form></td>
+					<td><input type="radio" class="rCircuito" name="rCircuito" value="{{ circuito['id'] }}"></td>
+					<td>{{ circuito['nombre'] }}</td>
+					<td>{{ circuito['pais'] }}</td>
+					<td>{{ circuito['distancia'] }} Km</td>
 				</tr>
 				{% else %}
 				<tr><td>No se han encontrado circuitos</td></tr>

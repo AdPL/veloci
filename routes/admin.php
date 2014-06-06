@@ -101,7 +101,7 @@ $app->post('/listaCategorias', function() use ($app) {
                 eliminarCategoria($app, $_POST['id']);
             }
 
-            $app->Redirect('listaCategorias');
+            $app->Redirect('categorias/lista');
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -128,8 +128,7 @@ $app->post('/carreras/nueva', function() use ($app) {
     } else {
         if($_SESSION['rol'] == 5) {
             crearCarrera($app, $_POST['inputNombre'], $_POST['primerCompuesto'], $_POST['segundoCompuesto'], $_POST['inputVueltas'], $_POST['inputFecha'], $_POST['inputHora'], $_POST['inputCategoria'], $_POST['inputCircuito']);
-            $app->Redirect('categorias');
-            $app->render('nuevaCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/carreras/lista');
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -186,8 +185,7 @@ $app->post('/circuitos/nuevo', function() use ($app) {
     } else {
         if($_SESSION['rol'] == 5) {
             crearCircuito($app, $_POST['inputNombre'], $_POST['inputPais'], $_POST['inputDistancia']);
-            $app->Redirect('circuitos');
-            $app->render('nuevaCircuito.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/circuitos/lista');
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -207,6 +205,38 @@ $app->get('/circuitos/lista', function() use ($app) {
         }
     }
 })->name('listaCircuitos');
+
+$app->get('/editar/:idCircuito', function($idCircuito) use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $circuito = cargarCcircuito($idCircuito);
+
+            $app->render('editarCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuito' => $circuito));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('editarCircuito');
+
+$app->post('/circuito', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            if (isset($_POST['inputNombre'])) {
+                //editarCategoria($app, $_POST['id'], $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);   
+            } else {
+                //eliminarCategoria($app, $_POST['id']);
+            }
+
+            $app->Redirect('/circuitos/lista');
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('editarCircuitoPost');
 
 $app->get('/usuarios', function() use ($app) {
     if(!isset($_SESSION['id'])) {
@@ -466,7 +496,11 @@ function cargarCategoria($idCat) {
 * @return object
 */
 function cargarCircuitos() {
-    return ORM::for_table('circuito')->select_many('id', 'nombre', 'pais', 'distancia')->order_by_asc('nombre')->find_many();   
+    return ORM::for_table('circuito')->order_by_asc('nombre')->find_many();   
+}
+
+function cargarCircuito($circuito) {
+    return ORM::for_table('circuito')->where('id', $circuito)->find_many();   
 }
 
 /**

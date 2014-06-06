@@ -123,11 +123,11 @@ function compruebaNombre(campo) {
     });
 }
 
-function seleccionado(ruta) {
-	var radios = document.getElementsByClassName("rUsuario");
+function seleccionado(ruta, clase) {
+	var radios = document.getElementsByClassName(clase);
 	var botones = document.getElementsByClassName('btn-action');
 	var error = true;
-
+	
 	for (var i = 0; i < radios.length; i++) {
 		if (radios[i].checked) {
 			for (var j = 0; j <= botones.length; j++) {
@@ -141,7 +141,7 @@ function seleccionado(ruta) {
 	};
 
 	if (error = true) {
-		alert("Debe seleccionar un usuario para continuar");
+		alert("Debe seleccionar un registro para continuar");
 	}
 }
 
