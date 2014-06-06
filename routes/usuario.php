@@ -85,6 +85,20 @@ $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
     }
 })->name('perfilUsuario');
 
+/**
+* Realiza el registro de usuarios en la BBDD
+*
+* @category Usuarios
+* @example principal.php registrarUsuario('pepito', 'pepito@gmail.com', '123456', '123456', 'Pepito Pérez')
+*
+* @param string $usuario Nombre de usuario para identificarse
+* @param string $email Correo eléctronico del usuario
+* @param string $password Contraseña
+* @param string $passwordCheck Contraseña para comprobación
+* @param string $nombreCompleto Nombre completo del usuario
+*
+* @return boolean
+*/
 function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $nombreCompleto) {
     if ($password == $passwordCheck) {
         $token = generarToken(100);
@@ -107,6 +121,16 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
     }
 }
 
+/**
+* Cambia la imagen de perfil del usuario
+*
+* @category Usuarios
+* @example principal.php imagenPerfil(archivo)
+*
+* @param file $imagen Imagen que el usuario carga a través de un formulario
+*
+* @return void
+*/
 function imagenPerfil($app, $imagen) {
     if ($_FILES['inputFoto']['error'] > 0) {
         //echo "error";
@@ -142,6 +166,16 @@ function imgExtension($cadena) {
     return substr($_FILES['inputFoto']['name'], $pos);
 }
 
+/**
+* Genera un Token único para el usuario que será utilizado para recuperar su contraseña o cambiar información
+*
+* @category Usuarios
+* @example principal.php generarToken(250)
+*
+* @param integer $logintud Longitud del token
+*
+* @return string
+*/
 function generarToken($longitud) {
     $cadena = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
     $token = "";
@@ -155,6 +189,16 @@ function generarToken($longitud) {
     return $token;
 }
 
+/**
+* Devuelve todo los datos del usuario indicado
+*
+* @category Usuarios
+* @example principal.php datosUsuario(36)
+*
+* @param integer $id ID del usuario
+*
+* @return object
+*/
 function datosUsuario($id) {
     return ORM::for_table('piloto')->find_one($id);
 }
