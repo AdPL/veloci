@@ -34,10 +34,8 @@ class="active"
 <div class="col-lg-9">
 	<div class="panel panel-default">
 		<div class="panel panel-body pull-right">
-			<a class="btn btn-success btn-action" href="{{ urlFor('asignarCategorias') }}" onclick="seleccionado('{{ urlFor('asignarCategorias') }}')">Gestionar categorías</a>
-			<a href="/" class="btn btn-warning btn-action">Quitar categoría</a>
-			<a href="{{ urlFor('editarUsuario') }}" class="btn btn-info btn-action">Editar</a>
-			<a href="{{ urlFor('editarUsuario') }}" class="btn btn-danger btn-action">Eliminar</a>
+			<a class="btn btn-info btn-action" onclick="seleccionado('{{ urlFor('editarUsuario') }}')">Editar</a>
+			<a class="btn btn-danger btn-action">Eliminar</a>
 		</div>
 		<table class="table table-striped">
 			<thead>
@@ -50,7 +48,7 @@ class="active"
 			<tbody>
 				{% for usuario in usuarios %}
 				<tr>
-					<td><input type="radio" name="rUsuario" value="{{ usuario['id'] }}" onclick="seleccionar('{{ usuario['id'] }}')"></td>
+					<td><input type="radio" name="rUsuario" class="rUsuario" value="{{ usuario['id'] }}"></td>
 					<td>{{ usuario['id'] }}</td>
 					<td>{{ usuario['nombre_completo'] }}</td>
 					<td>{{ usuario['email'] }}</td>
