@@ -260,18 +260,55 @@ function testAccess($app, $usuario, $pass) {
 	}
 }
 
+/**
+* Carga la próxima carrera
+* 
+* Recoge todas las carreras y las ordena por fechas más próximas, aplica un limit 1
+* y devuelve la próxima carrera
+*
+* @category Carreras
+* @example principal.php cargarCarrera();
+*
+* @return object
+*/
 function cargarCarrera() {
 	return ORM::for_table('carrera')->where_gt('fecha', date("Y-m-d"))->order_by_asc('fecha')->limit(1)->find_many();
 }
 
+/**
+* Carga todos los datos para una carrera específicada
+*
+* @category Carreras
+* @example principal.php cargarDatosCarrera(9)
+* @param integer $idCarrera ID de la carrera
+*
+* @return object
+*/
 function cargarDatosCarrera($idCarrera) {
 	return ORM::for_table('carrera')->where('id', $idCarrera)->find_one();
 }
 
+/**
+* Carga todos los datos de la categorías específicada
+*
+* @category Categorías
+* @example principal.php cargarDatosCategoria(8);
+* @param integer $idCategoria ID de la categoría
+*
+* @return object
+*/
 function cargarDatosCategoria($idCategoria) {
 	return ORM::for_table('categoria')->where('id', $idCategoria)->find_one();
 }
 
+/**
+* Devuelve la lista de carreras que tienen el plazo de reclamación abierto
+*
+* @category Carreras
+* @example principal.php cargarCarrerasReclamacion();
+*
+* @return object
+*/
 function cargarCarrerasReclamacion() {
     return ORM::for_table('carrera')->
     where_lte('fecha', date("Y-m-d"))->
@@ -281,6 +318,14 @@ function cargarCarrerasReclamacion() {
     order_by_asc('fecha')->find_many();
 }
 
+/**
+* Devuelve las 3 últimas reclamaciones abiertas para cualquier carrera y categoría
+*
+* @category Reclamaciones
+* @example principal.php cargarReclamacionesRecientes();
+*
+* @return object
+*/
 function cargarReclamacionesRecientes() {
 	return ORM::for_table('incidente')->
 	join('carrera', array('carrera_id', '=', 'carrera.id'))->
@@ -295,6 +340,17 @@ function cargarReclamacionesRecientes() {
 	select_many('reclamacion.incidente_id', 'vuelta', 'minuto', 'nombre_completo', 'reclama', 'titulo', 'sancion')->find_many();
 }
 
+/**
+* Devuelve las sanciones de los pilotos sancionados.
+* 
+* Consulta si el piloto ha sido sancionado y en caso de serlo devuelve el comentario
+* con su sanción
+*
+* @category Reclamaciones
+* @example principal.php cargarSancionados();
+*
+* @return object
+*/
 function cargarSancionados($idReclamacion) {
 	return ORM::for_table('piloto')->
 	join('piloto_incidente', array('piloto.id', '=', 'piloto_incidente.piloto_id'))->
@@ -303,6 +359,15 @@ function cargarSancionados($idReclamacion) {
 	find_many();
 }
 
+/**
+* Carga los datos de las reclamaciones para la carrera específicada
+*
+* @category Reclamaciones
+* @example principal.php cargarReclamaciones(23);
+* @param integer $race ID de la carrera
+*
+* @return object
+*/
 function cargarReclamaciones($race) {
 	return ORM::for_table('incidente')->
 	join('reclamacion', array('incidente.id', '=', 'reclamacion.incidente_id'))->
@@ -313,6 +378,15 @@ function cargarReclamaciones($race) {
 	select_many('reclamacion.incidente_id', 'vuelta', 'minuto', 'nombre_completo', 'reclama', 'titulo')->find_many();
 }
 
+/**
+* Carga la reclamación específicada
+*
+* @category Reclamaciones
+* @example principal.php cargarReclamacion(102);
+* @param integer $idReclamacion ID de la reclamación
+*
+* @return object
+*/
 function cargarReclamacion($idReclamacion) {
 	return ORM::for_table('reclamacion')->
 	join('piloto', array('piloto.id', '=', 'reclamacion.piloto_id'))->
@@ -321,6 +395,22 @@ function cargarReclamacion($idReclamacion) {
 	find_many();
 }
 
+/**
+* Crea una nueva reclamación
+*
+* Inserta los registros con el usuario que reclama y los reclamados
+*
+* @category Reclamaciones
+* @example principal.php crearReclamacion('Me golpea y me rompe el coche', 'En la cuarta curva me rompe el aleron', 2, 6, 14, Array(6, 7, 5));
+* @param string $titulo Título para la reclamación
+* @param string $comentario Descripción del incidente
+* @param integer $vuelta Vuelta en la que se produce el incidente
+* @param integer $minuto Minuto de la vuelta en la que ocurre el incidente
+* @param integer $reclama ID del usuario que crea la reclamación
+* @param Array $sereclama Usuarios que son reportados en la reclamación
+*
+* @return integer
+*/
 function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera, $reclama, $sereclama) {
 	$i = 0;
 
@@ -366,6 +456,17 @@ function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera
 	return $nincidentes;
 }
 
+/**
+* Añade un comentario a una reclamación
+*
+* @category Reclamaciones
+* @example principal.php crearComentario('No estoy de acuerdo', 'Yo no tengo la culpa', 5)
+* @param string $titulo Título para el comentario
+* @param string $comentario Texto del comentario (mensaje)
+* @param integer $id ID del incidente para el que se pone el comentario
+*
+* @return void
+*/
 function crearComentario($app, $titulo, $comentario, $id) {
 	$comment = ORM::for_table('reclamacion')->create();
 	$comment->titulo = $titulo;
@@ -376,6 +477,15 @@ function crearComentario($app, $titulo, $comentario, $id) {
 	$comment->save();
 }
 
+/**
+* Devuelve los pilotos que están reclamados para un determinado incidente
+*
+* @category Reclamaciones
+* @example principal.php pilotosReclamados(6)
+* @param integer $idReclamacion ID de la reclamación de la que queremos obtener los pilotos reclamados
+*
+* @return object
+*/
 function pilotosReclamados($idReclamacion) {
 	return ORM::for_table('piloto')->
 	join('piloto_incidente', array('piloto.id', '=', 'piloto_incidente.piloto_id'))->
@@ -384,21 +494,18 @@ function pilotosReclamados($idReclamacion) {
 	find_many();
 }
 
-function calcularFecha($modo, $valor, $fecha_inicio = false) {
- 
-   if ($fecha_inicio != false) {
-          $fecha_base = strtotime($fecha_inicio);
-   } else {
-          $time = time();
-          $fecha_actual = date("Y-m-d",$time);
-          $fecha_base = strtotime($fecha_actual);
-   }
- 
-   $calculo = strtotime("$valor $modo","$fecha_base");
- 
-   return date("Y-m-d", $calculo);
-}
-
+/**
+* Crea un comentario o responde a otro usuario en una noticia
+*
+* @category Noticias
+* @example principal.php enviarComentario('comentario', Array(1,3,5), 5, 24)
+* @param string $comentario Texto del comentario
+* @param Array $responde_a Usuario al que se responde en el comentario, en caso de ser un array vacío tendra valor 0
+* @param integer $usuario ID del usuario que publica el comentario
+* @param integer $noticia ID de la noticia para la que se crea el comentario
+*
+* @return void
+*/
 function enviarComentario($comentario, $responde_a, $usuario, $noticia) {
 	$comment = ORM::for_table('comentario')->create();
 	$comment->id = null;
@@ -410,6 +517,15 @@ function enviarComentario($comentario, $responde_a, $usuario, $noticia) {
 	$comment->save();
 }
 
+/**
+* Carga los comentarios para una determinada noticia
+*
+* @category Noticias
+* @example principal.php cargarComentarios(27)
+* @param integer $noticia ID de la noticia de la que cargar los comentarios
+*
+* @return object
+*/
 function cargarComentarios($noticia) {
 	return ORM::for_table('comentario')->
 	join('piloto', array('comentario.usuario_id', '=', 'piloto.id'))->
@@ -417,10 +533,29 @@ function cargarComentarios($noticia) {
 	select_many('piloto.id', 'comentario.id', 'nombre_completo', 'avatar', 'noticia_id', 'comentario', 'fecha', 'usuario_id')->find_many();
 }
 
+/**
+* Cuenta el número de comentarios para una noticia específicada
+*
+* @category Noticias
+* @example principal.php numeroComentarios(34)
+* @param integer $noticia ID de la noticia de la que cargar los comentarios
+*
+* @return object
+*/
 function numeroComentarios($idNoticia) {
 	return ORM::for_table('comentario')->where('noticia_id', $idNoticia)->count();
 }
 
+/**
+* Devuelve los pilotos que pueden ser reclamados
+*
+* Esto evita que pueda haber reclamaciones en contra de cuentas de administracción como la FIA.
+*
+* @category Noticias
+* @example principal.php cargarUsuariosReclamar()
+*
+* @return object
+*/
 function cargarUsuariosReclamar() {
 	return ORM::for_table('piloto')->where('puede_reclamarse', '1')->find_many();
 }
