@@ -123,23 +123,26 @@ function compruebaNombre(campo) {
     });
 }
 
-function seleccionar(idUsuario) {
-	var botones = document.getElementsByClassName('btn-action');
-	var nBotones = botones.length;
-
-	for (var i = 0; i < nBotones; i++) {
-		var boton = botones[i];
-		var fin = boton.href.lastIndexOf("/");
-		var enlace = boton.href.substr(0, fin) + "/" + idUsuario;
-		boton.href = enlace;
-	}
-}
-
 function seleccionado(ruta) {
-	alert(ruta.indexOf(':idUser'));
-	if (ruta.indexOf(':idUser')) {
-		document.stop();
+	var radios = document.getElementsByClassName("rUsuario");
+	var botones = document.getElementsByClassName('btn-action');
+	var error = true;
+
+	for (var i = 0; i < radios.length; i++) {
+		if (radios[i].checked) {
+			for (var j = 0; j <= botones.length; j++) {
+				var boton = botones[j];
+				var fin = ruta.lastIndexOf("/");
+				var enlace = ruta.substr(0, fin) + "/" + radios[i].value;
+				boton.href = enlace;
+			};
+			error = false;
+		};
 	};
+
+	if (error = true) {
+		alert("Debe seleccionar un usuario para continuar");
+	}
 }
 
 function responder(idComentario, usuario) {
