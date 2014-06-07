@@ -1,0 +1,65 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block head %}
+<link rel="stylesheet" href="../css/bootstrap.css" type="text/css">
+	<link rel="stylesheet" href="../css/font-awesome.css" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
+<script>
+	function rellenarSelect() {
+		var myselect = document.getElementById('inputPais');
+		for (var i = 2 ; i < 30; i++) {
+			myselect.innerHTML += "<option value='" + i + "'>" + i + "</option>";
+		};
+	}
+</script>
+{% endblock %}
+{% block loadJS %}
+onload="rellenarSelect()"
+{% endblock %}
+{% block adminCircuitos %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h2>{{ circuito['nombre'] }}<small> Edición de circuito</small></h2>
+			<div class="alert alert-warning">Sí no desea cambiar uno de los valores, no lo modifique.</div>
+			<form method="post" action="{{ urlFor('editarCircuitoPost') }}" role="form">
+				<input type="text" name="id" value="{{ circuito['id'] }}" hidden>
+				<div class="form-group">
+					<label for="inputNombre">Nuevo nombre</label>
+					<input type="text" class="form-control" id="inputNombre" name="inputNombre" value="{{ circuito['nombre'] }}" required>
+				</div>
+				<div class="form-group">
+					<label for="inputPais">País</label>
+					<input type="text" class="form-control" id="inputPais" name="inputPais" value="{{ circuito['pais'] }}">
+				</div>
+				<div class="form-group">
+					<label for="inputDistancia">Distancia</label>
+					<input type="text" class="form-control" id="inputDistancia" name="inputDistancia" value="{{ circuito['distancia'] }}" required>
+				</div>
+				<button type="submit" class="btn btn-success">Editar circuito</button>
+				<a href="{{ urlFor('listaCircuitos') }}" class="btn btn-danger">Volver</a>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
