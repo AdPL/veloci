@@ -145,6 +145,11 @@ function seleccionado(ruta, clase) {
 	}
 }
 
+function seleccion(radio) {
+	var co = document.getElementById("co");
+	co.value = radio.value;
+}
+
 function responder(idComentario, usuario) {
 	document.getElementById('tcomentarios').innerHTML = "<i class='fa fa-pencil-square-o fa-3x'></i> Responder a " + usuario
 	+ "<button class='btn btn-danger pull-right btn-sm' onclick='cancelaRespuesta()'>Cancelar respuesta</button>";

@@ -206,14 +206,14 @@ $app->get('/circuitos/lista', function() use ($app) {
     }
 })->name('listaCircuitos');
 
-$app->get('/editar/:idCircuito', function($idCircuito) use ($app) {
+$app->get('/circuito/editar/:idCircuito', function($idCircuito) use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
         if($_SESSION['rol'] == 5) {
-            $circuito = cargarCcircuito($idCircuito);
+            $circuito = cargarCircuito($idCircuito);
 
-            $app->render('editarCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuito' => $circuito));
+            $app->render('editarCircuito.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuito' => $circuito));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -226,7 +226,7 @@ $app->post('/circuito', function() use ($app) {
     } else {
         if($_SESSION['rol'] == 5) {
             if (isset($_POST['inputNombre'])) {
-                //editarCategoria($app, $_POST['id'], $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);   
+                editarCircuito($_POST['id'], $_POST['inputNombre'], $_POST['inputPais'], $_POST['inputDistancia']);
             } else {
                 //eliminarCategoria($app, $_POST['id']);
             }
@@ -305,7 +305,7 @@ $app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
     }
 })->name('editarUsuario');
 
-$app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
+$app->post('/usuarios/editar/:idUser', function($idUser) use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
@@ -322,6 +322,24 @@ $app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
         }
     }
 })->name('editarUsuarioPost');
+
+$app->post('/usuarios/borrar', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            if (isset($_POST['borralo'])) {
+                eliminarUsuario($_POST['co']);
+            } else {
+                echo "<script type='text/javascript'>alertify.error('No tiene permiso para realizar esta acción');</script>";
+            }
+
+            $app->Redirect('/usuarios');
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('borrarUsuario');
 
 $app->get('/noticias/lista', function() use ($app) {
     if(!isset($_SESSION['id'])) {
@@ -371,6 +389,24 @@ $app->post('/categorias/asignar', function() use ($app) {
         $app->render('asignarCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'piloto' => $piloto));
     }
 })->name('asignaCategorias');
+
+$app->post('/categorias/borrar', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            if (isset($_POST['borralo'])) {
+                eliminarCategoria($_POST['co']);
+            } else {
+                echo "<script type='text/javascript'>alertify.error('No tiene permiso para realizar esta acción');</script>";
+            }
+
+            $app->Redirect('/categorias/lista');
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('borrarCategoria');
 
 $app->get('/configuracion', function() use ($app) {
     $configuracion = datosApp();
@@ -474,6 +510,11 @@ function cargarCategorias() {
     return ORM::for_table('categoria')->order_by_asc('nombre')->find_many();
 }
 
+function eliminarUsuario($idUsuario) {
+    $borrar = ORM::for_Table('piloto')->find_one($idUsuario);
+    $borrar->delete();
+}
+
 /**
 * Carga los datos de la categoría especificada
 * 
@@ -500,7 +541,15 @@ function cargarCircuitos() {
 }
 
 function cargarCircuito($circuito) {
-    return ORM::for_table('circuito')->where('id', $circuito)->find_many();   
+    return ORM::for_table('circuito')->find_one($circuito);   
+}
+
+function editarCircuito($idCircuito, $nombre, $pais, $distancia) {
+    $circuito = ORM::for_table('circuito')->find_one($idCircuito);
+    $circuito->nombre = $nombre;
+    $circuito->pais = $pais;
+    $circuito->distancia = $distancia;
+    $circuito->save();
 }
 
 /**
@@ -664,8 +713,8 @@ function editarCategoria($app, $idCat, $nombre, $plazas, $precio) {
 *
 * @return @void
 */
-function eliminarCategoria($app, $idCat) {
-    $categoria = ORM::for_table('categoria')->where('id', $idCat)->find_one();
+function eliminarCategoria($idCat) {
+    $categoria = ORM::for_table('categoria')->find_one($idCat);
     $categoria->delete();
 }
 
