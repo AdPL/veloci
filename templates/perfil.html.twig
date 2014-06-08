@@ -16,16 +16,6 @@
 
 {% extends "base.html.twig" %}
 
-{% block head %}
-<style type="text/css">
-	.img-circle {
-		height: 100px;
-		width: 100px;
-		margin: 0 auto;
-	}
-</style>
-{% endblock %}
-
 {% block container %}
 <div class="container-fluid">
 	<div class="row">
@@ -40,15 +30,39 @@
 
 		<div class="col-lg-5 col-md-5 col-sm-8">
 			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3>Edición de perfil</h3>
+				</div>
 				<div class="panel-body">
 					<form method="post" action="#" role="form" class="form-horizontal" enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="inputNombreCompleto" class="col-sm-2 control-label">Nombre completo</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="inputNombreCompleto" id="inputFoto" value="{{ datosUsuario['nombre_completo'] }}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputNombreCompleto" class="col-sm-2 control-label">Visibilidad del perfil</label>
+							<div class="col-sm-10">
+								<div class="btn-group" data-toggle="buttons">
+									<label class="btn btn-primary {% if datosUsuario['privacidad_perfil'] == 1 %}active{% endif %}">
+											<input type="radio" name="visibilidad" value="1"> Público
+									</label>
+									<label class="btn btn-primary {% if datosUsuario['privacidad_perfil'] == 0 %}active{% endif %}">
+											<input type="radio" name="visibilidad" id="option2" value="0" checked> Privado
+									</label>
+								</div>
+							</div>
+						</div>
 						<div class="form-group">
 							<label for="inputFoto" class="col-sm-2 control-label">Cambiar avatar</label>
 							<div class="col-sm-3">
 								<input type="file" name="inputFoto" id="inputFoto">
 							</div>
 						</div>
+						<p>Rango actual: {{ datosUsuario['rol'] }}</p>
 						<button type="submit" class="btn btn-success">Guardar cambios</button>
+						<a href="{{ urlFor('principal') }}" class="btn btn-danger">Volver</a>
 					</form>
 				</div>
 			</div>

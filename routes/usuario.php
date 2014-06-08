@@ -51,7 +51,9 @@ $app->get('/perfil', function() use ($app) {
     }
 
     $configuracion = datosApp();
-    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion));
+    $usuario = datosUsuario($_SESSION['id']);
+
+    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion));
 })->name('perfil');
 
 $app->post('/perfil', function() use ($app) {
@@ -59,10 +61,15 @@ $app->post('/perfil', function() use ($app) {
         $app->redirect($app->urlFor('principal'));
     }
 
+    editarPerfil($_POST['inputNombreCompleto'], $_POST['visibilidad']);
     imagenPerfil($app, $_FILES['inputFoto']);
-
     $configuracion = datosApp();
-    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion));
+    $usuario = datosUsuario($_SESSION['id']);
+
+    $_SESSION['nombre_completo'] = $_POST['inputNombreCompleto'];
+    $_SESSION['avatar'] = $usuario['avatar'];
+
+    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion));
     echo "<script type='text/javascript'>alertify.success('Cambios guardados con éxito');</script>";
 })->name('cambiarAvatar');
 
@@ -211,4 +218,11 @@ function nCarreras($id, $estado) {
     return ORM::for_table('piloto_carrera')->
     where('piloto_id', $id)->
     where('estado', $estado)->count();
+}
+
+function editarPerfil($nombre_completo, $visibilidad) {
+    $usuario = ORM::for_table('piloto')->find_one($_SESSION['id']);
+    $usuario->nombre_completo = $nombre_completo;
+    $usuario->privacidad_perfil = $visibilidad;
+    $usuario->save();
 }
