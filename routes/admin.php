@@ -369,6 +369,42 @@ $app->post('/noticias/lista', function() use ($app) {
     }
 })->name('crearNoticia');
 
+$app->get('/noticias/editar/:idNoticia', function($idNoticia) use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        $noticia = cargarNoticia($idNoticia);
+        $app->render('editarNoticia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticia' => $noticia));
+    }
+})->name('editarNoticia');
+
+$app->post('/noticias/editar', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        editarNoticia($_POST['idNoticia'], $_POST['inputTitulo'], $_POST['inputTexto'], $_POST['inputRango'], $_POST['inputEstado']);
+        $app->Redirect('/noticias/lista');
+    }
+})->name('editarNoticiaPost');
+
+$app->post('/noticias/lista', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            if (isset($_POST['borralo'])) {
+                eliminarNoticia($_POST['co']);
+            } else {
+                echo "<script type='text/javascript'>alertify.error('No tiene permiso para realizar esta acción');</script>";
+            }
+
+            $app->Redirect('/noticias/lista');
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('borrarNoticia');
+
 $app->get('/categorias/asignar/:idUser', function($idUser) use ($app) {
     $piloto = cargarUsuario($idUser);
     $categorias = cargarCategorias();
@@ -468,8 +504,6 @@ function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pag
 */
 function cargarUsuario($idUser) {
     return ORM::for_table('piloto')->
-    //join('piloto_categoria', array('piloto.id', '=', 'piloto_categoria.piloto_id'))->
-    //join('categoria', array('piloto_categoria.categoria_id', '=', 'categoria.id'))->
     select_many('piloto.id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol')->find_one($idUser);
 }
 
@@ -653,8 +687,23 @@ function crearNoticia($titulo, $texto, $rango, $estado, $usuarioID) {
     $noticia->fecha_publicacion = date("Y-n-d H:i:s");
     $noticia->rango_requerido = $rango;
     $noticia->estado = $estado;
-    $noticia->usuario_id = $usuarioID;
+    $noticia->usuario_id = $_SESSION['id'];
     $noticia->save();
+}
+
+function editarNoticia($idNoticia, $titulo, $texto, $rango, $estado) {
+    $noticia = ORM::for_table('noticia')->find_one($idNoticia);
+    $noticia->titulo = $titulo;
+    $noticia->texto = $texto;
+    $noticia->fecha_publicacion = date("Y-n-d H:i:s");
+    $noticia->rango_requerido = $rango;
+    $noticia->estado = $estado;
+    $noticia->save();
+}
+
+function eliminarNoticia($idNoticia) {
+    $borrar = ORM::for_Table('noticia')->find_one($idNoticia);
+    $borrar->delete();
 }
 
 /**

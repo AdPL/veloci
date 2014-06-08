@@ -131,7 +131,7 @@
 							</li>
 							<li class="{% block adminAsistencia %}{% endblock %}"><a href="{{ urlFor('controlAsistencia') }}">Asistencias</a></li>
 							<li><a href="#">Estadísticas</a></li>
-							<li><a href="{{ urlFor('listaNoticias') }}">Noticias</a></li>
+							<li {% block adminNoticias %}{% endblock %}><a href="{{ urlFor('listaNoticias') }}">Noticias</a></li>
 						</ul>
 						{% endblock %}
 					</div>
