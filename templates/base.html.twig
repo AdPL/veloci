@@ -381,7 +381,7 @@ ts3v_display.init(ts3v_url_1, 1005719, 100);
 		<div class="modal-body">
 			<div class="form-group" id="pepito">
 				<label for="inputUsuario">Nombre de usuario</label>
-				<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Usuario" title="Introduzca su nombre de usuario" autocomplete="off" required>
+				<input type="text" class="form-control" id="inputUsuario" name="inputUsuario" placeholder="Usuario" title="Introduzca su nombre de usuario" autocomplete="off" value="{{ nombreGuardado }}" required>
 				<div id="pepe"></div>
 			</div>
 			<div class="form-group">
@@ -389,12 +389,12 @@ ts3v_display.init(ts3v_url_1, 1005719, 100);
 				<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Contraseña del usuario" title="Introduzca su contraseña" required>
 			</div>
 			<div class="form-group">
-				<label><input type="checkbox"/> Recordarme</label>
+				<label><input id="recordar" name="recordar" type="checkbox"/> Recordarme</label>
 			</div>
 		</div>
 		<div class="modal-footer">
       		<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-        	<button type="submit" class="btn btn-success" name="login">Login</button>
+        	<button type="submit" class="btn btn-success" onclick="guardarCookie()" name="login">Login</button>
       	</div>
 		</form>
     </div>
