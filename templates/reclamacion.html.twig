@@ -67,7 +67,7 @@
 		</div>
 	{% endfor %}
 
-	{% if reclamaciones['abierto'] == 0 %}
+	{% if abierto == 1 %}
 		<hr>
 		<h2>Responder a la reclamación</h2>
 		<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}">
@@ -86,10 +86,10 @@
 		<hr>
 		{% if rol == 2 %}
 		<h2>Panel de la FIA <small>Resolución de la incidencia</small></h2>
-		<form role="form" methos="post" action="#">
-			<input type="hidden" name="inputID" value="{{ idReclamacion }}">
+		<form role="form" id="v" method="post" action="{{ urlFor('sancionarReclamacion', {'idReclamacion': idReclamacion}) }}">
+			<input type="hidden" name="cReclamacion" value="{{ idReclamacion }}">
 			<div class="form-group">
-			<select class="form-control" id="inputPiloto" name="inputPiloto[]" required>
+			<select class="form-control" id="inputPiloto" name="inputPiloto" required>
 				{% for pilotoR in pilotosR %}
 					<option value="{{ pilotoR['id'] }}">{{ pilotoR['nombre_completo'] }}</option>
 				{% endfor %}
@@ -99,11 +99,18 @@
 				<label for="inputSancion">Sanción para el piloto</label>
 				<input type="text" name="inputSancion" id="inputSancion" class="form-control" placeholder="En caso de recibir sanción, indicar la sanción en este campo">
 			</div>
-			<a href="#" class="btn btn-success">No sancionar</a>
-			<a href="#" class="btn btn-danger">Sanción</a>
-			<a href="#" class="btn btn-info">Cerrar reclamación</a>
+			<input type="button" class="btn btn-success" onclick="cambiarRuta('{{ urlFor('noSancionarReclamacion', {'idReclamacion' : idReclamacion}) }}');" value="No sancionar">
+			<input type="submit" class="btn btn-danger" value="Sancionar">
+		</form>
+		<form method="post" class="pull-right" action="{{ urlFor('cerrarReclamacion', {'idReclamacion': idReclamacion}) }}">
+			<input type="hidden" name="cReclamacion" value="{{ idReclamacion }}">
+			<input type="submit" class="btn btn-info" value="Cerrar reclamación">
 		</form>
 		{% endif %}
+	{% else %}
+		<div class="alert alert-info">
+			Esta reclamación ya ha sido cerrada, no se permiten nuevos comentarios ni agregación de recursos
+		</div>
 	{% endif %}
 	</div>
 	</div>

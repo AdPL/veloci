@@ -177,14 +177,69 @@ $app->get('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 	$pilotosR = pilotosReclamados($idReclamacion);
 	$reclamaciones = cargarReclamacionesRecientes();
 	$sancionados = cargarSancionados($idReclamacion);
+	$abierto = incidenteAbierto($idReclamacion);
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	} else {
-		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'sancionados' => $sancionados, 'configuracion' => $configuracion));
+		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'sancionados' => $sancionados, 'idReclamacion' => $idReclamacion, 'abierto' => $abierto['abierto'], 'configuracion' => $configuracion));
 	}
 })->name('reclamacion');
+
+$app->post('/reclamacion/s:idReclamacion', function($idReclamacion) use ($app) {
+	sancionarReclamacion($_POST['inputPiloto'], $_POST['cReclamacion'], $_POST['inputSancion']);
+	$configuracion = datosApp();
+	$carrera = cargarCarrera();
+	$comentarios = cargarReclamacion($idReclamacion);
+	$pilotosR = pilotosReclamados($idReclamacion);
+	$reclamaciones = cargarReclamacionesRecientes();
+	$sancionados = cargarSancionados($idReclamacion);
+	$abierto = incidenteAbierto($idReclamacion);
+
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
+		$carreras = cargarCarrerasReclamacion();
+		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
+	} else {
+		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'sancionados' => $sancionados, 'idReclamacion' => $idReclamacion, 'abierto' => $abierto['abierto'], 'configuracion' => $configuracion));
+	}
+})->name('sancionarReclamacion');
+
+$app->post('/reclamacion/ns:idReclamacion', function($idReclamacion) use ($app) {
+	noSancionarReclamacion($_POST['inputPiloto'], $_POST['cReclamacion']);
+	$configuracion = datosApp();
+	$carrera = cargarCarrera();
+	$comentarios = cargarReclamacion($idReclamacion);
+	$pilotosR = pilotosReclamados($idReclamacion);
+	$reclamaciones = cargarReclamacionesRecientes();
+	$sancionados = cargarSancionados($idReclamacion);
+	$abierto = incidenteAbierto($idReclamacion);
+
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
+		$carreras = cargarCarrerasReclamacion();
+		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
+	} else {
+		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'sancionados' => $sancionados, 'idReclamacion' => $idReclamacion, 'abierto' => $abierto['abierto'], 'configuracion' => $configuracion));
+	}
+})->name('noSancionarReclamacion');
+
+$app->post('/reclamacion/c:idReclamacion', function($idReclamacion) use ($app) {
+	cerrarReclamacion($_POST['cReclamacion']);
+	$configuracion = datosApp();
+	$carrera = cargarCarrera();
+	$comentarios = cargarReclamacion($idReclamacion);
+	$pilotosR = pilotosReclamados($idReclamacion);
+	$reclamaciones = cargarReclamacionesRecientes();
+	$sancionados = cargarSancionados($idReclamacion);
+	$abierto = incidenteAbierto($idReclamacion);
+
+	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
+		$carreras = cargarCarrerasReclamacion();
+		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
+	} else {
+		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'sancionados' => $sancionados, 'idReclamacion' => $idReclamacion, 'configuracion' => $configuracion));
+	}
+})->name('cerrarReclamacion');
 
 $app->post('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 	$configuracion = datosApp();
@@ -491,6 +546,7 @@ function pilotosReclamados($idReclamacion) {
 	join('piloto_incidente', array('piloto.id', '=', 'piloto_incidente.piloto_id'))->
 	where('piloto_incidente.reclama', '0')->
 	where('piloto_incidente.incidente_id', $idReclamacion)->
+	select_many('piloto.id', 'piloto.avatar', 'piloto.nombre_completo', 'piloto_incidente.reclama', 'piloto_incidente.sancion', 'piloto_incidente.nota')->
 	find_many();
 }
 
@@ -558,4 +614,35 @@ function numeroComentarios($idNoticia) {
 */
 function cargarUsuariosReclamar() {
 	return ORM::for_table('piloto')->where('puede_reclamarse', '1')->find_many();
+}
+
+function cerrarReclamacion($idReclamacion) {
+	$cerrar = ORM::for_table('incidente')->find_one($idReclamacion);
+	$cerrar->abierto = 0;
+	$cerrar->save();
+}
+
+function sancionarReclamacion($idPiloto, $idReclamacion, $comentario) {
+	$s = ORM::for_table('piloto_incidente')->
+	where('piloto_id', $idPiloto)->
+	where('incidente_id', $idReclamacion)->
+	find_one();
+
+	$s->sancion = 1;
+	$s->nota = $comentario;
+	$s->save();
+}
+
+function noSancionarReclamacion($idPiloto, $idReclamacion) {
+	$sancion = ORM::for_table('piloto_incidente')->
+	where('piloto_id', $idPiloto)->
+	where('incidente_id', $idReclamacion)->
+	find_one();
+
+	$sancion->sancion = 2;
+	$sancion->save();
+}
+
+function incidenteAbierto($idReclamacion) {
+	return ORM::for_table('incidente')->select('abierto')->find_one($idReclamacion);
 }
