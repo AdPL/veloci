@@ -28,19 +28,32 @@
     {% if alert %}
     	<div class="alert alert-danger">{{ alert }}</div>
     {% endif %}
-    	<div class="alert alert-info">
-    		<h3>Pilotos bajo investigación:</h3>
-    		{% for pilotoR in pilotosR %}
-    			{% if pilotoR['sancion'] == 0 %}
-    				<div class="alert alert-warning">{{ pilotoR['nombre_completo'] }}: Este piloto todavía se encuentra bajo investigación</div>
-    			{% elseif pilotoR['sancion'] == 1  %}
-    				<div class="alert alert-danger">{{ pilotoR['nombre_completo'] }} ha sido sancionado con: {{ pilotoR['nota'] }}</div>
-    			{% else %}
-    				<div class="alert alert-success">{{ pilotoR['nombre_completo'] }} no sufre sanción</div>
-    			{% endif %}
-    		{% endfor %}
-    	</div>
-    
+    <h3>Pilotos bajo investigación</h3>
+    <div class="row">
+		{% for pilotoR in pilotosR %}
+			<div class="panel panel-default col-lg-4">
+				<div class="panel-body">
+				{% if pilotoR['sancion'] == 0 %}
+					<img src="/{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<span class="pull-right">{{ pilotoR['nombre_completo'] }}</span><hr>
+					<p>Este piloto todavía se encuentra bajo investigación</p>
+				{% elseif pilotoR['sancion'] == 1  %}
+					<img src="/{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<span class="pull-right">{{ pilotoR['nombre_completo'] }}</span><hr>
+					<div class="alert alert-danger">
+						<p>{{ pilotoR['nota'] }}</p>
+					</div>
+				{% else %}
+					<img src="/{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<span class="pull-right">{{ pilotoR['nombre_completo'] }}</span><hr>
+					<div class="alert alert-success">
+						<p>No sufre sanción</p>
+					</div>
+				{% endif %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
 	{% for comentario in comentarios %}
 		<div class="panel panel-default">
 			<div class="panel-body">
