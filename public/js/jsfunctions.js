@@ -160,3 +160,18 @@ function cancelaRespuesta() {
 	document.getElementById('tcomentarios').innerHTML = "<i class='fa fa-comment fa-3x'></i> Nuevo comentario</h4>";
 	document.getElementById('responde').value = 0;
 }
+
+function cambiarRuta(ruta) {
+	var formulario = document.getElementById('v');
+	formulario.action = ruta;
+	formulario.submit();
+}
+
+function editarAsistencia(boton, piloto, carrera) {
+	boton.parentNode.innerHTML = "<select name=" + piloto + "-" + carrera + ">" +
+	"<option value='0'>Selección</option>" +
+	"<option value='1'>Asiste</option>" +
+	"<option value='2'>Justifica falta</option>" +
+	"<option value='3'>Falta sin justificar</option>" +
+	"<option value='4'>Sanción</option></select>";
+}

@@ -846,11 +846,21 @@ function crearCircuito($app, $nombre, $pais, $distancia) {
 */
 function controlAsistencia($piloto_id, $carrera_id, $estado) {
     if ($estado != 0) {
-        $asistencia = ORM::for_table('piloto_carrera')->create();
-        $asistencia->id = null;
-        $asistencia->piloto_id = $piloto_id;
-        $asistencia->carrera_id = $carrera_id;
-        $asistencia->estado = $estado;
+        $asistencia = ORM::for_table('piloto_carrera')->
+        where('piloto_id', $piloto_id)->
+        where('carrera_id', $carrera_id)->
+        find_one();
+
+        if ($asistencia) {
+            $asistencia->estado = $estado;
+        } else {
+            $asistencia = ORM::for_table('piloto_carrera')->create();
+            $asistencia->id = null;
+            $asistencia->piloto_id = $piloto_id;
+            $asistencia->carrera_id = $carrera_id;
+            $asistencia->estado = $estado;
+        }
+
         $asistencia->save();
     }
 }

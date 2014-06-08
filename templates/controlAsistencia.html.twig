@@ -16,16 +16,6 @@
 
 {% extends "admbase.html.twig" %}
 
-{% block head %}
-<style type="text/css">
-	.img-circle {
-		height: 100px;
-		width: 100px;
-		margin: 0 auto;
-	}
-</style>
-{% endblock %}
-
 {% block adminAsistencia %}
 active
 {% endblock %}
@@ -52,16 +42,16 @@ active
 								{% if carrera['id'] == estado['carrera_id'] %}
 									{% if  piloto['id'] == estado['piloto_id'] %}
 										{% if estado['estado'] == 1 %}
-											Asiste
+											<button type="button" class="btn btn-link btn-xs" onclick="editarAsistencia(this, '{{ piloto['id'] }}', '{{ carrera['id'] }}')">Asiste</button>
 											{% set test = true %}
 										{% elseif estado['estado'] == 2 %}
-											Justifica falta
+											<button type="button" class="btn btn-link btn-xs" onclick="editarAsistencia(this, '{{ piloto['id'] }}', '{{ carrera['id'] }}')">Justifica falta</button>
 											{% set test = true %}
 										{% elseif estado['estado'] == 3 %}
-											Falta sin justificar
+											<button type="button" class="btn btn-link btn-xs" onclick="editarAsistencia(this, '{{ piloto['id'] }}', '{{ carrera['id'] }}')">Falta sin justificar</button>
 											{% set test = true %}
 										{% elseif estado['estado'] == 4 %}
-											Sanción
+											<button type="button" class="btn btn-link btn-xs" onclick="editarAsistencia(this, '{{ piloto['id'] }}', '{{ carrera['id'] }}')">Sanción</button>
 											{% set test = true %}
 										{% else %}
 											{% if test == false %}
