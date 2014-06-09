@@ -63,14 +63,23 @@
 					<img src="/{{ comentario['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
 				</span><hr style="clear: both;">
 				{{ comentario['comentario'] }}
+				<hr>
 			</div>
 		</div>
 	{% endfor %}
+		<div class="panel panel-default">
+			<h2>Recursos</h2>
+			<div class="panel-body">
+			{% for recurso in recursos %}
+				<img src="/{{ recurso['imagen'] }}" class="recurso" alt="recurso"/>
+			{% endfor %}
+			</div>
+		</div>
 
 	{% if abierto == 1 %}
 		<hr>
 		<h2>Responder a la reclamación</h2>
-		<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}">
+		<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}" enctype="multipart/form-data">
 		<input type="hidden" name="inputID" value="{{ idReclamacion }}">
 			<div class="form-group">
 				<label for="inputTitulo">Título</label>
@@ -79,6 +88,10 @@
 			<div class="form-group">
 				<label for="inputComentario">Comentario</label>
 				<textarea class="form-control" rows="3" name="inputComentario" id="inputComentario" rows="3"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="inputRecurso">Agregar recurso</label>
+				<input type="file" name="inputRecurso" id="inputFoto">
 			</div>
 			<input type="submit" value="Enviar" class="btn btn-success">
 			<a href="{{ urlFor('reclamaciones') }}" class="btn btn-danger">Volver</a>

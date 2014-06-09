@@ -186,12 +186,13 @@ $app->get('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 	$reclamaciones = cargarReclamacionesRecientes();
 	$sancionados = cargarSancionados($idReclamacion);
 	$abierto = incidenteAbierto($idReclamacion);
+	$recursos = cargarRecursos($idReclamacion);
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	} else {
-		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'sancionados' => $sancionados, 'idReclamacion' => $idReclamacion, 'abierto' => $abierto['abierto'], 'configuracion' => $configuracion));
+		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'sancionados' => $sancionados, 'idReclamacion' => $idReclamacion, 'abierto' => $abierto['abierto'], 'recursos' => $recursos, 'configuracion' => $configuracion));
 	}
 })->name('reclamacion');
 
@@ -252,6 +253,7 @@ $app->post('/reclamacion/c:idReclamacion', function($idReclamacion) use ($app) {
 $app->post('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 	$configuracion = datosApp();
 	crearComentario($app, $_POST['inputTitulo'], $_POST['inputComentario'], $_POST['inputID']);
+	agregarRecurso($_FILES['inputRecurso'], $idReclamacion);
 	$carrera = cargarCarrera();
 	$comentarios = cargarReclamacion($idReclamacion);
 	$pilotosR = pilotosReclamados($idReclamacion);
@@ -653,4 +655,44 @@ function noSancionarReclamacion($idPiloto, $idReclamacion) {
 
 function incidenteAbierto($idReclamacion) {
 	return ORM::for_table('incidente')->select('abierto')->find_one($idReclamacion);
+}
+
+function agregarRecurso($imagen, $idReclamacion) {
+	$maximo = ORM::for_table('recurso')->MAX('id');
+	$maximo++;
+    if ($_FILES['inputRecurso']['error'] > 0) {
+        //echo "error";
+    } else {
+        $ok = array("image/jpg", "image/jpeg", "image/gif", "image/png");
+        $limite_kb = 100;
+        
+        $ext = imgExt($_FILES['inputRecurso']['name']);
+
+        if (in_array($_FILES['inputRecurso']['type'], $ok) && $_FILES['inputRecurso']['size'] <= $limite_kb * 1024) {
+            $ruta = "images/recursos/" . $maximo . $ext;
+            
+                $resultado = @move_uploaded_file($_FILES['inputRecurso']['tmp_name'], $ruta);
+                if ($resultado) {
+                    $recurso = ORM::for_table('recurso')->create();
+                    $recurso->id = null;
+                    $recurso->descripcion = "texto";
+                    $recurso->imagen = $ruta;
+                    $recurso->reclamacion_id = $idReclamacion;
+                    $recurso->save();
+                } else {
+                    //echo "ERROR";
+                }
+        } else {
+            //echo "Archivo no permitido";
+        }
+    }
+}
+
+function imgExt($cadena) {
+    $pos = stripos($cadena, '.');
+    return substr($_FILES['inputRecurso']['name'], $pos);
+}
+
+function cargarRecursos($idReclamacion) {
+	return ORM::for_table('recurso')->where('reclamacion_id', $idReclamacion)->find_many();
 }
