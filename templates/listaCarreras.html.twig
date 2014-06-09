@@ -16,16 +16,6 @@
 
 {% extends "admbase.html.twig" %}
 
-{% block head %}
-<style type="text/css">
-	.img-circle {
-		height: 100px;
-		width: 100px;
-		margin: 0 auto;
-	}
-</style>
-{% endblock %}
-
 {% block adminCarreras %}
 active
 {% endblock %}
@@ -33,8 +23,16 @@ active
 {% block content %}
 <div class="col-lg-9">
 	<div class="panel panel-default">
+		<div class="panel panel-body pull-right">
+			<form method="post" action="{{ urlFor('borrarCarrera') }}">
+				<a class="btn btn-info btn-action" onclick="seleccionado('{{ urlFor('editarCarrera') }}', 'rCarrera')">Editar</a>
+				<input type="hidden" id="co" name="co">
+				<button type="submit" name="borralo" class="btn btn-danger btn-action">Eliminar</button>
+			</form>
+		</div>
 		<table class="table table-striped">
 			<thead>
+				<th>Seleccionar</th>
 				<th>Nombre</th>
 				<th>Primer compuesto</th>
 				<th>Segundo compuesto</th>
@@ -46,15 +44,14 @@ active
 			<tbody>
 				{% for carrera in carreras %}
 				<tr>
+					<td><input type="radio" class="rCarrera" name="rCarrera" value="{{ carrera['id'] }}" onclick="seleccion(this)"></td>
 					<td>{{ carrera['nombre'] }}</td>
 					<td>{{ carrera['neumatico1'] }}</td>
 					<td>{{ carrera['neumatico2'] }}</td>
 					<td>{{ carrera['vueltas'] }}</td>
 					<td>{{ carrera['fecha'] }} | {{ carrera['hora'] }}</td>
-					<td>{{ carrera['categoria_id'] }}</td>
-					<td>{{ carrera['circuito_id'] }}</td>
-					<td><a href="{{ urlFor('editarCategoria', {'idCat': categoria.id}) }}" class="btn btn-info">Editar</a></td>
-					<td><form method="post" action="{{ urlFor('editarCarreraPost') }}"><input type="text" name="id" value="{{ carrera['id'] }}" hidden><button type="submit" class="btn btn-danger">Eliminar</button></form></td>
+					<td>{% if carrera['categoria_id'] == null %}No asignada{% else %}{{ carrera['categoria_id'] }}{% endif %}</td>
+					<td>{% if carrera['circuito_id'] == null or carrera['circuito_id'] == 0 %}No asignado{% else %}{{ carrera['circuito_id'] }}{% endif %}</td>
 				</tr>
 				{% else %}
 				<tr><td>No se han encontrado categorías</td></tr>
