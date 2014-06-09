@@ -111,3 +111,8 @@
 	width: 100px;
 	margin: 0 auto;
 }
+
+.recurso {
+	max-height: 20%;
+	max-width: 20%;
+}
