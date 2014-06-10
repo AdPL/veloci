@@ -120,6 +120,11 @@ function compruebaNombre(campo) {
     request.done(function(response, textStatus, jqXHR)
     {
         document.getElementById(campo.name).className = response;
+        if (response == "form-group has-error") {
+        	document.getElementById('errorUsuario').innerHTML = "Nombre de usuario ya registrado.";
+        } else {
+        	document.getElementById('errorUsuario').innerHTML = "";
+        };
     });
 }
 
@@ -174,4 +179,73 @@ function editarAsistencia(boton, piloto, carrera) {
 	"<option value='2'>Justifica falta</option>" +
 	"<option value='3'>Falta sin justificar</option>" +
 	"<option value='4'>Sanción</option></select>";
+}
+
+function validarFormulario(myform) {
+	var elementos = myform.elements.length;
+	for (var i = 0; i <= elementos; i++) {
+		console.log(myform.elements[i]);
+	};
+
+	return false;
+}
+
+function validar(campo, c_error, error, tipo) {
+	var ayuda = document.getElementById(c_error);
+
+	switch(tipo) {
+		case 1: // Nombre de usuario 4 caracteres o más
+			if (campo.value.length <= 3) {
+				document.getElementById('inputUsuario').className = "form-group has-error";
+				ayuda.innerHTML = error;
+			} else {
+				document.getElementById('inputUsuario').className = "form-group has-success";
+			};
+		break;
+
+		case 2: // Que las 2 contraseñas se correspondan en el formulario y cumplan el patrón
+			if (campo.value.length <= 5) {
+				document.getElementById('inputPassword1').className = "form-group has-error";
+				ayuda.innerHTML = error;
+			} else {
+				document.getElementById('inputPassword1').className = "form-group has-success";
+				ayuda.innerHTML = "";
+			};
+		break;
+
+		case 3: // Comprobación de que el campo2 de contraseña coincide con el primero
+			var pass1 = document.getElementById('pass1').value;
+			console.log(campo.value + " = " + pass1);
+			if (campo.value == pass1) {
+				document.getElementById('inputPassword2').className = "form-group has-success";
+				ayuda.innerHTML = "Las contraseñas coinciden";
+			} else {
+				document.getElementById('inputPassword2').className = "form-group has-error";
+				ayuda.innerHTML = error;
+			};
+		break;
+	}
+
+	return false;
+}
+
+function soloTexto(campo) {
+	var patron = /[A-z]10/;
+	if( campo.value.match(patron) ) {
+		alert("bien");
+  		return false;
+	}
+}
+
+function soloTexto(e) {
+	tecla = (document.all) ? e.keyCode : e.which; 
+	if (tecla == 8) return true;
+    if (e.ctrlKey && tecla == 86) { return true;}
+    if (e.ctrlKey && tecla == 67) { return true;}
+    if (e.ctrlKey && tecla == 88) { return true;}
+
+    patron = /[a-zA-Z]/; //patron
+
+    te = String.fromCharCode(tecla); 
+    return patron.test(te);
 }

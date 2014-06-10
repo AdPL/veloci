@@ -37,12 +37,30 @@ $app->get('/registro', function() use ($app) {
 })->name('registro');
 
 $app->post('/registro', function() use ($app) {
-    if(registrarUsuario($app, $_POST['inputUsuario'], $_POST['inputEmail'], $_POST['inputPassword'], $_POST['inputPassword2'], $_POST['inputNombreCompleto'])) {
-        // MENSAJE DE REGISTRO CORRECTO
+    $configuracion = datosApp();
+    $carrera = cargarCarrera();
+    $noticias = cargarNoticiasPaginacion(4,0);
+    $nNoticias = cargarNnoticias(4);
+    $categorias = cargarCategorias();
+    $reclamaciones = cargarReclamacionesRecientes();
+
+    if(!isset($_SESSION['id'])) {
+        if (isset($_COOKIE['nombre'])) {
+            $nombreGuardado = $_COOKIE['nombre'];
+            $app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'nombreGuardado' => $nombreGuardado, 'configuracion' => $configuracion));
+        } else {
+            $app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
+        }
     } else {
-        // MENSAJE DE REGISTRO INCORRECTO
+        $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
     }
-    $app->render('principal.html.twig', array('alertLogin' => 'Registro completado con éxito'));
+    
+    if(registrarUsuario($app, $_POST['inputUsuario'], $_POST['inputEmail'], $_POST['inputPassword'], $_POST['inputPassword2'], $_POST['inputNombreCompleto'])) {
+        echo "<script>alertify.alert('Registro completado con éxito, ahora puede acceder a su cuenta.');</script>";    
+    } else {
+        echo "<script>alertify.alert('Ocurrio un error durante el registro, por favor intentelo de nuevo.');</script>";
+    }
+    
 })->name('registroUsuario');
 
 $app->get('/perfil', function() use ($app) {
