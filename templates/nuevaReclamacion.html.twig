@@ -31,7 +31,7 @@
 	<div class="row">
       <div class="col-xs-12">
         <h1>Nueva reclamación <small>Formulario de reclamación de incidente</small></h1>
-        <h4>Reclamación para la carrera {{ carrera['nombre'] }} de la categoría {{ categoria['nombre'] }}</h4>
+        <h4>Reclamación para la datosCarrera {{ datosCarrera['nombre'] }} de la categoría {{ categoria['nombre'] }}</h4>
         <form method="post" action="{{ urlFor('crearReclamacion') }}" role="form">
 			<input type="hidden" name="inputIdUsuario" value="{{ id }}">
         	<input type="hidden" name="inputIdCarrera" value="{{ idRace }}">
@@ -52,7 +52,7 @@
 				<label for="inputVuelta">Vuelta</label>
 				<select class="form-control" id="inputVuelta" name="inputVuelta" required>
 					<option value="0">Vuelta en la que se produjo el accidente</option>
-					{% for i in 1..carrera['vueltas'] %}
+					{% for i in 1..datosCarrera['vueltas'] %}
 						<option value="{{ i }}">{{ i }}</option>
 					{% endfor %}
 				</select>

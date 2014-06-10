@@ -52,8 +52,11 @@
 				        				{{ comentario['nombre_completo'] }} <span class="pull-right">{{ comentario['fecha'] }}</span><hr>
 				        				{{ comentario['comentario'] }}<hr>
 				        				{% if comentario['usuario_id'] == id %}
-				        					<a class="btn btn-danger btn-sm pull-right" 
-				        					onclick="responder({{ comentario['id'] }}, '{{ comentario['nombre_completo'] }}')">Eliminar comentario</a>
+				        					<form method="post" action="{{ urlFor('borrarComentario', {idNoticia: noticia['id']}) }}">
+				        						<input type="hidden" name="no" value="{{ noticia['id'] }}">
+				        						<input type="hidden" name="co" value="{{ comentario['id'] }}">
+					        					<input type="submit" class="btn btn-danger btn-sm pull-right" value="Eliminar comentario">
+					        				</form>
 				        				{% else %}
 				        					<a href="#comment" class="btn btn-info btn-sm pull-right" 
 					        				onclick="responder({{ comentario['id'] }}, '{{ comentario['nombre_completo'] }}')">Responder</a>
@@ -63,9 +66,9 @@
 				        	{% endfor %}
 				        	<a name="comment"></a>
 				        	<hr>
-				        	<h4 id="tcomentarios" class="tcomentarios"><i class="fa fa-comment fa-3x"></i> Nuevo comentario</h4>
 				        	{% if id %}
-				        		<form method="post" action="{{ noticia['id'] }}">
+				        	<h4 id="tcomentarios" class="tcomentarios"><i class="fa fa-comment fa-3x"></i> Nuevo comentario</h4>
+				        		<form method="post" action="{{ urlFor('comentar', {idNoticia: noticia['id']}) }}">
 				        			<input type="hidden" name="inputNoticia" value="{{ noticia['id'] }}">
 				        			<input type="hidden" id="responde" name="inputResponde" value="0">
 				        			<div class="form-group">

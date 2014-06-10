@@ -652,7 +652,7 @@ function cargarNoticias() {
 function cargarNoticiasPaginacion($nNoticias = 5, $pagina = 0) {
     return ORM::for_Table('noticia')->
     join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
-    select_many('noticia.id', 'titulo', 'texto', 'fecha_publicacion', 'rango_requerido', 'estado', 'piloto.nombre_completo')->
+    select_many('noticia.id', 'titulo', 'texto', 'fecha_publicacion', 'rango_requerido', 'estado', 'piloto.nombre_completo', 'n_comentarios')->
     order_by_desc('fecha_publicacion')->limit($nNoticias)->offset($pagina * $nNoticias)->find_many();
 }
 
