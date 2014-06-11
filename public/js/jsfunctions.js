@@ -181,17 +181,18 @@ function editarAsistencia(boton, piloto, carrera) {
 	"<option value='4'>Sanción</option></select>";
 }
 
-function validarFormulario(myform) {
+function validarRegistro(myform) {
 	var elementos = myform.elements.length;
-	for (var i = 0; i <= elementos; i++) {
-		console.log(myform.elements[i]);
-	};
+	error = validar(myform.elements[0], 'errorUsuario', 'El nombre de usuario debe tener 4 caracteres o más', 1) ? false : true;
+
+	console.log(error);
 
 	return false;
 }
 
 function validar(campo, c_error, error, tipo) {
 	var ayuda = document.getElementById(c_error);
+	var rerror = true;
 
 	switch(tipo) {
 		case 1: // Nombre de usuario 4 caracteres o más
@@ -200,6 +201,7 @@ function validar(campo, c_error, error, tipo) {
 				ayuda.innerHTML = error;
 			} else {
 				document.getElementById('inputUsuario').className = "form-group has-success";
+				rerror = false;
 			};
 		break;
 
@@ -210,6 +212,7 @@ function validar(campo, c_error, error, tipo) {
 			} else {
 				document.getElementById('inputPassword1').className = "form-group has-success";
 				ayuda.innerHTML = "";
+				rerror = false;
 			};
 		break;
 
@@ -219,14 +222,39 @@ function validar(campo, c_error, error, tipo) {
 			if (campo.value == pass1) {
 				document.getElementById('inputPassword2').className = "form-group has-success";
 				ayuda.innerHTML = "Las contraseñas coinciden";
+				rerror = false;
 			} else {
 				document.getElementById('inputPassword2').className = "form-group has-error";
 				ayuda.innerHTML = error;
 			};
 		break;
+
+		case 4: // Comprobación de que el nombre es Nombre + Apellido
+			var patron = /^[a-zA-Z]$/;
+			if (patron.test(campo.value)) {
+				document.getElementById('inputNombreCompleto').className = "form-group has-success";
+				ayuda.innerHTML = "";
+				rerror = false;
+			} else {
+				document.getElementById('inputNombreCompleto').className = "form-group has-error";
+				ayuda.innerHTML = error;
+			};
+		break;
+
+		case 5: // Comprobación de email
+			var patron = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;;
+			if (patron.test(campo.value)) {
+				document.getElementById('inputEmail').className = "form-group has-success";
+				ayuda.innerHTML = "";
+				rerror = false;
+			} else {
+				document.getElementById('inputEmail').className = "form-group has-error";
+				ayuda.innerHTML = error;
+			};
+		break;
 	}
 
-	return false;
+	return rerror;
 }
 
 function soloTexto(campo) {

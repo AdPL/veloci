@@ -298,15 +298,25 @@ $app->post('/noticia/:idNoticia', function($idNoticia) use ($app) {
 	$noticias = cargarNoticias();
 	$noticia = cargarNoticia($idNoticia);
 	$carrera = cargarCarrera();
-	enviarComentario($_POST['inputComentario'], $_POST['inputResponde'], $_SESSION['id'], $_POST['inputNoticia']);
-	$comentarios = cargarComentarios($idNoticia);
-	$nComentarios = numeroComentarios($idNoticia);
-	contarComentarios($idNoticia);
 
-	if(!isset($_SESSION['id'])) {
-		$app->render('noticia.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
-	} else {
+	if(isset($_SESSION['id'])) {
+		if(isset($_POST['nuevoComentario'])) {
+			enviarComentario($_POST['inputComentario'], $_POST['inputResponde'], $_SESSION['id'], $_POST['inputNoticia']);
+			$comentarios = cargarComentarios($idNoticia);
+			$nComentarios = numeroComentarios($idNoticia);
+			contarComentarios($idNoticia);
+		} else {
+			$comentarios = cargarComentarios($idNoticia);
+			$nComentarios = numeroComentarios($idNoticia);
+		}
+
 		$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
+		echo "<script>alertify.alert('No estoy seguro, pero creo que estas intentado hacer cosas malas...');</script>";
+	} else {
+		$comentarios = cargarComentarios($idNoticia);
+		$nComentarios = numeroComentarios($idNoticia);
+		$app->render('noticia.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
+		echo "<script>alertify.alert('No estoy seguro, pero creo que estas intentado hacer cosas malas...');</script>";
 	}
 })->name('comentar');
 

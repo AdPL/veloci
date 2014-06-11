@@ -20,6 +20,7 @@
 	<title>Proyecto</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/x-icon" href="http://i40.servimg.com/u/f40/12/30/65/21/logotr12.gif">
 	<link rel="stylesheet" href="/css/style.css" type="text/css">
 	<link rel="stylesheet" href="/css/bootstrap.css" type="text/css">
 	<link rel="stylesheet" href="/css/alertify.bootstrap.css" type="text/css">
@@ -328,7 +329,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title" id="myModalLabel">Registro de usuario</h4>
       </div>
-      <form method="post" onsubmit="return validarFormulario(this)" action="{{ urlFor('registroUsuario') }}" role="form">
+      <form method="post" onsubmit="return validarRegistro(this)" action="{{ urlFor('registroUsuario') }}" role="form">
       <div class="modal-body">
 			<div id="inputUsuario" class="form-group">
 				<label for="inputUsuario">Nombre de usuario</label>
@@ -346,12 +347,14 @@
 				<span id="errorPassword2" class="help-block"></span>
 			</div>
 			<div class="form-group" id="inputNombreCompleto">
-				<label for="inputNombreCompleto">Nombre completo</label>
-				<input type="text" class="form-control" name="inputNombreCompleto" placeholder="Nombre público, por ejemplo: Fernando Alonso (¡Nombre REAL!)" required>
+				<label for="inputNombreCompleto">Nombre y primer apellido</label>
+				<input type="text" class="form-control" name="inputNombreCompleto" placeholder="Nombre público, por ejemplo: Fernando Alonso (¡Nombre REAL!)" onblur="validar(this, 'errorNombreCompleto', 'A ver, te estoy diciendo que pongas Nombre y Apellido, ¿Tan difícil es?', 4)" required>
+				<span id="errorNombreCompleto" class="help-block"></span>
 			</div>
 			<div class="form-group" id="inputEmail">
 				<label for="inputEmail">Email</label>
-				<input type="text" class="form-control" name="inputEmail" placeholder="Email, necesario para confirmar la cuenta" required>
+				<input type="text" class="form-control" name="inputEmail" placeholder="Email, necesario para confirmar la cuenta" onblur="validar(this, 'errorEmail', 'Dirección de email no valida', 5)"required>
+				<span id="errorEmail" class="help-block"></span>
 			</div>
       </div>
       <div class="modal-footer">
