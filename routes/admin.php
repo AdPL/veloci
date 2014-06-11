@@ -484,7 +484,7 @@ $app->get('/configuracion', function() use ($app) {
 
 $app->post('/configuracion/guardar', function() use ($app) {
     actualizarConfiguracion($_POST['inputNombre'], $_POST['inputDescripcion'], $_POST['activacion'], $_POST['normativa'], $_POST['pago'],
-        $_POST['inputTeamspeak'], $_POST['inputTwitter'], $_POST['inputFacebook'], $_POST['inputYoutube'], $_POST['inputVimeo']);
+        $_POST['inputTeamspeak'], $_POST['inputTwitter'], $_POST['inputFacebook'], $_POST['inputYoutube'], $_POST['inputVimeo'], $_POST['permite'], $_POST['inputTema']);
 
     $configuracion = datosApp();
     
@@ -503,7 +503,7 @@ function datosApp() {
     return ORM::for_Table('configuracion')->find_one(1);
 }
 
-function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pago, $teamspeak, $twitter, $facebook, $youtube, $vimeo) {
+function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pago, $teamspeak, $twitter, $facebook, $youtube, $vimeo, $permite, $tema) {
     $datos = ORM::for_table('configuracion')->find_one(1);
     $datos->nombre = $titulo;
     $datos->descripcion = $slogan;
@@ -514,6 +514,13 @@ function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pag
     $datos->facebook = $facebook;
     $datos->youtube = $youtube;
     $datos->vimeo = $vimeo;
+    $datos->permite_plantillas = $permite;
+    if ($tema != "bootstrap") {
+        $datos->plantilla_defecto = $tema . "_bootstrap.css";
+    } else {
+        $datos->plantilla_defecto = "bootstrap.css";
+    }
+    
     $datos->save();
 }
 

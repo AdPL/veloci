@@ -92,6 +92,7 @@ $app->post('/perfil', function() use ($app) {
 })->name('cambiarAvatar');
 
 $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
+    $configuracion = datosApp();
     $usuario = datosUsuario($idUsuario);
     $competidas = nCarreras($idUsuario, 0);
     $justificadas = nCarreras($idUsuario, 2);
@@ -103,10 +104,10 @@ $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
         if($usuario['privacidad_perfil'] == 1) {
             $app->render('perfilUsuario.html.twig', array('user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado, 'configuracion' => $configuracion));
         } else {
-            $app->render('perfilUsuario.html.twig', array('user' => $usuario['nombre_completo'], 'alert' => "El perfil de este usuario es privado"));
+            $app->render('perfilUsuario.html.twig', array('user' => $usuario['nombre_completo'], 'alert' => "El perfil de este usuario es privado", 'configuracion' => $configuracion));
         }
     } else {
-        $app->render('perfilUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado));
+        $app->render('perfilUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado, 'configuracion' => $configuracion));
     }
 })->name('perfilUsuario');
 
