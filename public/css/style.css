@@ -25,6 +25,14 @@
 	margin-right: 3px;
 }
 
+#imgPerfilSuperior {
+	margin-left: 5px;
+	border-radius: 4px;
+	height: 20px;
+	width: 20px;
+	margin-right: 3px;
+}
+
 .img100 {
 	height: 100px;
 	width: 100px;
