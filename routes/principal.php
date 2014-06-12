@@ -17,6 +17,9 @@
 
 $app->get('/', function() use ($app) {
 	$configuracion = datosApp();
+	$notificacionesAdmin = notificacionesNoLeidas();
+	$notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
+	$nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
 	$carrera = cargarCarrera();
 	$noticias = cargarNoticiasPaginacion(4,0);
 	$nNoticias = cargarNnoticias(4);
@@ -25,13 +28,13 @@ $app->get('/', function() use ($app) {
 
 	if(!isset($_SESSION['id'])) {
 		if (isset($_COOKIE['nombre'])) {
-			$nombreGuardado = $_COOKIE['nombre'];
+			//$nombreGuardado = $_COOKIE['nombre'];
 			$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'nombreGuardado' => $nombreGuardado, 'configuracion' => $configuracion));
 		} else {
 			$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 		}
 	} else {
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion, 'notificacionesAdmin' => $notificacionesAdmin, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
 	}
 })->name('principal');
 
@@ -181,11 +184,14 @@ $app->post('/reclamacion', function() use ($app) {
 	$pilotos = cargarUsuarios();
 	$reclamaciones = cargarReclamacionesRecientes();
 
+	$enlace = $app->urlFor('reclamacion', array('idReclamacion' => $nIncidente));
+	creaNotificacion($enlace, 'abierto una nueva reclamación', $_SESSION['nombre_completo'], '5', '0', '0', '0');
+
 	if(isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
+		$app->redirect('/reclamacion/' . $nIncidente);
+	} else {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
-	} else {
-		$app->redirect('/reclamacion/' . $nIncidente);
 	}
 })->name('crearReclamacion');
 
@@ -216,6 +222,8 @@ $app->post('/reclamacion/s:idReclamacion', function($idReclamacion) use ($app) {
 	$reclamaciones = cargarReclamacionesRecientes();
 	$sancionados = cargarSancionados($idReclamacion);
 	$abierto = incidenteAbierto($idReclamacion);
+	$enlace = $app->urlFor('reclamacion', array('idReclamacion' => $idReclamacion));
+	creaNotificacion($enlace, 'sancionado a un piloto.', $_SESSION['nombre_completo'], '5', '0', '0', '0');
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
@@ -234,6 +242,8 @@ $app->post('/reclamacion/ns:idReclamacion', function($idReclamacion) use ($app) 
 	$reclamaciones = cargarReclamacionesRecientes();
 	$sancionados = cargarSancionados($idReclamacion);
 	$abierto = incidenteAbierto($idReclamacion);
+	$enlace = $app->urlFor('reclamacion', array('idReclamacion' => $idReclamacion));
+	creaNotificacion($enlace, 'ha decidido no sancionar a un piloto.', $_SESSION['nombre_completo'], '5', '0', '0', '0');
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
@@ -252,6 +262,8 @@ $app->post('/reclamacion/c:idReclamacion', function($idReclamacion) use ($app) {
 	$reclamaciones = cargarReclamacionesRecientes();
 	$sancionados = cargarSancionados($idReclamacion);
 	$abierto = incidenteAbierto($idReclamacion);
+	$enlace = $app->urlFor('reclamacion', array('idReclamacion' => $idReclamacion));
+	creaNotificacion($enlace, 'cerrado una reclamación.', $_SESSION['nombre_completo'], '5', '0', '0', '0');
 
 	if(!isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
@@ -269,6 +281,8 @@ $app->post('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 	$comentarios = cargarReclamacion($idReclamacion);
 	$pilotosR = pilotosReclamados($idReclamacion);
 	$reclamaciones = cargarReclamacionesRecientes();
+	$enlace = $app->urlFor('reclamacion', array('idReclamacion' => $idReclamacion));
+	creaNotificacion($enlace, 'agregado un nuevo comentario a una reclamación', $_SESSION['nombre_completo'], '5', '0', '0', '0');
 
 	if(isset($_SESSION['id']) || $_SESSION['rol'] <= 0) {
 		$carreras = cargarCarrerasReclamacion();
@@ -302,16 +316,18 @@ $app->post('/noticia/:idNoticia', function($idNoticia) use ($app) {
 	if(isset($_SESSION['id'])) {
 		if(isset($_POST['nuevoComentario'])) {
 			enviarComentario($_POST['inputComentario'], $_POST['inputResponde'], $_SESSION['id'], $_POST['inputNoticia']);
+			$enlace = $app->urlFor('comentar',  array('idNoticia' => $idNoticia));
+			creaNotificacion($enlace, 'publicado un nuevo comentario en la noticia', $_SESSION['nombre_completo'], '5', '0', '0', '0');
 			$comentarios = cargarComentarios($idNoticia);
 			$nComentarios = numeroComentarios($idNoticia);
 			contarComentarios($idNoticia);
+			$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
 		} else {
 			$comentarios = cargarComentarios($idNoticia);
 			$nComentarios = numeroComentarios($idNoticia);
+			$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
+			echo "<script>alertify.alert('No estoy seguro, pero creo que estas intentado hacer cosas malas...');</script>";
 		}
-
-		$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion));
-		echo "<script>alertify.alert('No estoy seguro, pero creo que estas intentado hacer cosas malas...');</script>";
 	} else {
 		$comentarios = cargarComentarios($idNoticia);
 		$nComentarios = numeroComentarios($idNoticia);
@@ -340,7 +356,6 @@ $app->post('/noticia/comentario/:idNoticia', function($idNoticia) use ($app) {
 		echo "<script>alertify.alert('No puede borrar un comentario que no es suyo.');</script>";
 	}
 })->name('borrarComentario');
-
 
 $app->get('/asistencias', function() use ($app) {
 	$carrera = cargarCarrera();
@@ -758,4 +773,31 @@ function eliminarComentario($idNoticia, $idComentario) {
 		$error = true;
 	}
 	return $error;
+}
+
+function creaNotificacion($enlace, $comentario, $nombre, $rango, $usuario_id, $leida) {
+	$notificacion = ORM::for_table('notificacion')->create();
+	$notificacion->id = null;
+	$notificacion->enlace = $enlace;
+	$notificacion->nota = $comentario;
+	$notificacion->usuario = $nombre;
+	$notificacion->fecha = date("Y-n-d H:i:s");
+	$notificacion->rango_requerido = $rango;
+	$notificacion->objetivo = $usuario_id;
+	$notificacion->leida = $leida;
+	$notificacion->save();
+}
+
+function nNotificacionesUsuario($idUsuario) {
+	return ORM::for_table('notificacion')->
+	where('objetivo', $idUsuario)->
+	where('leida', 0)->
+	count();
+}
+
+function notificacionesUsuario($idUsuario) {
+	return ORM::for_table('notificacion')->
+	where('objetivo', $idUsuario)->
+	where('leida', 0)->
+	find_many();
 }

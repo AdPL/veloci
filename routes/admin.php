@@ -28,9 +28,10 @@ $app->get('/admin', function() use ($app) {
             $categorias = cargarCategorias();
             $circuitos = cargarCircuitos();
             $carreras = cargarCarreras();
+            $notificacionesNoLeidas = notificacionesNoLeidas();
 
-            $app->render('admin.html.twig', array('usuarios' => $usuarios, 'id' => $_SESSION['id'], 'categorias' => $categorias, 'circuitos' => $circuitos, 'carreras' => $carreras, 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
-        } else {
+            $app->render('admin.html.twig', array('usuarios' => $usuarios, 'id' => $_SESSION['id'], 'categorias' => $categorias, 'circuitos' => $circuitos, 'carreras' => $carreras, 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'notificacionesNoLeidas' => $notificacionesNoLeidas));
+        } else {    
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
     }
@@ -524,6 +525,21 @@ function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pag
     $datos->save();
 }
 
+$app->get('/notificaciones', function() use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            $notificacionesNoLeidas = notificacionesNoLeidas();
+            $notificaciones = cargarNotificaciones();
+
+            $app->render('notificaciones.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'notificacionesNoLeidas' => $notificacionesNoLeidas, 'notificaciones' => $notificaciones));
+        } else {    
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('notificaciones');
+
 /**
 * Obtiene los datos del usuario especificado
 * 
@@ -950,4 +966,16 @@ function asignarCategorias($idUser, $categorias) {
         $catPiloto->piloto_id = $idUser;
         $catPiloto->save();
     }
+}
+
+function notificacionesNoLeidas() {
+    return ORM::for_table('notificacion')->where('leida', 0)->count();
+}
+
+function cargarNotificaciones() {
+    return ORM::for_table('notificacion')->
+    where('rango_requerido', 5)->
+    where('objetivo', 0)->
+    order_by_desc('fecha')->
+    find_many();
 }

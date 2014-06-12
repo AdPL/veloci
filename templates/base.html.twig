@@ -74,6 +74,22 @@
 					{% block Settings %}
 						{% if rol >= 1 %}
 							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> <span class="badge">{{ nNotificaciones }}</span></a>
+								<ul class="dropdown-menu">
+								{% for notificacion in notificaciones %}
+									<li class="menuitem"><a href="{{ notificacion['enlace'] }}">{{ notificacion['usuario'] }} {{ notificacion['nota'] }}</a></li>
+								{% else %}
+									<li class="menuitem"><a href="#">No tiene notificaciones</a></li>
+								{% endfor %}
+									<li class="divider"></li>
+									<li class="menuitem"><a href="#">Ver todas</a></li>
+								</ul>
+							</li>
+						{% if rol == 5 %}
+							<li><a href="{{ urlFor('notificaciones') }}"><i class="fa fa-bell"></i> <span class="badge">{{ notificacionesAdmin }}</span></a>
+						{% endif %}
+						<li><a href="{{ urlFor('perfil') }}"><img src="{{ avatar }}" id="imgPerfilSuperior"/> Identificado como {{ usuario }}</a></li>
+							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i><b class="caret"></b></a>
 								<ul class="dropdown-menu">
 									<li class="bloquePerfil" href="#">
@@ -124,7 +140,6 @@
       <div class="container">
         <h1 class="texto_cabecera">{{ configuracion['nombre'] }}</h1>
         <p class="texto_cabecera">{{ configuracion['descripcion'] }}</p>
-        <!--<p><a class="btn btn-primary btn-lg" role="button">Learn more »</a></p>-->
       </div>
     </div>
     {% endblock %}
@@ -295,12 +310,12 @@
 			<div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
 				<div class="row">
 					<div class="col-xs-12">
-						<div class="panel panel-default">
+						<!--<div class="panel panel-default">
 							<div class="panel-heading">Calendario</div>
 							<div class="panel-body">
 								<div id="calendario"></div>
 							</div>
-						</div>
+						</div>-->
 						<div class="panel panel-default">
 							<div class="panel-heading">Categorías</div>
 							<div class="panel-body">

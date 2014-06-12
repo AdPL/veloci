@@ -50,6 +50,8 @@
 
 			<ul class="nav navbar-nav navbar-right">
 				{% block Settings %}
+					<li><a href="{{ urlFor('notificaciones') }}"><i class="fa fa-bell"></i> <span class="badge">{{ notificacionesNoLeidas }}</span></a>
+					<li><a href="{{ urlFor('perfil') }}"><img src="{{ avatar }}" id="imgPerfilSuperior"/> Identificado como {{ usuario }}</a></li>
 					{% if rol >= 1 %}
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i><b class="caret"></b></a>
@@ -106,7 +108,7 @@
 						<ul class="nav nav-pills nav-stacked">
 							<li {% block adminPrincipal %}{% endblock %}><a href="{{ urlFor('admin') }}">Inicio</a></li>
 							<li {% block configSite %}{% endblock %}><a href="{{ urlFor('configuracionDelSitio') }}">Configuración del sitio</a></li>
-							<li><a href="#">Notificaciones <span class="badge">2</span></a></li>
+							<li {% block notificaciones %}{% endblock %}><a href="{{ urlFor('notificaciones') }}">Notificaciones <span class="badge">{{ notificacionesNoLeidas }}</span></a></li>
 							<li {% block adminUsuarios %}{% endblock %}><a href="{{ urlFor('listaUsuarios') }}">Pilotos (Usuarios)</a></li>
 							<li class="dropdown {% block adminCategorias %}{% endblock %}">
 								<a class="dropdown-toggle" data-toggle="dropdown" href="#">Categorías <span class="caret"></span></a>
