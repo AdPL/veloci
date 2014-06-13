@@ -18,12 +18,24 @@
     
     include "../vendor/autoload.php";
     require_once "../config/config.php";
-    //switch($_REQUEST['peticion'])
-    //{
-      //  case 1:
+    
+    switch($_REQUEST['tipo'])
+    {
+        case 1:
             $idem = ORM::for_table('piloto')->where('nombre',$_GET['val'])->find_one();
             if(!empty($idem))
-                 echo "form-group has-error";
-    //}
+                echo "form-group has-error";
+        break;
+
+		case 2:
+			$notificacion = ORM::for_table('notificacion')->
+			where('id', $_GET['idNotificacion'])->
+			where('objetivo', $_GET['idUsuario'])->
+			find_one();
+
+			$notificacion->leida = 1;
+			$notificacion->save();
+		break;
+    }
 
 ?>

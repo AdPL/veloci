@@ -114,7 +114,7 @@ function compruebaNombre(campo) {
     request = $.ajax({
         url: "/ajax.php",
         type: "GET",
-        data: {val: campo.value}
+        data: {tipo: 1, val: campo.value}
     });
 
     request.done(function(response, textStatus, jqXHR)
@@ -126,6 +126,20 @@ function compruebaNombre(campo) {
         	document.getElementById('errorUsuario').innerHTML = "";
         };
     });
+}
+
+function veNotificacion(usuario, notificacion) {
+    var request;
+    request = $.ajax({
+        url: "/ajax.php",
+        type: "GET",
+        data: {tipo: 2, idUsuario: usuario, idNotificacion: notificacion}
+    });
+
+    /*request.done(function(response, textStatus, jqXHR)
+    {
+    });
+*/
 }
 
 function seleccionado(ruta, clase) {
