@@ -623,6 +623,8 @@ function crearReclamacion($app, $titulo, $comentario, $vuelta, $minuto, $carrera
 			$piloto_incidente->sancion = 0;
 
 			$piloto_incidente->save();
+			$enlace = $app->urlFor('reclamacion', array('idReclamacion' => $nincidentes));
+			creaNotificacion($enlace, 'te ha reclamado', $_SESSION['nombre_completo'], '1', $sereclama[$i], '0', '0');
 			$i++;
 		}
 	}
@@ -649,6 +651,17 @@ function crearComentario($app, $titulo, $comentario, $id) {
 	$comment->piloto_id = $_SESSION['id'];
 
 	$comment->save();
+
+	$reclamacion = ORM::for_table('piloto_incidente')->
+	where('id', $id)->select_many('piloto_id')->find_many();
+/*
+	$i = 0;
+	while ($i <= count($reclamacion)) {
+		$enlace = $app->urlFor('reclamacion', array('reclamacion' => $id));
+		creaNotificacion($enlace, 'ha agregado un nuevo comentario en la reclamación', $_SESSION['nombre_completo'], '1', $reclamacion[$i], '0', '0');
+		$i++;
+	}
+	*/
 }
 
 /**

@@ -36,6 +36,15 @@
 			$notificacion->leida = 1;
 			$notificacion->save();
 		break;
+
+		case 3:
+			$notificacion = ORM::for_table('notificacion')->
+			where('id', $_GET['idNotificacion'])->
+			find_one();
+
+			$notificacion->leida = 1;
+			$notificacion->save();
+		break;
     }
 
 ?>

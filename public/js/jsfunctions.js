@@ -135,11 +135,15 @@ function veNotificacion(usuario, notificacion) {
         type: "GET",
         data: {tipo: 2, idUsuario: usuario, idNotificacion: notificacion}
     });
+}
 
-    /*request.done(function(response, textStatus, jqXHR)
-    {
+function veNotificacionAdmin(notificacion) {
+    var request;
+    request = $.ajax({
+        url: "/ajax.php",
+        type: "GET",
+        data: {tipo: 3, idNotificacion: notificacion}
     });
-*/
 }
 
 function seleccionado(ruta, clase) {

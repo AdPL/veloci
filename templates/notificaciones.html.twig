@@ -25,10 +25,11 @@ class="active"
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<h2>Notificaciones</h2>
+			<hr>
 			<ul class="list-group">
 				{% for notificacion in notificaciones %}
 					{% if notificacion['tipo'] == 0 %}
-						<a href="{{ notificacion['enlace'] }}"><div class="alert alert-info">{{ notificacion['usuario'] }} ha {{ notificacion['nota'] }}</div></a>
+						<a href="{{ notificacion['enlace'] }}" onclick="veNotificacionAdmin('{{ notificacion['id'] }}')">{{ notificacion['usuario'] }} {{ notificacion['nota'] }}</a><hr>
 					{% endif %}
 				{% endfor %}
 			</ul>
