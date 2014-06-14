@@ -65,44 +65,78 @@
 
 			// Creación de TABLAS:
 
+			/* Creación de tabla Configuración */
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `configuracion` (
+				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				`nombre` VARCHAR(45) NOT NULL,
+				`descripcion` VARCHAR(100) NOT NULL,
+				`requiere_activacion` INT UNSIGNED NOT NULL,
+				`requiere_normativa` INT UNSIGNED NOT NULL,
+				`requiere_pago` INT UNSIGNED NOT NULL,
+				`teamspeak` TEXT NOT NULL,
+				`twitter` TEXT NOT NULL,
+				`facebook` TEXT NOT NULL,
+				`youtube` TEXT NOT NULL,
+				`vimeo` TEXT NOT NULL,
+				`permite_plantillas` INT UNSIGNED NOT NULL,
+				`plantilla_defecto` VARCHAR(60) NOT NULL DEFAULT 'bootstrap.css',
+				PRIMARY KEY (`id`))
+			ENGINE = InnoDB;");
+
+			/* Creación de tabla Notificación */
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `notificacion` (
+				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				`enlace` VARCHAR(70) NOT NULL,
+				`nota` TEXT NOT NULL,
+				`usuario` VARCHAR(60) NOT NULL,
+				`fecha` DATETIME NOT NULL,
+				`rango_requerido` INT UNSIGNED NOT NULL,
+				`objetivo` INT UNSIGNED NOT NULL,
+				`tipo` INT UNSIGNED NOT NULL,
+				`leida` INT UNSIGNED NOT NULL,
+				PRIMARY KEY (`id`))
+			ENGINE = InnoDB;");
+
 			/* Creación de tabla piloto - usuario */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`piloto` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `piloto` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`nombre` VARCHAR(45) NOT NULL,
 				`password` VARCHAR(255) NOT NULL,
-				`avatar` VARCHAR(30),
-				`email` VARCHAR(45) NOT NULL,
+				`avatar` VARCHAR(45) NOT NULL,
+				`email` VARCHAR(50) NOT NULL,
 				`token` VARCHAR(100) NOT NULL,
 				`escuderia` VARCHAR(45) NOT NULL,
 				`nombre_completo` VARCHAR(60) NOT NULL,
-				`activo` INT(1) UNSIGNED NOT NULL,
+				`activo` INT UNSIGNED NOT NULL,
 				`rol` INT UNSIGNED NOT NULL,
+				`privacidad_perfil` INT UNSIGNED NOT NULL,
+				`expulsado` INT UNSIGNED NOT NULL,
+				`puede_reclamarse` INT UNSIGNED NOT NULL DEFAULT '1',
 				PRIMARY KEY (`id`),
 				UNIQUE INDEX `name_UNIQUE` (`nombre` ASC))
-				ENGINE = InnoDB;");
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla categoría */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`categoria` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `categoria` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`nombre` VARCHAR(45) NOT NULL,
-				`imagen` VARCHAR(50) NULL,
-				`plazas` INT UNSIGNED NOT NULL,
-				`precio_inscripcion` INT UNSIGNED NULL,
-				PRIMARY KEY (`id`),
-				UNIQUE INDEX `nombre_UNIQUE` (`nombre` ASC))
-				ENGINE = InnoDB;");
+				`pais` VARCHAR(45) NOT NULL,
+				`distancia` INT UNSIGNED NOT NULL,
+				`imagen` VARCHAR(50) UNSIGNED NOT NULL,
+				PRIMARY KEY (`id`))
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla circuito */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`circuito` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `circuito` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`nombre` VARCHAR(45) NOT NULL,
 				`pais` VARCHAR(45) NOT NULL,
 				`distancia` INT UNSIGNED NOT NULL,
 				PRIMARY KEY (`id`))
-				ENGINE = InnoDB;");
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla carrera */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`carrera` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `carrera` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`nombre` VARCHAR(45) NOT NULL,
 				`neumatico1` ENUM('Super blandos', 'Blandos', 'Medios', 'Duros', 'Normal') NOT NULL DEFAULT 'Normal',
@@ -110,62 +144,65 @@
 				`vueltas` VARCHAR(45) NOT NULL,
 				`fecha` DATE NOT NULL,
 				`hora` TIME NOT NULL,
-				`categoria_id` INT UNSIGNED NOT NULL,
-				`circuito_id` INT UNSIGNED NOT NULL,
+				`fecha_limite` DATE NOT NULL,
+				`hora_limite` TIME NOT NULL,
+				`categoria_id` INT UNSIGNED NULL,
+				`circuito_id` INT UNSIGNED NULL,
 				PRIMARY KEY (`id`),
 				INDEX `fk_carrera_categoria1_idx` (`categoria_id` ASC),
 				INDEX `fk_carrera_circuito1_idx` (`circuito_id` ASC),
 				CONSTRAINT `fk_carrera_categoria1`
 				FOREIGN KEY (`categoria_id`)
 				REFERENCES `$database`.`categoria` (`id`)
-				ON DELETE NO ACTION
-				ON UPDATE NO ACTION,
+				ON DELETE SET NULL
+				ON UPDATE CASCADE,
 				CONSTRAINT `fk_carrera_circuito1`
 				FOREIGN KEY (`circuito_id`)
 				REFERENCES `$database`.`circuito` (`id`)
-				ON DELETE NO ACTION
-				ON UPDATE NO ACTION)
-				ENGINE = InnoDB;");
+				ON DELETE SET NULL
+				ON UPDATE CASCADE)
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla incidente */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`incidente` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `incidente` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`vuelta` INT NOT NULL,
 				`minuto` TIME NOT NULL,
+				`abierto` INT UNSIGNED NOT NULL,
 				`carrera_id` INT UNSIGNED NOT NULL,
 				PRIMARY KEY (`id`),
 				INDEX `fk_incidente_carrera1_idx` (`carrera_id` ASC),
 				CONSTRAINT `fk_incidente_carrera1`
 				FOREIGN KEY (`carrera_id`)
 				REFERENCES `$database`.`carrera` (`id`)
-				ON DELETE NO ACTION
+				ON DELETE CASCADE
 				ON UPDATE NO ACTION)
-				ENGINE = InnoDB;");
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla piloto - categoría */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`piloto_categoria` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `piloto_categoria` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-				`categoria_id` INT UNSIGNED NOT NULL,
 				`piloto_id` INT UNSIGNED NOT NULL,
-				PRIMARY KEY (`id`, `categoria_id`, `piloto_id`),
-				INDEX `fk_pilo_cat_categoria1_idx` (`categoria_id` ASC),
-				INDEX `fk_pilo_cat_piloto1_idx` (`piloto_id` ASC),
-				CONSTRAINT `fk_pilo_cat_categoria1`
-				FOREIGN KEY (`categoria_id`)
-				REFERENCES `$database`.`categoria` (`id`)
-				ON DELETE CASCADE
-				ON UPDATE NO ACTION,
-				CONSTRAINT `fk_pilo_cat_piloto1`
+				`categoria_id` INT UNSIGNED NOT NULL,
+				PRIMARY KEY (`id`),
+				INDEX `fk_piloto_categoria_piloto1_idx` (`piloto_id` ASC),
+				INDEX `fk_piloto_categoria_categoria1_idx` (`categoria_id` ASC),
+				CONSTRAINT `fk_piloto_categoria_piloto1`
 				FOREIGN KEY (`piloto_id`)
 				REFERENCES `$database`.`piloto` (`id`)
 				ON DELETE CASCADE
+				ON UPDATE NO ACTION,
+				CONSTRAINT `fk_piloto_categoria_categoria1`
+				FOREIGN KEY (`categoria_id`)
+				REFERENCES `$database`.`categoria` (`id`)
+				ON DELETE CASCADE
 				ON UPDATE NO ACTION)
-				ENGINE = InnoDB;");
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla reclamación */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`reclamacion` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `reclamacion` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-				`titulo` VARCHAR(45) NULL,
+				`titulo` VARCHAR(45) NOT NULL,
 				`comentario` TEXT NOT NULL,
 				`incidente_id` INT UNSIGNED NOT NULL,
 				`piloto_id` INT UNSIGNED NOT NULL,
@@ -182,10 +219,10 @@
 				REFERENCES `$database`.`piloto` (`id`)
 				ON DELETE CASCADE
 				ON UPDATE NO ACTION)
-				ENGINE = InnoDB;");
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla recurso */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`recurso` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `recurso` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`descripcion` VARCHAR(45) NOT NULL,
 				`imagen` VARCHAR(60) NOT NULL,
@@ -197,68 +234,97 @@
 				REFERENCES `$database`.`reclamacion` (`id`)
 				ON DELETE CASCADE
 				ON UPDATE NO ACTION)
-				ENGINE = InnoDB;");
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla piloto - carrera */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`piloto_carrera` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `piloto_carrera` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`piloto_id` INT UNSIGNED NOT NULL,
 				`carrera_id` INT UNSIGNED NOT NULL,
 				`estado` INT UNSIGNED NOT NULL,
-				PRIMARY KEY (`id`,`piloto_id`, `carrera_id`),
-				INDEX `fk_piloto_has_carrera_carrera1_idx` (`carrera_id` ASC),
-				INDEX `fk_piloto_has_carrera_piloto1_idx` (`piloto_id` ASC),
-				CONSTRAINT `fk_piloto_has_carrera_piloto1`
-				FOREIGN KEY (`piloto_id`)
-				REFERENCES `$database`.`piloto` (`id`)
-				ON DELETE NO ACTION
-				ON UPDATE NO ACTION,
-				CONSTRAINT `fk_piloto_has_carrera_carrera1`
+				PRIMARY KEY (`id`),
+				INDEX `fk_piloto_carrera_carrera1_idx` (`carrera_id` ASC),
+				INDEX `fk_piloto_carrera_piloto1_idx` (`piloto_id` ASC),
+				CONSTRAINT `fk_piloto_carrera_carrera1`
 				FOREIGN KEY (`carrera_id`)
 				REFERENCES `$database`.`carrera` (`id`)
-				ON DELETE NO ACTION
-				ON UPDATE NO ACTION)
-				ENGINE = InnoDB;");
+				ON DELETE CASCADE
+				ON UPDATE CASCADE,
+				CONSTRAINT `fk_piloto_carrera_piloto1`
+				FOREIGN KEY (`piloto_id`)
+				REFERENCES `$database`.`piloto` (`id`)
+				ON DELETE CASCADE
+				ON UPDATE CASCADE)
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla piloto - incidente */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`piloto_incidente` (
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `piloto_incidente` (
 				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				`piloto_id` INT UNSIGNED NOT NULL,
 				`incidente_id` INT UNSIGNED NOT NULL,
 				`reclama` INT UNSIGNED NOT NULL,
 				`sancion` INT UNSIGNED NOT NULL,
-				PRIMARY KEY (`id`, `piloto_id`, `incidente_id`),
-				INDEX `fk_piloto_has_incidente_incidente1_idx` (`incidente_id` ASC),
-				INDEX `fk_piloto_has_incidente_piloto1_idx` (`piloto_id` ASC),
-				CONSTRAINT `fk_piloto_has_incidente_piloto1`
-				FOREIGN KEY (`piloto_id`)
-				REFERENCES `$database`.`piloto` (`id`)
-				ON DELETE NO ACTION
-				ON UPDATE NO ACTION,
-				CONSTRAINT `fk_piloto_has_incidente_incidente1`
+				`nota` TEXT NULL,
+				PRIMARY KEY (`id`),
+				INDEX `fk_piloto_incidente_incidente1_idx` (`incidente_id` ASC),
+				INDEX `fk_piloto_incidente_piloto1_idx` (`piloto_id` ASC),
+				CONSTRAINT `fk_piloto_incidente_incidente1`
 				FOREIGN KEY (`incidente_id`)
 				REFERENCES `$database`.`incidente` (`id`)
-				ON DELETE NO ACTION
-				ON UPDATE NO ACTION)
-				ENGINE = InnoDB;");
+				ON DELETE CASCADE
+				ON UPDATE CASCADE,
+				CONSTRAINT `fk_piloto_incidente_piloto1`
+				FOREIGN KEY (`piloto_id`)
+				REFERENCES `$database`.`piloto` (`id`)
+				ON DELETE CASCADE
+				ON UPDATE CASCADE)
+			ENGINE = InnoDB;");
 
 			/* Creación de tabla Noticias */
-			$dbh->exec("CREATE TABLE IF NOT EXISTS `$database`.`noticia` (
-				`id` INT unsigned NOT NULL AUTO_INCREMENT,
-				`titulo` varchar(45) NOT NULL,
-				`texto` text NOT NULL,
-				`fecha_publicacion` datetime NOT NULL,
-				`rango_requerido` INT unsigned NOT NULL,
-				`estado` INT NOT NULL,
-				`usuario_id` INT unsigned NOT NULL,
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `noticia` (
+				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				`titulo` VARCHAR(45) NOT NULL,
+				`texto` TEXT NOT NULL,
+				`fecha_publicacion` DATETIME NOT NULL,
+				`rango_requerido` INT UNSIGNED NOT NULL,
+				`n_comentarios` INT UNSIGNED NOT NULL,
+				`estado` INT UNSIGNED NOT NULL,
+				`piloto_id` INT UNSIGNED NOT NULL,
 				PRIMARY KEY (`id`),
-				CONSTRAINT `usuario_id` FOREIGN KEY (`id`) REFERENCES `piloto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-				) ENGINE=InnoDB;");
+				INDEX `fk_noticia_piloto1_idx` (`piloto_id` ASC),
+				CONSTRAINT `fk_noticia_piloto1`
+				FOREIGN KEY (`piloto_id`)
+				REFERENCES `$database`.`piloto` (`id`)
+				ON DELETE CASCADE
+				ON UPDATE CASCADE)
+			ENGINE = InnoDB;");
 
+			/* Creación de tabla Comentario */
+			$dbh->exec("CREATE TABLE IF NOT EXISTS `comentario` (
+				`id` INT NOT NULL AUTO_INCREMENT,
+				`comentario` TEXT NOT NULL,
+				`responde_a` INT UNSIGNED NOT NULL,
+				`fecha` DATETIME NOT NULL,
+				`piloto_id` INT UNSIGNED NOT NULL,
+				`noticia_id` INT UNSIGNED NOT NULL,
+				PRIMARY KEY (`id`),
+				INDEX `fk_comentario_piloto1_idx` (`piloto_id` ASC),
+				INDEX `fk_comentario_noticia1_idx` (`noticia_id` ASC),
+				CONSTRAINT `fk_comentario_piloto1`
+				FOREIGN KEY (`piloto_id`)
+				REFERENCES `$database`.`piloto` (`id`)
+				ON DELETE CASCADE
+				ON UPDATE CASCADE,
+				CONSTRAINT `fk_comentario_noticia1`
+				FOREIGN KEY (`noticia_id`)
+				REFERENCES `$database`.`noticia` (`id`)
+				ON DELETE CASCADE
+				ON UPDATE CASCADE)
+			ENGINE = InnoDB;");
 
 			$correcto = true; // Si todo ha ido correcto permitiremos la ejecución.
 
-		} catch (PDOException $e) {
+		} catch (Exception $e) {
 			// En casso de error, no hacemos ningún cambio, y detenemos la ejecución.
 			//$dbh->rollBack();
 			$correcto = false;
@@ -270,13 +336,17 @@
 			try {
 				$token = generarToken(100);
 				echo "BIEN";
-				$insertADM = $dbh->prepare("INSERT INTO `piloto`(`id`, `nombre`, `password`, `avatar`, `email`, `token`, `escuderia`, `nombre_completo`, `activo`, `rol`) VALUES (null,:usrADM,:passADM,'/images/default.png',:emailADM, :token, 'Ninguna', :nombreADM, '0', '5');");
-				$insertADM->bindValue(':usrADM', $usrADM, PDO::PARAM_STR);
+
+				$insertADM = $dbh->prepare("INSERT INTO `piloto` (`id`, `nombre`, `password`, `avatar`, `email`, `token`, `escuderia`, `nombre_completo`, `activo`, `rol`) VALUES (null,:usrADM,:passADM,'/images/default.png',:emailADM, :token, 'Ninguna', :nombreADM, '0', '5');");
+				$insertADM->bindValue(':usrADM', strtolower($usrADM), PDO::PARAM_STR);
 				$insertADM->bindValue(':passADM', $passADM, PDO::PARAM_STR);
 				$insertADM->bindValue(':emailADM', $emailADM, PDO::PARAM_STR);
 				$insertADM->bindValue(':token', $token, PDO::PARAM_STR);
 				$insertADM->bindValue(':nombreADM', $nombreADM, PDO::PARAM_STR);
 				$insertADM->execute() or die(print_r("Error en la creación del usuario administrador"));
+
+				$dbh->exec("INSERT INTO `configuracion` (`id`, `nombre`, `descripcion`, `requiere_activacion`, `requiere_normativa`, `requiere_pago`, `teamspeak`, `twitter`, `facebook`, `youtube`, `vimeo`, `permite_plantillas`, `plantilla_defecto`) VALUES (null, 'Veloci', 'Aplicación web para la gestión de carreras', 0, 0, 0, '', '', '', '', '', 0, 'bootstrap.css');");
+				
 				$todocorrecto = true;
 			} catch (PDOException $e) {
 				// Si falla algo, desechamos los cambios y paramos la ejecución.
