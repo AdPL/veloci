@@ -488,7 +488,6 @@ function cargarCarrerasReclamacion() {
     return ORM::for_table('carrera')->
     where_lte('fecha', date("Y-m-d"))->
     where_gte('fecha_limite', date("Y-m-d"))->
-    where_lt('hora', date("H:M:s"))->
     where_gt('hora_limite', date("H:m:s"))->
     order_by_asc('fecha')->find_many();
 }
