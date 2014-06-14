@@ -54,7 +54,7 @@ $app->post('/categorias/nueva', function() use ($app) {
         $app->render('principal.html.twig');
     } else {
         if($_SESSION['rol'] == 5) {
-            crearCategoria($app, $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);
+            crearCategoria($app, $_POST['inputNombre'], $_POST['inputFoto'], $_POST['inputPlazas'], $_POST['inputPrecio']);
             $categorias = cargarCategorias();
             $app->render('listaCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
         } else {
@@ -655,7 +655,7 @@ function cargarCarreras() {
 */
 function cargarNoticias() {
     return ORM::for_Table('noticia')->
-    join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
+    join('piloto', array('piloto.id', '=', 'noticia.piloto_id'))->
     select_many('noticia.id', 'titulo', 'texto', 'fecha_publicacion', 'rango_requerido', 'estado', 'piloto.nombre_completo')->
     order_by_desc('fecha_publicacion')->find_many();
 }
@@ -674,7 +674,7 @@ function cargarNoticias() {
 */
 function cargarNoticiasPaginacion($nNoticias = 5, $pagina = 0) {
     return ORM::for_Table('noticia')->
-    join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
+    join('piloto', array('piloto.id', '=', 'noticia.piloto_id'))->
     select_many('noticia.id', 'titulo', 'texto', 'fecha_publicacion', 'rango_requerido', 'estado', 'piloto.nombre_completo', 'n_comentarios')->
     order_by_desc('fecha_publicacion')->limit($nNoticias)->offset($pagina * $nNoticias)->find_many();
 }
@@ -707,7 +707,7 @@ function cargarNnoticias($porPagina) {
 */
 function cargarNoticia($idNoticia) {
     return ORM::for_Table('noticia')->
-    join('piloto', array('piloto.id', '=', 'noticia.usuario_id'))->
+    join('piloto', array('piloto.id', '=', 'noticia.piloto_id'))->
     select_many('noticia.id', 'titulo', 'texto', 'fecha_publicacion', 'rango_requerido', 'estado', 'piloto.nombre_completo')->
     where('id', $idNoticia)->find_one();
 }
@@ -734,7 +734,7 @@ function crearNoticia($titulo, $texto, $rango, $estado, $usuarioID) {
     $noticia->fecha_publicacion = date("Y-n-d H:i:s");
     $noticia->rango_requerido = $rango;
     $noticia->estado = $estado;
-    $noticia->usuario_id = $_SESSION['id'];
+    $noticia->piloto_id = $_SESSION['id'];
     $noticia->save();
 }
 
@@ -766,10 +766,10 @@ function eliminarNoticia($idNoticia) {
 *
 * @return @void
 */
-function crearCategoria($app, $nombre, $plazas, $precio) {
+function crearCategoria($app, $nombre, $imagen, $plazas, $precio) {
     $categoria = ORM::for_table('categoria')->create();
     $categoria->id = null;
-    $categoria->imagen = "images/defecto.jpeg";
+    $categoria->imagen = $imagen;
     $categoria->nombre = $nombre;
     $categoria->plazas = $plazas;
     $categoria->precio_inscripcion = $precio;

@@ -51,14 +51,14 @@
 			<ul class="nav navbar-nav navbar-right">
 				{% block Settings %}
 					<li><a href="{{ urlFor('notificaciones') }}"><i class="fa fa-bell"></i> <span class="badge">{{ notificacionesNoLeidas }}</span></a>
-					<li><a href="{{ urlFor('perfil') }}"><img src="/{{ avatar }}" id="imgPerfilSuperior"/> Identificado como {{ usuario }}</a></li>
+					<li><a href="{{ urlFor('perfil') }}"><img src="{{ avatar }}" id="imgPerfilSuperior"/> Identificado como {{ usuario }}</a></li>
 					{% if rol >= 1 %}
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i><b class="caret"></b></a>
 							<ul class="dropdown-menu">
 								<li class="bloquePerfil" href="#">
 									<a href="{{ urlFor('perfil') }}" class="menuitem">
-										<img src="/{{ avatar }}" class="imgPerfil" id="imgPerfil"/>
+										<img src="{{ avatar }}" class="imgPerfil" id="imgPerfil"/>
 										{{ usuario }}
 									</a>
 								</li>

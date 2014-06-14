@@ -130,9 +130,9 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
         $token = generarToken(100);
         $user = ORM::for_table('piloto')->create();
         $user->id = null;
-        $user->nombre = strtolower($usuario);;
+        $user->nombre = strtolower($usuario);
         $user->password = password_hash($password, PASSWORD_DEFAULT);
-        $user->avatar = 'images/default.png';
+        $user->avatar = '/images/default.png';
         $user->escuderia = 'Ninguna';
         $user->nombre_completo = $nombreCompleto;
         $user->email = $email;

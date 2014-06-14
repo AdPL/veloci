@@ -41,7 +41,7 @@
 					{% if alert %}
 						<h2 class="text-center">{{ user }}</h2>
 					{% else %}
-					<img src="/{{ user.avatar }}" alt="avatar" class="img-circle img-responsive">
+					<img src="{{ user.avatar }}" alt="avatar" class="img-circle img-responsive">
 					<h2 class="text-center">{{ user['nombre_completo'] }}</h2>
 					{% if competidas %}
 					<ul>

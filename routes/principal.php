@@ -700,7 +700,7 @@ function enviarComentario($comentario, $responde_a, $usuario, $noticia, $idUsuar
 	$comment->comentario = $comentario;
 	$comment->responde_a = $responde_a;
 	$comment->fecha = date("Y-n-d H:i:s");
-	$comment->usuario_id = $usuario;
+	$comment->piloto_id = $usuario;
 	$comment->noticia_id = $noticia;
 	$comment->save();
 
@@ -723,9 +723,9 @@ function enviarComentario($comentario, $responde_a, $usuario, $noticia, $idUsuar
 */
 function cargarComentarios($noticia) {
 	return ORM::for_table('comentario')->
-	join('piloto', array('comentario.usuario_id', '=', 'piloto.id'))->
+	join('piloto', array('comentario.piloto_id', '=', 'piloto.id'))->
 	where('noticia_id', $noticia)->
-	select_many('piloto.id', 'comentario.id', 'nombre_completo', 'avatar', 'noticia_id', 'comentario', 'fecha', 'usuario_id')->find_many();
+	select_many('piloto.id', 'comentario.id', 'nombre_completo', 'avatar', 'noticia_id', 'comentario', 'fecha', 'piloto_id')->find_many();
 }
 
 /**
@@ -835,7 +835,7 @@ function contarComentarios($idNoticia) {
 
 function eliminarComentario($idNoticia, $idComentario) {
 	$comentario = ORM::for_table('comentario')->where('noticia_id', $idNoticia)->find_one($idComentario);
-	if ($_SESSION['id'] == $comentario['usuario_id']) {
+	if ($_SESSION['id'] == $comentario['piloto_id']) {
 		$comentario->delete();
 		$error = false;
 	} else {
@@ -844,7 +844,7 @@ function eliminarComentario($idNoticia, $idComentario) {
 	return $error;
 }
 
-function creaNotificacion($enlace, $comentario, $nombre, $rango, $usuario_id, $tipo, $leida) {
+function creaNotificacion($enlace, $comentario, $nombre, $rango, $piloto_id, $tipo, $leida) {
 	$notificacion = ORM::for_table('notificacion')->create();
 	$notificacion->id = null;
 	$notificacion->enlace = $enlace;
@@ -852,7 +852,7 @@ function creaNotificacion($enlace, $comentario, $nombre, $rango, $usuario_id, $t
 	$notificacion->usuario = $nombre;
 	$notificacion->fecha = date("Y-n-d H:i:s");
 	$notificacion->rango_requerido = $rango;
-	$notificacion->objetivo = $usuario_id;
+	$notificacion->objetivo = $piloto_id;
 	$notificacion->leida = $leida;
 	$notificacion->save();
 }

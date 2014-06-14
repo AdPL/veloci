@@ -48,10 +48,10 @@
 				        	{% for comentario in comentarios %}
 				        		<div class="panel panel-default">
 				        			<div class="panel-body">
-				        				<img src="/{{ comentario['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+				        				<img src="{{ comentario['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
 				        				{{ comentario['nombre_completo'] }} <span class="pull-right">{{ comentario['fecha'] }}</span><hr>
 				        				{{ comentario['comentario'] }}<hr>
-				        				{% if comentario['usuario_id'] == id %}
+				        				{% if comentario['piloto_id'] == id %}
 				        					<form method="post" action="{{ urlFor('borrarComentario', {idNoticia: noticia['id']}) }}">
 				        						<input type="hidden" name="no" value="{{ noticia['id'] }}">
 				        						<input type="hidden" name="co" value="{{ comentario['id'] }}">
