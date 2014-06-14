@@ -16,16 +16,6 @@
 
 {% extends "admbase.html.twig" %}
 
-{% block head %}
-<style type="text/css">
-	.img-circle {
-		height: 100px;
-		wnameth: 100px;
-		margin: 0 auto;
-	}
-</style>
-{% endblock %}
-
 {% block configSite %}
 class="active"
 {% endblock %}
@@ -138,23 +128,22 @@ class="active"
 				</div>
 				<hr>
 				<div class="form-group">
-					<label>Permitir que los usuarios puedan seleccionar el tema que quieren utilizar</label>
+					<div class="alert alert-danger">
+					<label>Permitir que los usuarios puedan seleccionar el tema que desean utilizar: Función disponible en la versión 1.1</label>
+					<!--<label></label>
 					<div class="btn-group" data-toggle="buttons">
-						{% if configuracion['permite_plantillas'] == 1 %}
 						<label class="btn btn-success active">
 							<input type="radio" name="permite" value="1" checked> Sí
 						</label>
 						<label class="btn btn-danger">
 							<input type="radio" name="permite" value="0"> No
 						</label>
-						{% else %}
 						<label class="btn btn-success">
 							<input type="radio" name="permite" value="1"> Sí
 						</label>
 						<label class="btn btn-danger active">
 							<input type="radio" name="permite" value="0" checked> No
-						</label>
-						{% endif %}
+						</label>-->
 					</div>
 				</div>
 				<div class="form-group">

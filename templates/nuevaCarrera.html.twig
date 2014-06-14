@@ -16,7 +16,16 @@
 
 {% extends 'admbase.html.twig' %}
 
-{% block head %}{% endblock %}
+{% block head %}
+<script>
+	function rellenarSelect() {
+		var myselect = document.getElementById('inputVueltas');
+		for (var i = 2 ; i < 70; i++) {
+			myselect.innerHTML += "<option value='" + i + "'>" + i + "</option>";
+		};
+	}
+</script>
+{% endblock %}
 
 {% block adminCarreras %}
 active
@@ -56,15 +65,17 @@ active
 				</div>
 				<div class="form-group">
 					<label for="inputVueltas">Vueltas</label>
-					<input type="text" class="form-control" id="inputVueltas" name="inputVueltas" placeholder="Vueltas de la carrera" required>
+					<select class="form-control" id="inputVueltas" name="inputVueltas" placeholder="Vueltas de la carrera" onload="rellenarSelect()" required>
+						<option value="0">Indicar número de vueltas</option>
+					</select>
 				</div>
 				<div class="form-group">
 					<label for="inputFecha">Fecha</label>
-					<input type="text" class="form-control" id="inputFecha" name="inputFecha" placeholder="Día que se disputa la carrera" required>
+					<input type="text" class="form-control" id="inputFecha" name="inputFecha" placeholder="Formato: 2014-05-30" required>
 				</div>
 				<div class="form-group">
 					<label for="inputHora">Hora</label>
-					<input type="text" class="form-control" id="inputHora" name="inputHora" placeholder="Hora a la que se disputa la carrera" required>
+					<input type="text" class="form-control" id="inputHora" name="inputHora" placeholder="Formato: 23:00" required>
 				</div>
 				<div class="form-group">
 					<label for="inputCategoria">Categoría</label>

@@ -445,7 +445,7 @@ $app->post('/categorias/asignar', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
-        asignarCategorias($_POST['idUser'], $_POST['idCategoria']);
+        asignarCategorias($_POST['idUser'], $_POST['inputCategoriaA']);
         $piloto = cargarUsuario($_POST['idUser']);
         $app->render('asignarCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'piloto' => $piloto));
     }
@@ -485,7 +485,7 @@ $app->get('/configuracion', function() use ($app) {
 
 $app->post('/configuracion/guardar', function() use ($app) {
     actualizarConfiguracion($_POST['inputNombre'], $_POST['inputDescripcion'], $_POST['activacion'], $_POST['normativa'], $_POST['pago'],
-        $_POST['inputTeamspeak'], $_POST['inputTwitter'], $_POST['inputFacebook'], $_POST['inputYoutube'], $_POST['inputVimeo'], $_POST['permite'], $_POST['inputTema']);
+        $_POST['inputTeamspeak'], $_POST['inputTwitter'], $_POST['inputFacebook'], $_POST['inputYoutube'], $_POST['inputVimeo'], /*$_POST['permite'],*/ $_POST['inputTema']);
 
     $configuracion = datosApp();
     
@@ -504,7 +504,7 @@ function datosApp() {
     return ORM::for_Table('configuracion')->find_one(1);
 }
 
-function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pago, $teamspeak, $twitter, $facebook, $youtube, $vimeo, $permite, $tema) {
+function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pago, $teamspeak, $twitter, $facebook, $youtube, $vimeo, /*$permite,*/ $tema) {
     $datos = ORM::for_table('configuracion')->find_one(1);
     $datos->nombre = $titulo;
     $datos->descripcion = $slogan;
@@ -515,7 +515,7 @@ function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pag
     $datos->facebook = $facebook;
     $datos->youtube = $youtube;
     $datos->vimeo = $vimeo;
-    $datos->permite_plantillas = $permite;
+    $datos->permite_plantillas = 0;
     if ($tema != "bootstrap") {
         $datos->plantilla_defecto = $tema . "_bootstrap.css";
     } else {
