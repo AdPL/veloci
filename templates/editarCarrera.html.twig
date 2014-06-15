@@ -27,7 +27,8 @@ active
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<h2>Edición de carrera</h2>
-			<form method="post" action="{{ urlFor('crearCarrera') }}" role="form">
+			<form method="post" action="{{ urlFor('modificarCarrera', {idCarrera: carrera['id'] }) }}" role="form">
+				<input type="hidden" value="{{ carrera['id'] }}">
 				<div class="form-group">
 					<label for="inputNombre">Nombre de la carrera</label>
 					<input type="text" class="form-control" id="inputNombre" name="inputNombre" value="{{ carrera['nombre'] }}" required>
@@ -35,23 +36,20 @@ active
 				<div class="form-group">
 					<label for="inputPlazas">Primer compuesto</label>
 					<select class="form-control" id="primerCompuesto" name="primerCompuesto" required>
-						<option value="0">Seleccione el primer compuesto</option>
 						<option value="Super Blandos">Super Blandos</option>
-						<option value="Blandos">Blandos</option>
-						<option value="Medios">Medios</option>
-						<option value="Duros">Duros</option>
-						<option value="Normal">Normal</option>
+						<option value="Blandos" {% if carrera['neumatico1'] == 'Blandos' %}selected{% endif %}>Blandos</option>
+						<option value="Medios" {% if carrera['neumatico1'] == 'Medios' %}selected{% endif %}>Medios</option>
+						<option value="Duros" {% if carrera['neumatico1'] == 'Duros' %}selected{% endif %}>Duros</option>
+						<option value="Normal" {% if carrera['neumatico1'] == 'Normal' %}selected{% endif %}>Normal</option>
 					</select>
 				</div>
 				<div class="form-group">
 					<label for="inputPlazas">Segundo compuesto</label>
-					<select class="form-control" id="segundoCompuesto" name="segundoCompuesto" required>
-						<option value="0">Seleccione el segundo compuesto</option>
-						<option value="Super Blandos">Super Blandos</option>
-						<option value="Blandos">Blandos</option>
-						<option value="Medios">Medios</option>
-						<option value="Duros">Duros</option>
-						<option value="Normal">Normal</option>
+					<select class="form-control" id="segundoCompuesto" name="segundoCompuesto" value="{{ carrera['neumatico2'] }}" required>
+						<option value="Blandos" {% if carrera['neumatico2'] == 'Blandos' %}selected{% endif %}>Blandos</option>
+						<option value="Medios" {% if carrera['neumatico2'] == 'Medios' %}selected{% endif %}>Medios</option>
+						<option value="Duros" {% if carrera['neumatico2'] == 'Duros' %}selected{% endif %}>Duros</option>
+						<option value="Normal" {% if carrera['neumatico2'] == 'Normal' %}selected{% endif %}>Normal</option>
 					</select>
 				</div>
 				<div class="form-group">
@@ -63,6 +61,10 @@ active
 					<input type="text" class="form-control" id="inputFecha" name="inputFecha" value="{{ carrera['fecha'] }}" required>
 				</div>
 				<div class="form-group">
+					<label for="inputFLimite">Fecha límite de reclamaciones</label>
+					<input type="text" class="form-control" id="inputFLimite" name="inputFLimite" value="{{ carrera['fecha_limite'] }}" required>
+				</div>
+				<div class="form-group">
 					<label for="inputHora">Hora</label>
 					<input type="text" class="form-control" id="inputHora" name="inputHora" value="{{ carrera['hora'] }}" required>
 				</div>
@@ -71,7 +73,11 @@ active
 					<select class="form-control" id="inputCategoria" name="inputCategoria" required>
 						<option value="0">No asignar categoría</option>
 						{% for categoria in categorias %}
-							<option value="{{ categoria['id'] }}">{{ categoria['nombre'] }}</option>
+							{% if categoria['id'] == carrera['categoria_id'] %}
+								<option value="{{ categoria['id'] }}" selected>{{ categoria['nombre'] }}</option>
+							{% else %}
+								<option value="{{ categoria['id'] }}">{{ categoria['nombre'] }}</option>
+							{% endif %}
 						{% endfor %}
 					</select>
 				</div>
@@ -80,7 +86,11 @@ active
 					<select class="form-control" id="inputCircuito" name="inputCircuito" required>
 						<option value="0">No asignar circuito</option>
 						{% for circuito in circuitos %}
-							<option value="{{ circuito['id'] }}">{{ circuito['nombre'] }}</option>
+							{% if circuito['id'] == carrera['circuito_id'] %}
+								<option value="{{ circuito['id'] }}" selected>{{ circuito['nombre'] }}</option>
+							{% else %}
+								<option value="{{ circuito['id'] }}">{{ circuito['nombre'] }}</option>
+							{% endif %}
 						{% endfor %}
 					</select>
 				</div>

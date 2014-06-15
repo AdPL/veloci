@@ -54,7 +54,7 @@ $app->post('/categorias/nueva', function() use ($app) {
         $app->render('principal.html.twig');
     } else {
         if($_SESSION['rol'] == 5) {
-            crearCategoria($app, $_POST['inputNombre'], $_POST['inputFoto'], $_POST['inputPlazas'], $_POST['inputPrecio']);
+            crearCategoria($app, $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);
             $categorias = cargarCategorias();
             $app->render('listaCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
         } else {
@@ -156,13 +156,32 @@ $app->get('/carrera/editar/:idCarrera', function($idCarrera) use ($app) {
     } else {
         if($_SESSION['rol'] == 5) {
             $carrera = cargarECarrera($idCarrera);
+            $categorias = cargarCategorias();
+            $circuitos = cargarCircuitos();
 
-            $app->render('editarCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera));
+            $app->render('editarCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categorias' => $categorias, 'circuitos' => $circuitos));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
     }
 })->name('editarCarrera');
+
+$app->post('/carrera/editar/e:idCarrera', function($idCarrera) use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            editarCarrera($idCarrera, $_POST['inputNombre'], $_POST['primerCompuesto'], $_POST['segundoCompuesto'], $_POST['inputVueltas'], $_POST['inputFecha'], $_POST['inputHora'], $_POST['inputFLimite'], $_POST['inputCategoria'], $_POST['inputCircuito']);
+            $carrera = cargarECarrera($idCarrera);
+            $categorias = cargarCategorias();
+            $circuitos = cargarCircuitos();
+
+            $app->render('editarCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categorias' => $categorias, 'circuitos' => $circuitos));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('modificarCarrera');
 
 $app->post('/carreras/lista', function() use ($app) {
     if(!isset($_SESSION['id'])) {
@@ -766,10 +785,10 @@ function eliminarNoticia($idNoticia) {
 *
 * @return @void
 */
-function crearCategoria($app, $nombre, $imagen, $plazas, $precio) {
+function crearCategoria($app, $nombre, $plazas, $precio) {
     $categoria = ORM::for_table('categoria')->create();
     $categoria->id = null;
-    $categoria->imagen = $imagen;
+    $categoria->imagen = '/images/defecto.jpg';
     $categoria->nombre = $nombre;
     $categoria->plazas = $plazas;
     $categoria->precio_inscripcion = $precio;
@@ -844,6 +863,20 @@ function crearCarrera($app, $nombre, $primerCompuesto, $segundoCompuesto, $vuelt
 
 function cargarECarrera($idCarrera) {
     return ORM::for_table('carrera')->find_one($idCarrera);
+}
+
+function editarCarrera($idCarrera, $nombre, $n1, $n2, $vueltas, $fecha, $hora, $fecha_limite, $categoria, $circuito) {
+    $carrera = ORM::for_table('carrera')->find_one($idCarrera);
+    $carrera->nombre = $nombre;
+    $carrera->neumatico1 = $n1;
+    $carrera->neumatico2 = $n2;
+    $carrera->vueltas = $vueltas;
+    $carrera->fecha = $fecha;
+    $carrera->hora = $hora;
+    $carrera->fecha_limite = $fecha_limite;
+    $carrera->categoria_id = $categoria;
+    $carrera->circuito_id = $circuito;
+    $carrera->save();
 }
 
 /**
@@ -979,3 +1012,34 @@ function cargarNotificaciones() {
     order_by_desc('fecha')->
     find_many();
 }
+
+/*function agregarRecurso($imagen, $idCategoria) {
+    $maximo = ORM::for_table('categoria')->MAX('id');
+    $maximo++;
+    if ($_FILES['inputRecurso']['error'] > 0) {
+        //echo "error";
+    } else {
+        $ok = array("image/jpg", "image/jpeg", "image/gif", "image/png");
+        $limite_kb = 100;
+        
+        $ext = imgExt($_FILES['inputRecurso']['name']);
+
+        if (in_array($_FILES['inputRecurso']['type'], $ok) && $_FILES['inputRecurso']['size'] <= $limite_kb * 1024) {
+            $ruta = "images/recursos/" . $maximo . $ext;
+            
+                $resultado = @move_uploaded_file($_FILES['inputRecurso']['tmp_name'], $ruta);
+                if ($resultado) {
+                    $recurso = ORM::for_table('recurso')->create();
+                    $recurso->id = null;
+                    $recurso->descripcion = "texto";
+                    $recurso->imagen = $ruta;
+                    $recurso->reclamacion_id = $idReclamacion;
+                    $recurso->save();
+                } else {
+                    //echo "ERROR";
+                }
+        } else {
+            //echo "Archivo no permitido";
+        }
+    }
+}*/

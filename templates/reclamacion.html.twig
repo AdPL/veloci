@@ -17,13 +17,11 @@
 {% extends "base.html.twig" %}
 
 {% block content %}
-<div class="col-sm-9">
+<div class="col-sm-12">
 	<div class="panel panel-default">
 	<div class="panel-body">
 	<div class="row">
-      <div class="col-xs-12">
         <h1>Lista de reclamaciones <small>Reclamaciones abiertas</small></h1>
-      </div>
     </div>
     {% if alert %}
     	<div class="alert alert-danger">{{ alert }}</div>
@@ -31,20 +29,20 @@
     <h3>Pilotos bajo investigación</h3>
     <div class="row">
 		{% for pilotoR in pilotosR %}
-			<div class="panel panel-default col-lg-4">
+			<div class="panel panel-default col-lg-4 col-sm-4">
 				<div class="panel-body">
 				{% if pilotoR['sancion'] == 0 %}
-					<img src="/{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<img src="{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
 					<span class="pull-right">{{ pilotoR['nombre_completo'] }}</span><hr>
 					<p>Este piloto todavía se encuentra bajo investigación</p>
 				{% elseif pilotoR['sancion'] == 1  %}
-					<img src="/{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<img src="{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
 					<span class="pull-right">{{ pilotoR['nombre_completo'] }}</span><hr>
 					<div class="alert alert-danger">
 						<p>{{ pilotoR['nota'] }}</p>
 					</div>
 				{% else %}
-					<img src="/{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<img src="{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
 					<span class="pull-right">{{ pilotoR['nombre_completo'] }}</span><hr>
 					<div class="alert alert-success">
 						<p>No sufre sanción</p>
@@ -60,7 +58,7 @@
 				<h2 class="pull-left">{{ comentario['titulo'] }}</h2>
 				<span class="pull-right">
 					{{ comentario['nombre_completo'] }}
-					<img src="/{{ comentario['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<img src="{{ comentario['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
 				</span><hr style="clear: both;">
 				{{ comentario['comentario'] }}
 				<hr>

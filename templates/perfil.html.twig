@@ -60,7 +60,19 @@
 								<input type="file" name="inputFoto" id="inputFoto">
 							</div>
 						</div>
-						<p>Rango actual: {{ datosUsuario['rol'] }}</p>
+						<p>Rango actual: 
+						{% if datosUsuario['rol'] == 5 %}
+							Super Administrador
+						{% elseif datosUsuario['rol'] == 4 %}
+							Administrador
+						{% elseif datosUsuario['rol'] == 3 %}
+							Moderador
+						{% elseif datosUsuario['rol'] == 2 %}
+							FIA
+						{% elseif datosUsuario['rol'] == 1 %}
+							Usuario registrado
+						{% endif %}
+						</p>
 						<button type="submit" class="btn btn-success">Guardar cambios</button>
 						<a href="{{ urlFor('principal') }}" class="btn btn-danger">Volver</a>
 					</form>

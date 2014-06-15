@@ -295,3 +295,10 @@ function soloTexto(e) {
     te = String.fromCharCode(tecla); 
     return patron.test(te);
 }
+
+function rellenarSelect() {
+	var myselect = document.getElementById('inputVueltas');
+	for (var i = 2 ; i < 70; i++) {
+		myselect.innerHTML += "<option value='" + i + "'>" + i + "</option>";
+	};
+}

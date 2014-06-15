@@ -25,18 +25,12 @@
 {% for categoria in categorias %}
 <div class="media">
 	<a class="pull-left" href="#">
-		<img class="media-object img40" src="/{{ categoria['imagen'] }}" alt="{{ categoria['nombre'] }}">
+		<img class="media-object img40" src="{{ categoria['imagen'] }}" alt="{{ categoria['nombre'] }}">
 	</a>
 	<div class="media-body">
 		<h4 class="media-heading">{{ categoria['nombre'] }}</h4>
-		<small>0 plazas disponibles.</small>
+		<small>{% if plazas == "" %}0{% else %}{{ plazas }}{% endif %}/{{ categoria['plazas'] }} ocupadas</small>
 	</div>
 </div>
-{% endfor %}
-{% endblock %}
-
-{% block bloque %}
-{% for race in carrera %}
-	<p>{{ race['nombre'] }} el {{ race['fecha']|date('d/m/Y') }} a las {{ race['hora']|date('H:i') }}</p>
 {% endfor %}
 {% endblock %}

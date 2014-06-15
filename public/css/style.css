@@ -4,6 +4,12 @@
 	}
 }
 
+@media (max-width: 991px) {
+	.ocultar {
+		display: none !important;
+	}
+}
+
 @media (max-width: 710px) {
 	
 }

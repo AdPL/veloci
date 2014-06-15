@@ -41,8 +41,7 @@ active
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<h2>{{ categoria['nombre'] }}<small> Edición de categoría</small></h2>
-			<div class="alert alert-warning">Sí no desea cambiar uno de los valores, no lo modifique.</div>
-			<form method="post" action="{{ urlFor('editarCategoriaPost') }}" role="form">
+			<form method="post" action="{{ urlFor('editarCategoriaPost') }}" role="form" enctype="multipart/form-data">
 				<input type="text" name="id" value="{{ categoria['id'] }}" hidden>
 				<div class="form-group">
 					<label for="inputNombre">Nuevo nombre</label>
@@ -57,6 +56,10 @@ active
 				<div class="form-group">
 					<label for="inputPrecio">Precio de inscripción</label>
 					<input type="text" class="form-control" id="inputPrecio" name="inputPrecio" value="{{ categoria['precio_inscripcion'] }}" required>
+				</div>
+				<div class="form-group">
+					<label for="inputFoto">Imagen de la categoría</label>
+					<input type="file" name="inputFoto" id="inputFoto">
 				</div>
 				<button type="submit" class="btn btn-success">Editar categoría</button>
 				<a href="{{ urlFor('listaCategorias') }}" class="btn btn-danger">Volver</a>

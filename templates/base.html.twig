@@ -61,16 +61,22 @@
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav navbar-left">
 					<li><a href="{{ urlFor('pilotos') }}">Pilotos</a></li>
-					<li><a href="{{ urlFor('carreras') }}">Carreras</a></li>
-					<li><a href="{{ urlFor('categorias') }}">Categorías</a></li>
-					<li><a href="{{ urlFor('asistencias') }}">Asistencias</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Competición</span></a>
+						<ul class="dropdown-menu">
+							<li class="menuitem"><a href="{{ urlFor('categorias') }}">Categorías</a></li>
+							<li class="menuitem"><a href="{{ urlFor('carreras') }}">Carreras</a></li>
+							<li class="menuitem"><a href="{{ urlFor('reclamaciones') }}">Reclamaciones</a></li>
+							<li class="menuitem"><a href="{{ urlFor('asistencias') }}">Asistencias</a></li>
+						</ul>
+					</li>
 					<li><a href="http://f1mresultados.webcindario.com/F12014/HTML-Export/Calendar.html" target="_blank">Clasificación</a></li>
-					<li><a href="#">Foro</a></li>
+					<li><a href="http://www.f1mallorcasimracing.com/forum" target="_blank">Foro</a></li>
 					{% block LinksMenu %}{% endblock %}
 		            </li>
 				</ul>
 
-				<ul class="nav navbar-nav navbar-right notablet">
+				<ul class="nav navbar-nav navbar-right">
 					{% block Settings %}
 						{% if rol >= 1 %}
 						<li class="dropdown">
@@ -85,8 +91,8 @@
 								<li class="menuitem"><a href="{{ urlFor('notificacionesUsuario') }}">Ver todas</a></li>
 							</ul>
 						</li>
-						<li><a href="{{ urlFor('perfil') }}"><img src="{{ avatar }}" id="imgPerfilSuperior"/> Identificado como {{ usuario }}</a></li>
-							<li class="dropdown">
+						<li><a href="{{ urlFor('perfil') }}"><img src="{{ avatar }}" id="imgPerfilSuperior"/> <span class="ocultar notablet">Identificado como</span> {{ usuario }}</a></li>
+							<li class="dropdown notablet">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i><b class="caret"></b></a>
 								<ul class="dropdown-menu">
 									<li class="bloquePerfil" href="#">
@@ -175,7 +181,8 @@
 					{% else %}
 					<div class="col-lg-12 col-md-6 col-sm-12 col-xs-12 hidden-lg hidden-md">
 						<div class="panel panel-default">
-							<div class="panel-heading">Identificarse</div>
+							<div class="panel-heading">Identificarse<a class="btn btn-info btn-xs pull-right" data-toggle="modal" data-target="#registerModal" data-backdrop="static"><i class="fa fa-pencil"></i> Registro</a>
+							</div>
 							<div class="panel-body">
 								<form role="form" method="post" action="{{ urlFor('accederPrincipal') }}">
 									<div class="form-group" id="pepito">
@@ -226,6 +233,8 @@
 								{% block bloque %}
 								{% for race in carrera %}
 									<p>{{ race['nombre'] }} el {{ race['fecha']|date('d/m/Y') }} a las {{ race['hora']|date('H:i') }}</p>
+								{% else %}
+									<p>No hay carreras cercanas</p>
 								{% endfor %}
 								{% endblock %}
 							</div>
@@ -234,7 +243,7 @@
 
 					<div class="col-lg-12 col-md-12 col-sm-6 col-xs-12">
 						<div class="panel panel-default">
-							<div class="panel-heading">Últimas reclamaciones<span><a href="{{ urlFor('reclamaciones') }}" class="btn btn-success btn-xs pull-right btnreclamar">Nueva reclamación</a></span></div>
+							<div class="panel-heading">Últimas reclamaciones<span><a href="{{ urlFor('reclamaciones') }}" class="btn btn-success btn-xs pull-right btnreclamar notablet">Nueva reclamación</a></span></div>
 							<div class="panel-body">
 								{% for reclamacion in reclamaciones %}
 								<a href={{ urlFor('reclamacion', {'idReclamacion': reclamacion['incidente_id']}) }} class="btn btn-info btn-block">
@@ -251,7 +260,7 @@
 						<div class="panel panel-default">
 							<div class="panel-heading">Servidor TeamSpeak</div>
 							<div class="panel-body">
-							
+								<div id="ts3viewer_1005719" style="width:; background-color:;"><div class="ts3v"><div id="ts3_h_s1"><img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_server_pass.png" title="" alt="" align="top"> <span class="ts3v_server" title=""><a href="ts3server://188.165.123.243?port=9987" title="">F1MallorcaSimRacing</a></span> <div><span class="ts3v_info"><a href="http://www.tsviewer.com/index.php?page=ts_viewer&amp;ID=1005719" target="_blank" title="TSViewer TeamSpeak 3"><img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_info.png" title="" alt="" align="top"> TS 3 Info</a></span></div></div><div id="ts3_h_s1_ch1"><img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_tree_end.gif" title="" alt="" align="top"><img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_channel_open.png" title="" alt="" align="top"> <span class="ts3v_channel" title="Topic: Default Channel has no topic | Codec: Unknown | Quality: 6">Default Channel</span> <img src="http://static.tsviewer.com/images/teamspeak3/standard/16x16_channel_flag_default.png" title="Default Channel" alt="" align="top"> </div><div style="margin-top:5px; margin-left:16px; margin-bottom:16px;"><a href="http://www.tsviewer.com/" target="_blank" title="TSViewer for TeamSpeak 3"><img src="http://static.tsviewer.com//images/teamspeak3/default/tsv20100409.png" alt=""></a></div></div><style type="text/css"><!--.ts3v {display: block;color: #525284;font-family: Arial, Helvetica, sans-serif;font-size: 13px;width:100%;text-align: left !important;line-height: 16px;white-space:nowrap;overflow: auto;}.ts3v span.ts3v_server a:link, .ts3v span.ts3v_server a:visited {color: #525284 !important;display: inline !important;text-align: left !important;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: bold;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v span.ts3v_server a:active, .ts3v span.ts3v_server a:hover {color: #525284 !important;display: inline !important;text-align: left !important;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: bold;font-style: normal;font-variant: normal;text-decoration: underline;}.ts3v_channel {color: #;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: normal;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v_channel:hover {color: #525284;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: normal;font-style: normal;font-variant: normal;text-decoration: underline;}.ts3v_user {color: #;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: bold;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v_user:hover {color: #525284;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: bold;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v_info, .ts3v_info a:link, .ts3v_info a:visited, .ts3v_info a:active {color: #525284 !important;display: inline !important;text-align: left !important;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: normal;font-style: normal;font-variant: normal;text-decoration: none;}.ts3v_info:hover, .ts3v_info:hover a:hover {color: #525284 !important;display: inline !important;text-align: left !important;font-family: Arial, Helvetica, sans-serif;font-size: 13px;font-weight: normal;font-style: normal;font-variant: normal;text-decoration: underline;}.ts3v img {display: inline !important;float: none !important;border: 0 !important;padding: 0 !important;margin: 0 !important;}--></style><!--[if IE]> <style type="text/css"> .ts3v { overflow:visible; overflow-x:auto; overflow-y:hidden; padding-bottom:15px; } </style> <![endif]--></div>
 							</div>
 						</div>
 					</div>
@@ -314,14 +323,16 @@
 							</div>
 						</div>-->
 						<div class="panel panel-default">
-							<div class="panel-heading">Categorías</div>
+							<div class="panel-heading">Categorías<span><a href="{{ urlFor('categorias') }}" class="btn btn-danger btn-xs pull-right">Ver categorías</a></span></div>
 							<div class="panel-body">
 								{% block categorias %}{% endblock %}
 							</div>
 						</div>
 						<div class="panel panel-default">
-							<div class="panel-heading">Bloque</div>
+							<div class="panel-heading">ENLACES</div>
 							<div class="panel-body">
+								<a href="http://livetiming.theracingconcept.co.uk:8080/F1Mallorca/hotlaps.php?TrackName=ALL" target="_blank" class="btn btn-info btn-block">HOTLAPS <i class="fa fa-tachometer"></i></a>
+								<a href="ftp://ftp.theracingconcept.co.uk/F1Mallorca/" target="_blank" class="btn btn-info btn-block">FTP (Zona de descargas) <i class="fa fa-download"></i></a>
 								{% block bloque2 %}{% endblock %}
 							</div>
 						</div>

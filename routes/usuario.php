@@ -198,7 +198,7 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
 */
 function imagenPerfil($app, $imagen) {
     if ($_FILES['inputFoto']['error'] > 0) {
-        //echo "error";
+        echo "error";
     } else {
         $ok = array("image/jpg", "image/jpeg", "image/gif", "image/png");
         $limite_kb = 100;
@@ -213,15 +213,15 @@ function imagenPerfil($app, $imagen) {
                     $usuario = ORM::for_table('piloto')->
                     where('id', $_SESSION['id'])->find_one();
 
-                    $usuario->avatar = $ruta;
+                    $usuario->avatar = "/" . $ruta;
                     $usuario->save();
 
                     $_SESSION['avatar'] = $ruta;
                 } else {
-                    //echo "ERROR";
+                    echo "ERROR";
                 }
         } else {
-            //echo "Archivo no permitido";
+            echo "Archivo no permitido";
         }
     }
 }
@@ -270,7 +270,11 @@ function datosUsuario($id) {
 
 function nCarreras($id, $estado) {
     if ($estado == 0) {
-        return ORM::for_table('piloto_carrera')->where('piloto_id', $id)->count();
+        return ORM::for_table('piloto_carrera')->
+        where('piloto_id', $id)->
+        where_not_equal('estado', 2)->
+        where_not_equal('estado', 3)->
+        count();
     }
     
     return ORM::for_table('piloto_carrera')->

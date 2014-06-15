@@ -41,7 +41,6 @@ active
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<h2>{{ circuito['nombre'] }}<small> Edición de circuito</small></h2>
-			<div class="alert alert-warning">Sí no desea cambiar uno de los valores, no lo modifique.</div>
 			<form method="post" action="{{ urlFor('editarCircuitoPost') }}" role="form">
 				<input type="text" name="id" value="{{ circuito['id'] }}" hidden>
 				<div class="form-group">
