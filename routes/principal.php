@@ -57,8 +57,9 @@ $app->get('/i:idPagina', function($idPagina) use ($app) {
 $app->post('/', function() use ($app) {
 	$configuracion = datosApp();
 	$carrera = cargarCarrera();
-	$noticias = cargarNoticiasPaginacion(4,1);
+	$noticias = cargarNoticiasPaginacion(4,0);
 	$nNoticias = cargarNnoticias(4);
+	$categorias = cargarCategorias();
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if (isset($_POST['login'])) {
@@ -71,7 +72,7 @@ $app->post('/', function() use ($app) {
 	} else {
 		$notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
 		$nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
-		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
+		$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
 		echo "<script type='text/javascript'>alertify.success('Usuario identificado correctamente');</script>";
 	}
 })->name('accederPrincipal');
@@ -407,7 +408,7 @@ $app->get('/perfil/notificaciones', function() use ($app) {
 	$notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
 	$notificacionesTodas = notificacionesUsuarioTodas($_SESSION['id']);
 	$nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
-	$configuracion = datosApp();	
+	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$noticias = cargarNoticiasPaginacion(4,0);
 	$nNoticias = cargarNnoticias(4);
@@ -424,7 +425,7 @@ $app->get('/perfil/notificaciones', function() use ($app) {
 function testAccess($app, $usuario, $pass) {
 	$usuario = strtolower($usuario);
 	$user = ORM::for_table('piloto')->where('nombre', $usuario)->find_one();
-	if ($user['nombre'] == $usuario && password_verify($pass, $user['password'])) {
+	if ($user['nombre'] == $usuario && password_verify($pass, $user['password']) && $user['activo'] == 1) {
 		$_SESSION['id'] = $user['id'];
 		$_SESSION['nombre_completo'] = $user['nombre_completo'];
 		$_SESSION['rol'] = $user['rol'];

@@ -111,6 +111,17 @@ $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
     }
 })->name('perfilUsuario');
 
+$app->get('/complete/:token', function($token) use ($app) {
+    $configuracion = datosApp();
+    $autenticar = autenticarNuevaCuenta($token);
+
+    if ($autenticar) {
+        $app->render('autenticarCuenta.html.twig', array('resultado' => 1, 'configuracion' => $configuracion));    
+    } else {
+        $app->render('autenticarCuenta.html.twig', array('configuracion' => $configuracion));
+    }
+})->name('autenticarCuenta');
+
 /**
 * Realiza el registro de usuarios en la BBDD
 *
@@ -141,7 +152,35 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
         $user->rol = 1;
         $user->save();
 
-        return true;   
+        $mail = new PHPMailer;
+
+        $mail->isSMTP();                                      // Set mailer to use SMTP
+        $mail->Host = 'smtp.googlemail.com;smtp.googlemail.com';  // Specify main and backup SMTP servers
+        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $mail->Username = 'adrianpelopez@gmail.com';                 // SMTP username
+        $mail->Password = 'lnhgctnevnljjock';                           // SMTP password
+        $mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
+
+        $mail->From = 'F1MallorcaSimRacing@f1m.com';
+        $mail->FromName = 'F1Mallorca Sim Racing';
+        $mail->addAddress($email, $nombreCompleto);     // Add a recipient
+        $mail->addReplyTo('fiatotalcontrol@hotmail.es', 'FIA TOTAL CONTROL');
+
+        $mail->WordWrap = 50;                                 // Set word wrap to 50 characters
+        $mail->isHTML(true);                                  // Set email format to HTML
+
+        $mail->Subject = 'Bienvenido a F1M';
+        $mail->Body    = 'Gracias por registrarse en F1Mallorca, le recordamos que con el registro usted afirma haber leido los términos y condiciones de uso de la aplicación 
+        y la liga.<hr/><br/>Para completar su registro debe acceder al siguiente enlace para autenticar su cuenta:<br/>http://localhost/complete/' . $token . '<hr/>Muchas gracias por su registro.<br/>';
+
+        if(!$mail->send()) {
+            echo 'Message could not be sent.';
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        } else {
+            echo 'Message has been sent';
+        }
+
+        return true;
     } else {
         return false;
     }
@@ -244,4 +283,15 @@ function editarPerfil($nombre_completo, $visibilidad) {
     $usuario->nombre_completo = $nombre_completo;
     $usuario->privacidad_perfil = $visibilidad;
     $usuario->save();
+}
+
+function autenticarNuevaCuenta($tk) {
+    $cuenta = ORM::for_table('piloto')->where('token', $tk)->find_one();
+    if ($cuenta) {
+        $cuenta->activo = 1;
+        $cuenta->save();
+        return true;
+    } else {
+        return false;
+    }
 }
