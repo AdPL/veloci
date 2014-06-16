@@ -20,10 +20,8 @@
 */
 
 $app->get('/admin', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $usuarios = cargarUsuarios();
             $categorias = cargarCategorias();
             $circuitos = cargarCircuitos();
@@ -31,284 +29,297 @@ $app->get('/admin', function() use ($app) {
             $notificacionesNoLeidas = notificacionesNoLeidas();
 
             $app->render('admin.html.twig', array('usuarios' => $usuarios, 'id' => $_SESSION['id'], 'categorias' => $categorias, 'circuitos' => $circuitos, 'carreras' => $carreras, 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'notificacionesNoLeidas' => $notificacionesNoLeidas));
-        } else {    
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        } else {
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('admin');
 
 $app->get('/categorias/nueva', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
-            $app->render('nuevaCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            $app->render('nuevaCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('nuevaCategoria');
 
 $app->post('/categorias/nueva', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             crearCategoria($app, $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);
             $categorias = cargarCategorias();
-            $app->render('listaCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
+            $app->render('listaCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('crearCategoria');
 
 $app->get('/categorias/lista', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $categorias = cargarCategorias();
-
-            $app->render('listaCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
+            $app->render('listaCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('listaCategorias');
 
 $app->get('/editar/:idCat', function($idCat) use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $categoria = cargarCategoria($idCat);
 
-            $app->render('editarCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categoria' => $categoria));
+            $app->render('editarCategoria.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categoria' => $categoria, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('editarCategoria');
 
 $app->post('/listaCategorias', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             if (isset($_POST['inputNombre'])) {
-                editarCategoria($app, $_POST['id'], $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);   
+                editarCategoria($app, $_POST['id'], $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);
             } else {
                 eliminarCategoria($app, $_POST['id']);
             }
 
             $app->Redirect('categorias/lista');
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('editarCategoriaPost');
 
 $app->get('/carreras/nueva', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $categorias = cargarCategorias();
             $circuitos = cargarCircuitos();
-            $app->render('nuevaCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'circuitos' => $circuitos, 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias));
+            $app->render('nuevaCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'circuitos' => $circuitos, 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('nuevaCarrera');
 
 $app->post('/carreras/nueva', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             crearCarrera($app, $_POST['inputNombre'], $_POST['primerCompuesto'], $_POST['segundoCompuesto'], $_POST['inputVueltas'], $_POST['inputFecha'], $_POST['inputHora'], $_POST['inputCategoria'], $_POST['inputCircuito']);
             $app->Redirect('/carreras/lista');
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('crearCarrera');
 
 $app->get('/carreras/lista', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $carreras = cargarCarreras();
-
-            $app->render('listaCarreras.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras));
+            $app->render('listaCarreras.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('listaCarreras');
 
 $app->get('/carrera/editar/:idCarrera', function($idCarrera) use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $carrera = cargarECarrera($idCarrera);
             $categorias = cargarCategorias();
             $circuitos = cargarCircuitos();
 
-            $app->render('editarCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categorias' => $categorias, 'circuitos' => $circuitos));
+            $app->render('editarCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categorias' => $categorias, 'circuitos' => $circuitos, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('editarCarrera');
 
 $app->post('/carrera/editar/e:idCarrera', function($idCarrera) use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             editarCarrera($idCarrera, $_POST['inputNombre'], $_POST['primerCompuesto'], $_POST['segundoCompuesto'], $_POST['inputVueltas'], $_POST['inputFecha'], $_POST['inputHora'], $_POST['inputFLimite'], $_POST['inputCategoria'], $_POST['inputCircuito']);
             $carrera = cargarECarrera($idCarrera);
             $categorias = cargarCategorias();
             $circuitos = cargarCircuitos();
 
-            $app->render('editarCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categorias' => $categorias, 'circuitos' => $circuitos));
+            $app->render('editarCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categorias' => $categorias, 'circuitos' => $circuitos, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('modificarCarrera');
 
 $app->post('/carreras/lista', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
                 eliminarCarrera($_POST['co']);
                 $carreras = cargarCarreras();
-                $app->render('listaCarreras.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras));
+                $app->render('listaCarreras.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
             } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+                $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('borrarCarrera');
 
 $app->get('/circuitos/nuevo', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
-            $app->render('nuevoCircuito.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            $app->render('nuevoCircuito.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('nuevoCircuito');
 
 $app->post('/circuitos/nuevo', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             crearCircuito($app, $_POST['inputNombre'], $_POST['inputPais'], $_POST['inputDistancia']);
             $app->Redirect('/circuitos/lista');
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('crearCircuito');
 
 $app->get('/circuitos/lista', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $circuitos = cargarCircuitos();
 
-            $app->render('listaCircuitos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuitos' => $circuitos));
+            $app->render('listaCircuitos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuitos' => $circuitos, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('listaCircuitos');
 
 $app->get('/circuito/editar/:idCircuito', function($idCircuito) use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $circuito = cargarCircuito($idCircuito);
 
-            $app->render('editarCircuito.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuito' => $circuito));
+            $app->render('editarCircuito.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuito' => $circuito, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('editarCircuito');
 
 $app->post('/circuitos/borrar', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
                 eliminarCircuito($_POST['co']);
                 $circuitos = cargarCircuitos();
-                $app->render('listaCircuitos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuitos' => $circuitos));
+                $app->render('listaCircuitos.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'circuitos' => $circuitos, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
             } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+                $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('borrarCircuito');
 
 $app->post('/circuito', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             if (isset($_POST['inputNombre'])) {
                 editarCircuito($_POST['id'], $_POST['inputNombre'], $_POST['inputPais'], $_POST['inputDistancia']);
+                $app->Redirect('/circuitos/lista');
             } else {
-                //eliminarCategoria($app, $_POST['id']);
+                $app->Redirect('/');
             }
-
-            $app->Redirect('/circuitos/lista');
-        } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('editarCircuitoPost');
 
 $app->get('/usuarios', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $usuarios = cargarUsuarios();
-
-            $app->render('listaUsuarios.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'usuarios' => $usuarios));
+            $app->render('listaUsuarios.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'usuarios' => $usuarios, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('listaUsuarios');
 
 $app->get('/asistencias/control', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $carreras = cargarCarreras();
             $pilotos = cargarUsuarios();
             $estados = carreraControlAsistencia();
             
-            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados));
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('controlAsistencia');
 
@@ -317,44 +328,45 @@ function carreraControlAsistencia() {
 }
 
 $app->post('/asistencias/control', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $carreras = cargarCarreras();
             $pilotos = cargarUsuarios();
             
             guardarAsistencias($_POST);
             $estados = carreraControlAsistencia();
 
-            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados));
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        
     }
 })->name('controlAsistenciaGuardar');
 
 $app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             $piloto = cargarUsuario($idUser);
             $categorias = cargarCategorias();
             $participa = cargarCategoriasUsuario($idUser);
 
-            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto, 'categorias' => $categorias, 'participa' => $participa));
+            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto, 'categorias' => $categorias, 'participa' => $participa, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('editarUsuario');
 
 $app->post('/usuarios/editar/:idUser', function($idUser) use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             if (isset($_POST['inputSubmit'])) {
                 editarUsuario($idUser, $_POST['inputNombre'], $_POST['inputEmail'], $_POST['inputActivo']);
                 if(isset($_POST['inputCategoriasA'])) {
@@ -369,22 +381,22 @@ $app->post('/usuarios/editar/:idUser', function($idUser) use ($app) {
             $categorias = cargarCategorias();
             $participa = cargarCategoriasUsuario($idUser);
 
-            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto, 'categorias' => $categorias, 'participa' => $participa));            
+            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto, 'categorias' => $categorias, 'participa' => $participa, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('editarUsuarioPost');
 
 $app->post('/usuarios/editar/banear/:idUser', function($idUser) use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
-            if (isset($_POST['idUser']) && isset($_POST['banear']) && ($_SESSION['rol'] == 4 || $_SESSION['rol'] == 5)) {
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            if (isset($_POST['idUser']) && isset($_POST['banear'])) {
                 banearUsuario($_POST['idUser']);
             }
-            if (isset($_POST['idUser']) && isset($_POST['quitarbaneo']) && ($_SESSION['rol'] == 4 || $_SESSION['rol'] == 5)) {
+            if (isset($_POST['idUser']) && isset($_POST['quitarbaneo'])) {
                 desbanearUsuario($_POST['idUser']);
             }
             
@@ -394,16 +406,17 @@ $app->post('/usuarios/editar/banear/:idUser', function($idUser) use ($app) {
 
             $app->Redirect('/usuarios/editar/' . $idUser);
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('banearUsuario');
 
 $app->post('/usuarios/borrar', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             if (isset($_POST['borralo'])) {
                 eliminarUsuario($_POST['co']);
             } else {
@@ -412,62 +425,86 @@ $app->post('/usuarios/borrar', function() use ($app) {
 
             $app->Redirect('/usuarios');
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('borrarUsuario');
 
 $app->get('/noticias/lista', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            $noticias = cargarNoticias();
+            $app->render('listaNoticias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
+        } else {
+            $app->Redirect('/');
+        }
     } else {
-        $noticias = cargarNoticias();
-        $app->render('listaNoticias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias));
+        $app->Redirect('/');
     }
 })->name('listaNoticias');
 
 $app->get('/noticias/nueva', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            $noticias = cargarNoticias();
+            $app->render('nuevaNoticia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
+        } else {
+            $app->Redirect('/');
+        }
     } else {
-        $noticias = cargarNoticias();
-        $app->render('nuevaNoticia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias));
+        $app->Redirect('/');
     }
 })->name('nuevaNoticia');
 
 $app->post('/noticias/lista', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            crearNoticia($_POST['inputTitulo'], $_POST['inputTexto'], $_POST['inputRango'], $_POST['inputEstado'], $_SESSION['id']);
+            $noticias = cargarNoticias();
+            $app->render('listaNoticias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
+        } else {
+            $app->Redirect('/');
+        }
     } else {
-        crearNoticia($_POST['inputTitulo'], $_POST['inputTexto'], $_POST['inputRango'], $_POST['inputEstado'], $_SESSION['id']);
-        $noticias = cargarNoticias();
-        $app->render('listaNoticias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias));
+        $app->Redirect('/');
     }
 })->name('crearNoticia');
 
 $app->get('/noticias/editar/:idNoticia', function($idNoticia) use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            $noticia = cargarNoticia($idNoticia);
+            $app->render('editarNoticia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticia' => $noticia, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
+        } else {
+            $app->Redirect('/');
+        }
     } else {
-        $noticia = cargarNoticia($idNoticia);
-        $app->render('editarNoticia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticia' => $noticia));
+        $app->Redirect('/');
     }
 })->name('editarNoticia');
 
 $app->post('/noticias/editar', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            editarNoticia($_POST['idNoticia'], $_POST['inputTitulo'], $_POST['inputTexto'], $_POST['inputRango'], $_POST['inputEstado']);
+            $app->Redirect('/noticias/lista');
+        } else {
+            $app->Redirect('/');
+        }
     } else {
-        editarNoticia($_POST['idNoticia'], $_POST['inputTitulo'], $_POST['inputTexto'], $_POST['inputRango'], $_POST['inputEstado']);
-        $app->Redirect('/noticias/lista');
+        $app->Redirect('/');
     }
 })->name('editarNoticiaPost');
 
-$app->post('/noticias/lista', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+$app->post('/noticias/lista/borrar', function() use ($app) {
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             if (isset($_POST['borralo'])) {
                 eliminarNoticia($_POST['co']);
             } else {
@@ -476,37 +513,16 @@ $app->post('/noticias/lista', function() use ($app) {
 
             $app->Redirect('/noticias/lista');
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('borrarNoticia');
 
-$app->get('/categorias/asignar/:idUser', function($idUser) use ($app) {
-    $piloto = cargarUsuario($idUser);
-    $categorias = cargarCategorias();
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        $app->render('asignarCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'piloto' => $piloto));
-    }
-})->name('asignarCategorias');
-
-$app->post('/categorias/asignar', function() use ($app) {
-    $categorias = cargarCategorias();
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        asignarCategorias($_POST['idUser'], $_POST['inputCategoriaA']);
-        $piloto = cargarUsuario($_POST['idUser']);
-        $app->render('asignarCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'piloto' => $piloto));
-    }
-})->name('asignaCategorias');
-
 $app->post('/categorias/borrar', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
             if (isset($_POST['borralo'])) {
                 eliminarCategoria($_POST['co']);
             } else {
@@ -515,39 +531,43 @@ $app->post('/categorias/borrar', function() use ($app) {
 
             $app->Redirect('/categorias/lista');
         } else {
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('borrarCategoria');
 
 $app->get('/configuracion', function() use ($app) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
     $configuracion = datosApp();
 
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
-            $app->render('configuracionDelSitio.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion));
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            $app->render('configuracionDelSitio.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('admin.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('configuracionDelSitio');
 
 $app->post('/configuracion/guardar', function() use ($app) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
     actualizarConfiguracion($_POST['inputNombre'], $_POST['inputDescripcion'], $_POST['activacion'], $_POST['normativa'], $_POST['pago'],
         $_POST['inputTeamspeak'], $_POST['inputTwitter'], $_POST['inputFacebook'], $_POST['inputYoutube'], $_POST['inputVimeo'], /*$_POST['permite'],*/ $_POST['inputTema']);
 
     $configuracion = datosApp();
     
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if($_SESSION['rol'] == 5) {
-            $app->render('configuracionDelSitio.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion));
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            $app->render('configuracionDelSitio.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'configuracion' => $configuracion, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
-            $app->render('admin.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+            $app->Redirect('/');
         }
+    } else {
+        $app->Redirect('/');
     }
 })->name('guardarConfiguracion');
 
@@ -580,7 +600,7 @@ $app->get('/notificaciones', function() use ($app) {
     if(!isset($_SESSION['id'])) {
         $app->render('principal.html.twig');
     } else {
-        if($_SESSION['rol'] == 5) {
+        if(esAdmin($_SESSION['id'])) {
             $notificacionesNoLeidas = notificacionesNoLeidas();
             $notificaciones = cargarNotificaciones();
 
@@ -1112,4 +1132,13 @@ function desbanearUsuario($idUsuario) {
     $usuario->activo = 1;
     $usuario->expulsado = 0;
     $usuario->save();
+}
+
+function esAdmin($idUsuario) {
+    $usuario = ORM::for_table('piloto')->find_one($idUsuario);
+    if ($usuario['rol'] >= 4) {
+        return true;
+    } else {
+        return false;
+    }
 }
