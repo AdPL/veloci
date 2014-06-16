@@ -38,14 +38,21 @@ class="active"
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<h2>Usuario seleccionado: {{ piloto['nombre_completo'] }} <small> Edición de usuario</small></h2>
-			<a href="#" class="btn btn-danger pull-right">Banear usuario</a>
-			<img src="/{{ piloto['avatar'] }}" id="bloquePerfil" alt="avatar"/><br/>
-			<form method="post" action="{{ urlFor('editarUsuarioPost') }}" role="form">
+			<form method="post" name="expulsar" action="{{ urlFor('banearUsuario', {'idUser': piloto['id']}) }}">
+				<input type="hidden" name="idUser" value="{{ piloto['id'] }}">
+				{% if piloto['expulsado'] == 0 %}
+					<input type="submit" name="banear" class="btn btn-danger pull-right" value="Expulsar usuario">
+				{% else %}
+					<input type="submit" name="quitarbaneo" class="btn btn-info pull-right" value="Quitar expulsión">
+				{% endif %}
+			</form>
+			<img src="{{ piloto['avatar'] }}" id="bloquePerfil" alt="avatar"/><br/>
+			<form method="post" action="{{ urlFor('editarUsuarioPost', {'idUser': piloto['id']}) }}" role="form">
 				<input type="hidden" name="idUser" value="{{ piloto['id'] }}">
 				<input type="text" name="id" value="{{ piloto['id'] }}" hidden>
 				<div class="form-group">
 					<label for="inputNombre">Nombre completo</label>
-					<input type="text" class="form-control" name="inputNombre" value="{{ piloto['nombre_completo'] }}">
+					<input type="text" class="form-control" name="inputNombre" value="{{ piloto['nombre_completo'] }}" maxlength="40">
 				</div>
 				<div class="form-group">
 					<label for="inputEmail">Email</label>
@@ -59,43 +66,57 @@ class="active"
 				<div class="form-group">
 					<label for="inputActivo">Activo</label>
 					<select name="inputActivo" class="form-control">
-						<option value="1">Activo</option>
+					{% if piloto['activo'] == 1 %}
+						<option value="1" selected>Activo</option>
 						<option value="0">Inactivo</option>
+					{% else %}
+						<option value="1">Activo</option>
+						<option value="0" selected>Inactivo</option>
+					{% endif %}
 					</select>
 				</div>
+				{% if piloto['rol'] == 5%}
+				<hr>
 				<div class="form-group">
 					<label for="inputRol">Rol</label>
-					<select name="inputRol" class="form-control">
-						<option value="1">Usuario registrado</option>
-						<option value="2">FIA</option>
-						<option value="3">Publicador</option>
-						<option value="4">Administrador</option>
-					</select>
+					<input type="hidden" name="inputRol" value="5">
+					<p>Super Administrador (No editable)</p>
 				</div>
-			</form>
-			<form method="post" action="{{ urlFor('asignaCategorias') }}">
+				<hr>
+				{% else %}
+					<div class="form-group">
+						<label for="inputRol">Rol</label>
+						<select name="inputRol" class="form-control">
+							<option value="1">Usuario registrado</option>
+							<option value="2">FIA</option>
+							<option value="3">Publicador</option>
+							<option value="4">Administrador</option>
+						</select>
+					</div>
+				{% endif %}
+
 				<div class="form-group">
+				{% if categorias == false %}<a href="{{ urlFor('nuevaCategoria') }}" class="btn btn-success">Crear su primera categoría</a>
+				{% else %}
 				<p>Seleccione las categorías en las que participa este piloto</p>
-					<select class="form-control" name="inputCategoriasA" multiple>
+					<select class="form-control" name="inputCategoriasA[]" multiple {% if categorias == false %}disabled{% endif %}>
 						{% for categoria in categorias %}
-							{% if categoria['piloto_id'] == piloto['id'] %}
-								<option>{{ categoria['nombre'] }} e</option>
-							{% endif %}
-								<option>{{ categoria['nombre'] }}</option>
+								<option value="{{ categoria['id'] }}">{{ categoria['nombre'] }}</option>
 							{% else %}
 								<option>No se han encontrado categorías</option>
 						{% endfor %}
 					</select>
 				</div>
+				{% endif %}
 				<!--<input type="hidden" value="">-->
 				<div class="form-group">
 				<p>Este piloto participa en la siguientes categorías, seleccione las que desea quitar</p>
-					<select class="form-control" name="inputCategoriasQ" multiple>
-						{% for categoria in categorias %}
+					<select class="form-control" name="inputCategoriasQ[]" multiple {% if participa == false %}disabled{% endif %}>
+						{% for categoria in participa %}
 							{% if categoria['piloto_id'] == piloto['id'] %}
-								<option>{{ categoria['nombre'] }} e</option>
+								<option value="{{ categoria['id'] }}">{{ categoria['nombre'] }}</option>
 							{% endif %}
-								<option>{{ categoria['nombre'] }}</option>
+
 							{% else %}
 								<option>No se han encontrado categorías</option>
 						{% endfor %}

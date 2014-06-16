@@ -341,8 +341,9 @@ $app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
         if($_SESSION['rol'] == 5) {
             $piloto = cargarUsuario($idUser);
             $categorias = cargarCategorias();
-            
-            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto, 'categorias' => $categorias));
+            $participa = cargarCategoriasUsuario($idUser);
+
+            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto, 'categorias' => $categorias, 'participa' => $participa));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -355,17 +356,48 @@ $app->post('/usuarios/editar/:idUser', function($idUser) use ($app) {
     } else {
         if($_SESSION['rol'] == 5) {
             if (isset($_POST['inputSubmit'])) {
-                //editarCategoria($app, $_POST['id'], $_POST['inputNombre'], $_POST['inputPlazas'], $_POST['inputPrecio']);   
-            } else {
-                //eliminarCategoria($app, $_POST['id']);
+                editarUsuario($idUser, $_POST['inputNombre'], $_POST['inputEmail'], $_POST['inputActivo']);
+                if(isset($_POST['inputCategoriasA'])) {
+                    asignarCategorias($idUser, $_POST['inputCategoriasA']); 
+                }
+                if(isset($_POST['inputCategoriasQ'])) {
+                    quitarCategorias($idUser, $_POST['inputCategoriasQ']);
+                }
             }
+            
+            $piloto = cargarUsuario($idUser);
+            $categorias = cargarCategorias();
+            $participa = cargarCategoriasUsuario($idUser);
 
-            $app->Redirect('listaCategorias');
+            $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto, 'categorias' => $categorias, 'participa' => $participa));            
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
     }
 })->name('editarUsuarioPost');
+
+$app->post('/usuarios/editar/banear/:idUser', function($idUser) use ($app) {
+    if(!isset($_SESSION['id'])) {
+        $app->render('principal.html.twig');
+    } else {
+        if($_SESSION['rol'] == 5) {
+            if (isset($_POST['idUser']) && isset($_POST['banear']) && ($_SESSION['rol'] == 4 || $_SESSION['rol'] == 5)) {
+                banearUsuario($_POST['idUser']);
+            }
+            if (isset($_POST['idUser']) && isset($_POST['quitarbaneo']) && ($_SESSION['rol'] == 4 || $_SESSION['rol'] == 5)) {
+                desbanearUsuario($_POST['idUser']);
+            }
+            
+            $piloto = cargarUsuario($idUser);
+            $categorias = cargarCategorias();
+            $participa = cargarCategoriasUsuario($idUser);
+
+            $app->Redirect('/usuarios/editar/' . $idUser);
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    }
+})->name('banearUsuario');
 
 $app->post('/usuarios/borrar', function() use ($app) {
     if(!isset($_SESSION['id'])) {
@@ -570,7 +602,7 @@ $app->get('/notificaciones', function() use ($app) {
 */
 function cargarUsuario($idUser) {
     return ORM::for_table('piloto')->
-    select_many('piloto.id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol')->find_one($idUser);
+    select_many('piloto.id', 'email', 'avatar', 'nombre_completo', 'escuderia', 'activo', 'rol', 'expulsado')->find_one($idUser);
 }
 
 /**
@@ -583,7 +615,9 @@ function cargarUsuario($idUser) {
 * @return object
 */
 function cargarCategoriasUsuario($idUser) {
-    return ORM::for_table('piloto_categoria')->where('piloto_id', $idUser)->find_many();
+    return ORM::for_table('piloto_categoria')->
+    join('categoria', array('categoria.id', '=', 'piloto_categoria.categoria_id'))->
+    where('piloto_id', $idUser)->find_many();
 }
 
 /**
@@ -992,12 +1026,26 @@ function guardarAsistencias($formulario) {
 * @return @void
 */
 function asignarCategorias($idUser, $categorias) {
+    for ($i=0; $i < count($categorias); $i++) {
+        $catPiloto = ORM::for_table('piloto_categoria')->
+        where('piloto_id', $idUser)->
+        where('categoria_id', $categorias[$i])->find_one();
+        if (!$catPiloto) {
+            $catPiloto = ORM::for_table('piloto_categoria')->create();
+            $catPiloto->id = null;
+            $catPiloto->categoria_id = $categorias[$i];
+            $catPiloto->piloto_id = $idUser;
+            $catPiloto->save();
+        }
+    }
+}
+
+function quitarCategorias($idUser, $categorias) {
     for ($i=0; $i < count($categorias); $i++) { 
-        $catPiloto = ORM::for_table('piloto_categoria')->create();
-        $catPiloto->id = null;
-        $catPiloto->categoria_id = $categorias[$i];
-        $catPiloto->piloto_id = $idUser;
-        $catPiloto->save();
+        $catPiloto = ORM::for_table('piloto_categoria')->
+        where('piloto_id', $idUser)->
+        where('categoria_id', $categorias[$i])->find_one();
+        $catPiloto->delete();
     }
 }
 
@@ -1043,3 +1091,25 @@ function cargarNotificaciones() {
         }
     }
 }*/
+
+function editarUsuario($idUsuario, $nombre_completo, $email, $activo) {
+    $usuario = ORM::for_table('piloto')->find_one($idUsuario);
+    $usuario->nombre_completo = $nombre_completo;
+    $usuario->email = $email;
+    $usuario->activo = $activo;
+    $usuario->save();
+}
+
+function banearUsuario($idUsuario) {
+    $usuario = ORM::for_table('piloto')->find_one($idUsuario);
+    $usuario->activo = 0;
+    $usuario->expulsado = 1;
+    $usuario->save();
+}
+
+function desbanearUsuario($idUsuario) {
+    $usuario = ORM::for_table('piloto')->find_one($idUsuario);
+    $usuario->activo = 1;
+    $usuario->expulsado = 0;
+    $usuario->save();
+}
