@@ -16,16 +16,6 @@
 
 {% extends "admbase.html.twig" %}
 
-{% block head %}
-<style type="text/css">
-	.img-circle {
-		height: 100px;
-		width: 100px;
-		margin: 0 auto;
-	}
-</style>
-{% endblock %}
-
 {% block adminUsuarios %}
 class="active"
 {% endblock %}
@@ -37,7 +27,6 @@ class="active"
 			<form method="post" action="{{ urlFor('borrarUsuario') }}">
 				<a class="btn btn-info btn-action" onclick="seleccionado('{{ urlFor('editarUsuario') }}', 'rUsuario')">Editar</a>
 				<input type="hidden" id="co" name="co">
-				<button type="submit" name="borralo" class="btn btn-danger btn-action">Eliminar</button>
 			</form>
 		</div>
 		<table class="table table-striped">
