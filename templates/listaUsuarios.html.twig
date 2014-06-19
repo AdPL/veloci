@@ -46,6 +46,12 @@ class="active"
 					<td>{{ usuario['email'] }}</td>
 					{% if usuario['rol'] == 5 %}
 						<td>Administrador</td>
+					{% elseif usuario['rol'] == 4 %}
+						<td>Administrador</td>
+					{% elseif usuario['rol'] == 3 %}
+						<td>Moderador</td>
+					{% elseif usuario['rol'] == 2 %}
+						<td>FIA (árbitro)</td>
 					{% elseif usuario['rol'] == 1 %}
 						<td>Registrado</td>
 					{% endif %}

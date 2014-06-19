@@ -23,7 +23,17 @@ active
 {% block content %}
 <div class="col-lg-9">
 	<div class="panel panel-default">
-		<form method="post" action="{{ urlFor('controlAsistenciaGuardar') }}">
+		<div class="panel-heading">
+			Asistencias
+		</div>
+		<div class="panel-body">
+			Seleccione una categoría<hr>
+			{% for categoria in categorias %}
+				<a href="{{ urlFor('controlAsistenciasCategoria', {'idCategoria': categoria['id'] })}}" class="btn btn-info">{{ categoria['nombre'] }}</a>
+			{% endfor %}
+		</div>
+		{% if tabla %}
+		<form method="post" action="{{ urlFor('controlAsistenciaGuardar', {'idCategoria': c }) }}">
 		<table class="table table-striped">
 			<thead>
 				<th>Piloto/Circuito</th>
@@ -90,6 +100,7 @@ active
 			<input type="submit" class="btn btn-success" value="Guardar faltas"/>
 		</div>
 		</form>
+		{% endif %}
 	</div>
 </div>
 {% endblock %}

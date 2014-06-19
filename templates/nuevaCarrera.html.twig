@@ -16,6 +16,10 @@
 
 {% extends 'admbase.html.twig' %}
 
+{% block loadJS %}
+onload="rellenarSelect()"
+{% endblock %}
+
 {% block head %}
 <script>
 	function rellenarSelect() {

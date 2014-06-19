@@ -19,6 +19,16 @@
 {% block content %}
 <div class="col-lg-9 col-sm-12">
 	<div class="panel panel-default">
+	<div class="panel-heading">
+		Asistencias
+	</div>
+	<div class="panel-body">
+		Seleccione una categoría<hr>
+		{% for categoria in categorias %}
+			<a href="{{ urlFor('asistenciasCategoria', {'idCategoria': categoria['id'] })}}" class="btn btn-info">{{ categoria['nombre'] }}</a>
+		{% endfor %}
+	</div>
+		{% if tabla %}
 		<table class="table table-striped">
 			<thead>
 				<th>Piloto/Circuito</th>
@@ -69,6 +79,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
+		{% endif %}
 	</div>
 </div>
 {% endblock %}

@@ -40,10 +40,12 @@ class="active"
 			<h2>Usuario seleccionado: {{ piloto['nombre_completo'] }} <small> Edición de usuario</small></h2>
 			<form method="post" name="expulsar" action="{{ urlFor('banearUsuario', {'idUser': piloto['id']}) }}">
 				<input type="hidden" name="idUser" value="{{ piloto['id'] }}">
-				{% if piloto['expulsado'] == 0 %}
-					<input type="submit" name="banear" class="btn btn-danger pull-right" value="Expulsar usuario">
-				{% else %}
-					<input type="submit" name="quitarbaneo" class="btn btn-info pull-right" value="Quitar expulsión">
+				{% if piloto['rol'] != 5%}
+					{% if piloto['expulsado'] == 0 %}
+						<input type="submit" name="banear" class="btn btn-danger pull-right" value="Expulsar usuario">
+					{% else %}
+						<input type="submit" name="quitarbaneo" class="btn btn-info pull-right" value="Quitar expulsión">
+					{% endif %}
 				{% endif %}
 			</form>
 			<img src="{{ piloto['avatar'] }}" id="bloquePerfil" alt="avatar"/><br/>

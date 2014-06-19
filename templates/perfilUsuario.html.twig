@@ -39,18 +39,17 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					{% if alert %}
-						<h2 class="text-center">{{ user }}</h2>
+						<img src="{{ user['avatar'] }}" alt="avatar" class="img-circle img-responsive">
+						<h2 class="text-center">{{ user['nombre_completo'] }}</h2>
 					{% else %}
-					<img src="{{ user.avatar }}" alt="avatar" class="img-circle img-responsive">
-					<h2 class="text-center">{{ user['nombre_completo'] }}</h2>
-					{% if competidas %}
-					<ul>
-						<li>Carreras disputadas: {{ competidas }} </li>
-						<li>Ausencias justificadas: {{ justificadas }} </li>
-						<li>Ausencias injustificadas: {{ injustificadas }} </li>
-						<li>Sanciones: {{ sancionado }} </li>
-					</ul>
-					{% endif %}
+						<img src="{{ user['avatar'] }}" alt="avatar" class="img-circle img-responsive">
+						<h2 class="text-center">{{ user['nombre_completo'] }}</h2>
+						<ul>
+							<li>Carreras disputadas: {{ competidas }} </li>
+							<li>Ausencias justificadas: {{ justificadas }} </li>
+							<li>Ausencias injustificadas: {{ injustificadas }} </li>
+							<li>Sanciones: {{ sancionado }} </li>
+						</ul>
 					{% endif %}
 				</div>
 			</div>
