@@ -275,14 +275,6 @@ function validar(campo, c_error, error, tipo) {
 	return rerror;
 }
 
-function soloTexto(campo) {
-	var patron = /[A-z]10/;
-	if( campo.value.match(patron) ) {
-		alert("bien");
-  		return false;
-	}
-}
-
 function soloTexto(e) {
 	tecla = (document.all) ? e.keyCode : e.which; 
 	if (tecla == 8) return true;
