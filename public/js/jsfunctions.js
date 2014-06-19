@@ -248,7 +248,7 @@ function validar(campo, c_error, error, tipo) {
 		break;
 
 		case 4: // Comprobación de que el nombre es Nombre + Apellido
-			var patron = /^[a-zA-Z]$/;
+			var patron = /^([a-z ñáéíóú]{2,60}\s[a-z ñáéíóú]{2,60})$/i;
 			if (patron.test(campo.value)) {
 				document.getElementById('inputNombreCompleto').className = "form-group has-success";
 				ayuda.innerHTML = "";
@@ -282,7 +282,7 @@ function soloTexto(e) {
     if (e.ctrlKey && tecla == 67) { return true;}
     if (e.ctrlKey && tecla == 88) { return true;}
 
-    patron = /[a-zA-Z]/; //patron
+    patron = /[a-zA-Z ñáéíóú{4, 30}]/; //patron
 
     te = String.fromCharCode(tecla); 
     return patron.test(te);
