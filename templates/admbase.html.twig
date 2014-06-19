@@ -135,6 +135,8 @@
 							<li><a href="#">Estadísticas (No disponible)</a></li>
 							<li {% block adminNoticias %}{% endblock %}><a href="{{ urlFor('listaNoticias') }}">Noticias</a></li>
 						</ul>
+						<hr>
+						<a href="{{ urlFor('principal') }}" class="btn btn-success btn-block">Salir del panel</a>
 						{% endblock %}
 					</div>
 				</div>

@@ -99,14 +99,15 @@ $app->get('/categorias', function() use ($app) {
 	$configuracion = datosApp();
 	$carrera = cargarCarrera();
 	$categorias = cargarCategorias();
+	$plazas = plazasOcupadasCategoria();
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if(isset($_SESSION['id'])) {
 		$notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
 		$nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
-		$app->render('categorias.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
+		$app->render('categorias.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario, 'plazasOcupadas' => $plazas));
 	} else {
-		$app->render('categorias.html.twig', array('carrera' => $carrera, 'categorias' => $categorias, 'configuracion' => $configuracion));
+		$app->render('categorias.html.twig', array('carrera' => $carrera, 'categorias' => $categorias, 'configuracion' => $configuracion, 'plazasOcupadas' => $plazas));
 	}
 })->name('categorias');
 
@@ -338,7 +339,7 @@ $app->post('/noticia/:idNoticia', function($idNoticia) use ($app) {
 
 	if(isset($_SESSION['id'])) {
 		if(isset($_POST['nuevoComentario'])) {
-			if (longitudMinima($_POST['inputComentario'], 10)) {
+			if (longitudMinima($_POST['inputComentario'], 5)) {
 				enviarComentario($_POST['inputComentario'], $_POST['inputResponde'], $_SESSION['id'], $_POST['inputNoticia'], $_SESSION['id'], $_SESSION['nombre_completo']);
 				$enlace = $app->urlFor('comentar',  array('idNoticia' => $idNoticia));
 				creaNotificacion($enlace, 'publicado un nuevo comentario en la noticia', $_SESSION['nombre_completo'], '5', '0', '0', '0');
@@ -351,7 +352,7 @@ $app->post('/noticia/:idNoticia', function($idNoticia) use ($app) {
 				$nComentarios = numeroComentarios($idNoticia);
 				contarComentarios($idNoticia);
 				$app->render('noticia.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'noticias' => $noticias, 'noticia' => $noticia, 'comentarios' => $comentarios, 'nComentarios' => $nComentarios, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
-				echo "<script>alertify.alert('Error: un comentario debe tener al menos 10 palabras.');</script>";
+				echo "<script>alertify.alert('Error: un comentario debe tener al menos 5 palabras.');</script>";
 			}
 		} else {
 			$comentarios = cargarComentarios($idNoticia);

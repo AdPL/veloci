@@ -24,12 +24,16 @@
 {% block categorias %}
 {% for categoria in categorias %}
 <div class="media">
-	<a class="pull-left" href="#">
+	<a class="pull-left" href="{{ urlFor('categorias') }}">
 		<img class="media-object img40" src="{{ categoria['imagen'] }}" alt="{{ categoria['nombre'] }}">
 	</a>
 	<div class="media-body">
 		<h4 class="media-heading">{{ categoria['nombre'] }}</h4>
-		<small>{% if plazas == "" %}0{% else %}{{ plazas }}{% endif %}/{{ categoria['plazas'] }} ocupadas</small>
+		{% if categoria['plazas_libres'] > 0 %}
+			<small>{{ categoria['plazas_libres'] }} plazas libres <a href="#" class="btn btn-info btn-xs">Inscripción</a></small>
+		{% else %}
+			<small>Ninguna plaza libre, inscripciones cerradas.</small>
+		{% endif %}
 	</div>
 </div>
 {% endfor %}

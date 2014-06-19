@@ -22,10 +22,13 @@ $app->get('/login', function() use ($app) {
 $app->post('/login', function() use ($app) {
     $acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
 
-    if (!$acceso) {
+    if ($acceso) {
+        $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+    } else {
         $app->redirect($app->urlFor('princial'));
     }
-    $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+
+    
 })->name('accederLogin');
 
 $app->get('/registro', function() use ($app) {
@@ -68,10 +71,12 @@ $app->get('/perfil', function() use ($app) {
         $app->redirect($app->urlFor('principal'));
     }
 
+    $notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
+    $nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
     $configuracion = datosApp();
     $usuario = datosUsuario($_SESSION['id']);
 
-    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion));
+    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
 })->name('perfil');
 
 $app->post('/perfil', function() use ($app) {
@@ -80,6 +85,8 @@ $app->post('/perfil', function() use ($app) {
     }
 
     $configuracion = datosApp();
+    $notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
+    $nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
 
     if (editarPerfil($_POST['inputNombreCompleto'], $_POST['visibilidad'])) {
         imagenPerfil($app, $_FILES['inputFoto']);
@@ -88,11 +95,11 @@ $app->post('/perfil', function() use ($app) {
         $_SESSION['nombre_completo'] = $_POST['inputNombreCompleto'];
         $_SESSION['avatar'] = $usuario['avatar'];
 
-        $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion));
+        $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
         echo "<script type='text/javascript'>alertify.success('Cambios guardados con éxito');</script>";
     } else {
         $usuario = datosUsuario($_SESSION['id']);
-        $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion));
+        $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
         echo "<script type='text/javascript'>alertify.alert('Ocurrio un error en el envio del formulario, por favor, revise los campos.');</script>";    
     }
 })->name('cambiarAvatar');
@@ -107,10 +114,12 @@ $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
     $configuracion = datosApp();
     
     if(isset($_SESSION['id'])) {
+        $notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
+        $nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
         if($usuario['privacidad_perfil'] == 1 || esAdmin($_SESSION['id'])) {
-            $app->render('perfilUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado, 'configuracion' => $configuracion));
+            $app->render('perfilUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
         } else {
-            $app->render('perfilUsuario.html.twig', array('user' => $usuario, 'alert' => "El perfil de este usuario es privado", 'configuracion' => $configuracion));
+            $app->render('perfilUsuario.html.twig', array('user' => $usuario, 'alert' => "El perfil de este usuario es privado", 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
         }
     } else {
         if($usuario['privacidad_perfil'] == 1) {
