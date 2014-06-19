@@ -680,7 +680,7 @@ function cargarUsuarios() {
 * @return object
 */
 function cargarCategorias() {
-    return ORM::for_table('categoria')->order_by_asc('nombre')->find_many();
+    return ORM::for_table('categoria')->raw_query('select nombre, imagen, plazas, (plazas-count(*)) as plazas_libres, precio_inscripcion from categoria join piloto_categoria ON categoria.id = piloto_categoria.categoria_id group by nombre')->find_many();
 }
 
 function eliminarUsuario($idUsuario) {
