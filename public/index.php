@@ -38,6 +38,7 @@
 	session_cache_limiter(false);
 	session_start();
 
+	require('../routes/testing.php');
 	require('../routes/principal.php');
 	require('../routes/usuario.php');
 	require('../routes/admin.php');
