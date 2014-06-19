@@ -311,10 +311,11 @@ $app->get('/asistencias/control', function() use ($app) {
     if(isset($_SESSION['id'])) {
         if(esAdmin($_SESSION['id'])) {
             $carreras = cargarCarreras();
-            $pilotos = cargarUsuarios();
+            $pilotos = cargarUsuariosOficiales();
             $estados = carreraControlAsistencia();
+            $categorias = cargarCategorias();
             
-            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'notificacionesNoLeidas' => $notificacionesNoLeidas, 'categorias' => $categorias, 'tabla' => false));
         } else {
             $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
         }
@@ -323,21 +324,39 @@ $app->get('/asistencias/control', function() use ($app) {
     }
 })->name('controlAsistencia');
 
+$app->get('/asistencias/control/:idCategoria', function($idCategoria) use ($app) {
+    $notificacionesNoLeidas = notificacionesNoLeidas();
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            $carreras = cargarCarrerasCategoria($idCategoria);
+            $pilotos = cargarUsuariosOficialesCategoria($idCategoria);
+            $estados = carreraControlAsistencia();
+            $categorias = cargarCategorias();
+            
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'notificacionesNoLeidas' => $notificacionesNoLeidas, 'categorias' => $categorias, 'tabla' => true, 'c' => $idCategoria));
+        } else {
+            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
+        }
+    } else {
+        $app->Redirect('/');
+    }
+})->name('controlAsistenciasCategoria');
+
 function carreraControlAsistencia() {
     return ORM::for_table('piloto_carrera')->find_many();
 }
 
-$app->post('/asistencias/control', function() use ($app) {
+$app->post('/asistencias/control/:idCategoria', function($idCategoria) use ($app) {
     $notificacionesNoLeidas = notificacionesNoLeidas();
     if(isset($_SESSION['id'])) {
         if(esAdmin($_SESSION['id'])) {
-            $carreras = cargarCarreras();
-            $pilotos = cargarUsuarios();
-            
+            $carreras = cargarCarrerasCategoria($idCategoria);
+            $pilotos = cargarUsuariosOficialesCategoria($idCategoria);
+            $categorias = cargarCategorias();
             guardarAsistencias($_POST);
             $estados = carreraControlAsistencia();
 
-            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
+            $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'categorias' => $categorias, 'estados' => $estados, 'notificacionesNoLeidas' => $notificacionesNoLeidas, 'c' => $idCategoria, 'tabla' => true));
         } else {
             $app->Redirect('/');
         }
@@ -571,6 +590,21 @@ $app->post('/configuracion/guardar', function() use ($app) {
     }
 })->name('guardarConfiguracion');
 
+$app->get('/notificaciones', function() use ($app) {
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            $notificacionesNoLeidas = notificacionesNoLeidas();
+            $notificaciones = cargarNotificaciones();
+
+            $app->render('notificaciones.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'notificacionesNoLeidas' => $notificacionesNoLeidas, 'notificaciones' => $notificaciones));
+        } else {    
+            $app->Redirect('/');
+        }
+    } else {
+        $app->Redirect('/');
+    }
+})->name('notificaciones');
+
 function datosApp() {
     return ORM::for_Table('configuracion')->find_one(1);
 }
@@ -595,21 +629,6 @@ function actualizarConfiguracion($titulo, $slogan, $activacion, $normativa, $pag
     
     $datos->save();
 }
-
-$app->get('/notificaciones', function() use ($app) {
-    if(!isset($_SESSION['id'])) {
-        $app->render('principal.html.twig');
-    } else {
-        if(esAdmin($_SESSION['id'])) {
-            $notificacionesNoLeidas = notificacionesNoLeidas();
-            $notificaciones = cargarNotificaciones();
-
-            $app->render('notificaciones.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'notificacionesNoLeidas' => $notificacionesNoLeidas, 'notificaciones' => $notificaciones));
-        } else {    
-            $app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol']));
-        }
-    }
-})->name('notificaciones');
 
 /**
 * Obtiene los datos del usuario especificado
@@ -1134,11 +1153,20 @@ function desbanearUsuario($idUsuario) {
     $usuario->save();
 }
 
-function esAdmin($idUsuario) {
-    $usuario = ORM::for_table('piloto')->find_one($idUsuario);
-    if ($usuario['rol'] >= 4) {
-        return true;
-    } else {
-        return false;
-    }
+function cargarUsuariosOficiales() {
+    return ORM::for_table('piloto')->
+    join('piloto_categoria', array('piloto.id', '=', 'piloto_categoria.piloto_id'))->
+    select_many('piloto.id', 'piloto.nombre_completo')->distinct()->find_many();
+}
+
+function cargarUsuariosOficialesCategoria($idCategoria) {
+    return ORM::for_table('piloto')->
+    join('piloto_categoria', array('piloto.id', '=', 'piloto_categoria.piloto_id'))->
+    where('piloto_categoria.categoria_id', $idCategoria)->
+    select_many('piloto.id', 'piloto.nombre_completo')->distinct()->find_many();
+}
+
+function cargarCarrerasCategoria($idCategoria) {
+    return ORM::for_table('carrera')->
+    where('categoria_id', $idCategoria)->find_many();
 }

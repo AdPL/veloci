@@ -79,16 +79,22 @@ $app->post('/perfil', function() use ($app) {
         $app->redirect($app->urlFor('principal'));
     }
 
-    editarPerfil($_POST['inputNombreCompleto'], $_POST['visibilidad']);
-    imagenPerfil($app, $_FILES['inputFoto']);
     $configuracion = datosApp();
-    $usuario = datosUsuario($_SESSION['id']);
 
-    $_SESSION['nombre_completo'] = $_POST['inputNombreCompleto'];
-    $_SESSION['avatar'] = $usuario['avatar'];
+    if (editarPerfil($_POST['inputNombreCompleto'], $_POST['visibilidad'])) {
+        imagenPerfil($app, $_FILES['inputFoto']);
+        $usuario = datosUsuario($_SESSION['id']);
 
-    $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion));
-    echo "<script type='text/javascript'>alertify.success('Cambios guardados con éxito');</script>";
+        $_SESSION['nombre_completo'] = $_POST['inputNombreCompleto'];
+        $_SESSION['avatar'] = $usuario['avatar'];
+
+        $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion));
+        echo "<script type='text/javascript'>alertify.success('Cambios guardados con éxito');</script>";
+    } else {
+        $usuario = datosUsuario($_SESSION['id']);
+        $app->render('perfil.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'datosUsuario' => $usuario, 'configuracion' => $configuracion));
+        echo "<script type='text/javascript'>alertify.alert('Ocurrio un error en el envio del formulario, por favor, revise los campos.');</script>";    
+    }
 })->name('cambiarAvatar');
 
 $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
@@ -100,14 +106,18 @@ $app->get('/perfil/:idUsuario', function($idUsuario) use ($app) {
     $sancionado = nCarreras($idUsuario, 4);
     $configuracion = datosApp();
     
-    if(!isset($_SESSION['id'])) {
+    if(isset($_SESSION['id'])) {
+        if($usuario['privacidad_perfil'] == 1 || esAdmin($_SESSION['id'])) {
+            $app->render('perfilUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado, 'configuracion' => $configuracion));
+        } else {
+            $app->render('perfilUsuario.html.twig', array('user' => $usuario, 'alert' => "El perfil de este usuario es privado", 'configuracion' => $configuracion));
+        }
+    } else {
         if($usuario['privacidad_perfil'] == 1) {
             $app->render('perfilUsuario.html.twig', array('user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado, 'configuracion' => $configuracion));
         } else {
-            $app->render('perfilUsuario.html.twig', array('user' => $usuario['nombre_completo'], 'alert' => "El perfil de este usuario es privado", 'configuracion' => $configuracion));
+            $app->render('perfilUsuario.html.twig', array('user' => $usuario, 'alert' => "El perfil de este usuario es privado", 'configuracion' => $configuracion));
         }
-    } else {
-        $app->render('perfilUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'user' => $usuario, 'competidas' => $competidas, 'justificadas' => $justificadas, 'injustificadas' => $injustificadas, 'sancionado' => $sancionado, 'configuracion' => $configuracion));
     }
 })->name('perfilUsuario');
 
@@ -171,7 +181,7 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
 
         $mail->Subject = 'Bienvenido a F1M';
         $mail->Body    = 'Gracias por registrarse en F1Mallorca, le recordamos que con el registro usted afirma haber leido los términos y condiciones de uso de la aplicación 
-        y la liga.<hr/><br/>Para completar su registro debe acceder al siguiente enlace para autenticar su cuenta:<br/>http://localhost/complete/' . $token . '<hr/>Muchas gracias por su registro.<br/>';
+        y la liga.<hr/><br/>Para completar su registro debe acceder al siguiente enlace para autenticar su cuenta:<br/>http://' . $_SERVER['SERVER_NAME'] . '/complete/' . $token . '<hr/>Muchas gracias por su registro.<br/>';
 
         if(!$mail->send()) {
             echo 'Message could not be sent.';
@@ -198,7 +208,7 @@ function registrarUsuario($app, $usuario, $email, $password, $passwordCheck, $no
 */
 function imagenPerfil($app, $imagen) {
     if ($_FILES['inputFoto']['error'] > 0) {
-        echo "error";
+        //echo "error";
     } else {
         $ok = array("image/jpg", "image/jpeg", "image/gif", "image/png");
         $limite_kb = 100;
@@ -221,7 +231,7 @@ function imagenPerfil($app, $imagen) {
                     echo "ERROR";
                 }
         } else {
-            echo "Archivo no permitido";
+            //echo "Archivo no permitido";
         }
     }
 }
@@ -284,9 +294,16 @@ function nCarreras($id, $estado) {
 
 function editarPerfil($nombre_completo, $visibilidad) {
     $usuario = ORM::for_table('piloto')->find_one($_SESSION['id']);
-    $usuario->nombre_completo = $nombre_completo;
-    $usuario->privacidad_perfil = $visibilidad;
-    $usuario->save();
+
+    if (texto($nombre_completo) && is_numeric($visibilidad) && entre($visibilidad, 1, 2)) {
+        $usuario->nombre_completo = $nombre_completo;
+        $usuario->privacidad_perfil = $visibilidad;
+        $usuario->save();
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function autenticarNuevaCuenta($tk) {
