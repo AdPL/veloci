@@ -471,7 +471,7 @@ function testAccess($app, $usuario, $pass) {
 function cargarCarrera() {
 	return ORM::for_table('carrera')->
 	where_gte('fecha', date("Y-m-d"))->
-	where_lte('hora', date("H:i:s"))->
+	//where_gte('hora', date("H:i:s"))->
 	order_by_asc('fecha')->limit(1)->find_many();
 }
 

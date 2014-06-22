@@ -32,16 +32,16 @@
 	
 	// Ejecución tras presionar el botón instalar.
 	if (isset($_POST['instalar'])) {
-		echo $host = $_POST['inputHost'];
-		echo $database = $_POST['inputBaseDatos'];
-		echo $usuario = $_POST['inputUsuarioBase'];
-		echo $password = $_POST['inputPassUsuarioBase'];
-		echo $nombreApp = $_POST['inputNombreApp'];
-		echo $usrADM = $_POST['inputUsuarioAdmin'];
-		echo $passADM = $_POST['inputPassAdmin'];
-		echo $passTestADM = $_POST['inputPassAdmin2'];
-		echo $nombreADM = $_POST['inputNombrePublico'];
-		echo $emailADM = $_POST['inputEmailAdmin'];
+		$host = $_POST['inputHost'];
+		$database = $_POST['inputBaseDatos'];
+		$usuario = $_POST['inputUsuarioBase'];
+		$password = $_POST['inputPassUsuarioBase'];
+		$nombreApp = $_POST['inputNombreApp'];
+		$usrADM = $_POST['inputUsuarioAdmin'];
+		$passADM = $_POST['inputPassAdmin'];
+		$passTestADM = $_POST['inputPassAdmin2'];
+		$nombreADM = $_POST['inputNombrePublico'];
+		$emailADM = $_POST['inputEmailAdmin'];
 
 		$correcto = false;
 
@@ -118,11 +118,13 @@
 
 			/* Creación de tabla categoría */
 			$dbh->exec("CREATE TABLE IF NOT EXISTS `categoria` (
-				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-				`nombre` VARCHAR(45) NOT NULL,
-				`pais` VARCHAR(45) NOT NULL,
-				`distancia` INT UNSIGNED NOT NULL,
-				`imagen` VARCHAR(50) UNSIGNED NOT NULL,
+				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+				`nombre` varchar(45) NOT NULL,
+				`pais` varchar(45) NOT NULL,
+				`distancia` int(10) unsigned NOT NULL,
+				`imagen` varchar(50) NOT NULL,
+				`plazas` int(10) unsigned NOT NULL,
+				`precio_inscripcion` int(10) unsigned NOT NULL,
 				PRIMARY KEY (`id`))
 			ENGINE = InnoDB;");
 
@@ -335,9 +337,8 @@
 		if ($correcto) {
 			try {
 				$token = generarToken(100);
-				echo "BIEN";
 
-				$insertADM = $dbh->prepare("INSERT INTO `piloto` (`id`, `nombre`, `password`, `avatar`, `email`, `token`, `escuderia`, `nombre_completo`, `activo`, `rol`) VALUES (null,:usrADM,:passADM,'/images/default.png',:emailADM, :token, 'Ninguna', :nombreADM, '0', '5');");
+				$insertADM = $dbh->prepare("INSERT INTO `piloto` (`id`, `nombre`, `password`, `avatar`, `email`, `token`, `escuderia`, `nombre_completo`, `activo`, `rol`) VALUES (null,:usrADM,:passADM,'/images/default.png',:emailADM, :token, 'Ninguna', :nombreADM, '1', '5');");
 				$insertADM->bindValue(':usrADM', strtolower($usrADM), PDO::PARAM_STR);
 				$insertADM->bindValue(':passADM', $passADM, PDO::PARAM_STR);
 				$insertADM->bindValue(':emailADM', $emailADM, PDO::PARAM_STR);
@@ -345,8 +346,10 @@
 				$insertADM->bindValue(':nombreADM', $nombreADM, PDO::PARAM_STR);
 				$insertADM->execute() or die(print_r("Error en la creación del usuario administrador"));
 
-				$dbh->exec("INSERT INTO `configuracion` (`id`, `nombre`, `descripcion`, `requiere_activacion`, `requiere_normativa`, `requiere_pago`, `teamspeak`, `twitter`, `facebook`, `youtube`, `vimeo`, `permite_plantillas`, `plantilla_defecto`) VALUES (null, 'Veloci', 'Aplicación web para la gestión de carreras', 0, 0, 0, '', '', '', '', '', 0, 'bootstrap.css');");
-				
+				$configApp = $dbh->prepare("INSERT INTO `configuracion` (`id`, `nombre`, `descripcion`, `requiere_activacion`, `requiere_normativa`, `requiere_pago`, `teamspeak`, `twitter`, `facebook`, `youtube`, `vimeo`, `permite_plantillas`, `plantilla_defecto`) VALUES (null, :nombreApp, 'Aplicación web para la gestión de carreras', 0, 0, 0, '', '', '', '', '', 0, 'bootstrap.css');");
+				$configApp->bindValue(':nombreApp', $nombreApp, PDO::PARAM_STR);
+				$configApp->execute() or die(print_r("Error en la creación de la tabla configuración"));
+
 				$todocorrecto = true;
 			} catch (PDOException $e) {
 				// Si falla algo, desechamos los cambios y paramos la ejecución.
@@ -404,50 +407,46 @@ function generarToken($longitud) {
 <head>
 	<title>Instalador</title>
 	<meta charset="utf-8"/>
-	<link href="css/semantic.css" rel="stylesheet" type="text/css">
+	<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="css/style.css" rel="stylesheet" type="text/css">
 	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="js/semantic.js"></script>
 	<script type="text/javascript" src="js/myscript.js"></script>
 </head>
-<body>
-	<div class="ui grid">
-		<div class="ui one column grid">
-			<div class="column">
-				<div class="ui segment green">
-					<h3 class="header">Fin de la instalación</h3>
-					<p><?php
-						$error = isset($_POST['instalar']) ? true : false;
-						
-						if ($error)
-							echo "Error, no se han recibido datos.";
-						else
-							echo "<h2>¡Instalación completada con éxito!</h2>";
-							echo "Ahora ya puede acceder a su web y panel de administración: " . $usrADM . "<br/>";
-							echo "<a href='http://" . $_SERVER["SERVER_NAME"] . "' class='ui animated positive button floated left'>
-							<div class='visible content'>Ir al sitio web</div>
-							<div class='hidden content'>
-							<i class='right arrow icon'></i>
-							</div>
-							</a>";
-							echo "<a href='http://" . $_SERVER["SERVER_NAME"] . "/admin' class='ui animated positive button floated left'>
-							<div class='visible content'>Ir al panel de administración</div>
-							<div class='hidden content'>
-							<i class='right arrow icon'></i>
-							</div>
-							</a>";
-
-							if (!file_exists($ruta)) {
-								echo "<br/><br/>Parece que hubo un problema en la creación del fichero de configuración, para que la aplicación pueda funcionar
-								correctamente debe copiar el código a continuación en un fichero, guardarlo como 'config.php' y despúes copiarlo a la carpeta config
-								de su servidor donde instalo la aplicación.<br/>";
-								echo htmlspecialchars($cadena);
-							}
-						?>
-					</p>
+<body style="margin-top: 50px;">
+	<div class="container">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<?php 
+			if ($todocorrecto) {
+				echo "<h3 class='header'>Fin de la instalación</h3>";
+				echo "<h2>¡Instalación completada con éxito!</h2>";
+				echo "Ahora ya puede acceder a su web y panel de administración: " . $usrADM . "<br/>";
+				echo "<a href='http://" . $_SERVER["SERVER_NAME"] . "' class='ui animated positive button floated left'>
+				<div class='visible content'>Ir al sitio web</div>
+				<div class='hidden content'>
+				<i class='right arrow icon'></i>
 				</div>
-			</div>
+				</a>";
+				echo "<a href='http://" . $_SERVER["SERVER_NAME"] . "/admin' class='ui animated positive button floated left'>
+				<div class='visible content'>Ir al panel de administración</div>
+				<div class='hidden content'>
+				<i class='right arrow icon'></i>
+				</div>
+				</a>";
+
+				if (!file_exists($ruta)) {
+					echo "<br/><br/>Parece que hubo un problema en la creación del fichero de configuración, para que la aplicación pueda funcionar
+					correctamente debe copiar el código a continuación en un fichero, guardarlo como 'config.php' y despúes copiarlo en la carpeta config
+					de su servidor donde instalo la aplicación.<br/><br/>";
+					echo "<textarea rows='2' class='form-control'>" . htmlspecialchars($cadena) . "</textarea>";
+				}
+			} else
+				echo "Error, no se han recibido datos.";
+			?>
 		</div>
 	</div>
+	</div>
+</body>
+</html>

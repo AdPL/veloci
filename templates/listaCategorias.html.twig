@@ -42,7 +42,7 @@ active
 				{% for categoria in categorias %}
 				<tr>
 					<td><input type="radio" class="rCategoria" name="rCategoria" value="{{ categoria['id'] }}" onclick="seleccion(this)"></td>
-					<td><img src="/{{ categoria['imagen'] }}"></td>
+					<td><img src="{{ categoria['imagen'] }}" class="img100"></td>
 					<td>{{ categoria['nombre'] }}</td>
 					<td>{{ categoria['plazas'] }}</td>
 					<td>{{ categoria['precio_inscripcion'] }} €</td>

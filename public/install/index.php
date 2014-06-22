@@ -49,12 +49,12 @@
 						<div class="col-lg-6">
 							<h2>Bienvenido al asistente de instalación</h2>
 							<p>Este es el asistente de instalación para la aplicación Veloice, utilizada para gestionar
-								ligas de carreras online, como por ejemplo, ligas de formula 1, turismos, entre otras, es decir,
+								ligas de carreras, como por ejemplo, ligas de formula 1, turismos, entre otras, es decir,
 								cualquier competición dedicada a carreras.</p>
 							<h2>Comenzando la instalación</h2>
 							<p>¡Ya esta listo para comenzar el proceso de instalación, el asistente le guiará a través
-								de una serie de pasos, se le pedirá cierta información y se instalará la aplicación. Si
-								tiene todo preparado proceda a instalar, a través de las pestañas superiores.
+								de una serie de pasos, en los que se le pedirá cierta información y se procederá a instalar la aplicación. Si
+								tiene todo preparado ya puede empezar, continue a través de las pestañas superiores.
 							</p>
 						</div>
 						
@@ -66,7 +66,7 @@
 								<li>Control de asistencias a carreras</li>
 								<li>Control de reclamaciones</li>
 								<li>Control de categorías</li>
-								<li>Gestión de carreras, categorías, calendarios y circuitos</li>
+								<li>Gestión de carreras, categorías, noticias y circuitos</li>
 							</ol>
 							<h2>¿Qué más tendrá Veloci?</h2>
 							<p>La aplicación pretende llegar más lejos, por lo que en un futuro podrá ser actualizada
@@ -131,7 +131,7 @@
 						<div class="col-lg-4">
 						<h2>Información sobre la cuenta</h2>
 						<p>Y para terminar, rellene el formulario con los datos para la cuenta del administrador, es decir
-							la cuenta que tendrá permiso para hacer cualquier cosa, es como ser un DIOS. Algo parecido, sí...
+							la cuenta que tendrá permiso para hacer cualquier cosa. Es la cuenta de Super Administrador.
 						</p>
 						<button type="submit" name="instalar" class="btn btn-success">Instalar</button>
 						</div>

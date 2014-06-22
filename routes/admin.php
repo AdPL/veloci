@@ -69,7 +69,7 @@ $app->get('/categorias/lista', function() use ($app) {
     $notificacionesNoLeidas = notificacionesNoLeidas();
     if(isset($_SESSION['id'])) {
         if(esAdmin($_SESSION['id'])) {
-            $categorias = cargarCategorias();
+            $categorias = cargarTodasLasCategorias();
             $app->render('listaCategorias.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
             $app->Redirect('/');
@@ -116,7 +116,7 @@ $app->get('/carreras/nueva', function() use ($app) {
     $notificacionesNoLeidas = notificacionesNoLeidas();
     if(isset($_SESSION['id'])) {
         if(esAdmin($_SESSION['id'])) {
-            $categorias = cargarCategorias();
+            $categorias = cargarTodasLasCategorias();
             $circuitos = cargarCircuitos();
             $app->render('nuevaCarrera.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'circuitos' => $circuitos, 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'categorias' => $categorias, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
         } else {
@@ -130,7 +130,7 @@ $app->get('/carreras/nueva', function() use ($app) {
 $app->post('/carreras/nueva', function() use ($app) {
     if(isset($_SESSION['id'])) {
         if(esAdmin($_SESSION['id'])) {
-            crearCarrera($app, $_POST['inputNombre'], $_POST['primerCompuesto'], $_POST['segundoCompuesto'], $_POST['inputVueltas'], $_POST['inputFecha'], $_POST['inputHora'], $_POST['inputCategoria'], $_POST['inputCircuito']);
+            crearCarrera($app, $_POST['inputNombre'], $_POST['primerCompuesto'], $_POST['segundoCompuesto'], $_POST['inputVueltas'], $_POST['inputFecha'], $_POST['inputHora'], $_POST['inputFLimite'], $_POST['inputCategoria'], $_POST['inputCircuito']);
             $app->Redirect('/carreras/lista');
         } else {
             $app->Redirect('/');
@@ -313,7 +313,7 @@ $app->get('/asistencias/control', function() use ($app) {
             $carreras = cargarCarreras();
             $pilotos = cargarUsuariosOficiales();
             $estados = carreraControlAsistencia();
-            $categorias = cargarCategorias();
+            $categorias = cargarTodasLasCategorias();
             
             $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'notificacionesNoLeidas' => $notificacionesNoLeidas, 'categorias' => $categorias, 'tabla' => false));
         } else {
@@ -331,7 +331,7 @@ $app->get('/asistencias/control/:idCategoria', function($idCategoria) use ($app)
             $carreras = cargarCarrerasCategoria($idCategoria);
             $pilotos = cargarUsuariosOficialesCategoria($idCategoria);
             $estados = carreraControlAsistencia();
-            $categorias = cargarCategorias();
+            $categorias = cargarTodasLasCategorias();
             
             $app->render('controlAsistencia.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carreras' => $carreras, 'pilotos' => $pilotos, 'estados' => $estados, 'notificacionesNoLeidas' => $notificacionesNoLeidas, 'categorias' => $categorias, 'tabla' => true, 'c' => $idCategoria));
         } else {
@@ -370,7 +370,7 @@ $app->get('/usuarios/editar/:idUser', function($idUser) use ($app) {
     if(isset($_SESSION['id'])) {
         if(esAdmin($_SESSION['id'])) {
             $piloto = cargarUsuario($idUser);
-            $categorias = cargarCategorias();
+            $categorias = cargarTodasLasCategorias();
             $participa = cargarCategoriasUsuario($idUser);
 
             $app->render('editarUsuario.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'piloto' => $piloto, 'categorias' => $categorias, 'participa' => $participa, 'notificacionesNoLeidas' => $notificacionesNoLeidas));
@@ -680,7 +680,11 @@ function cargarUsuarios() {
 * @return object
 */
 function cargarCategorias() {
-    return ORM::for_table('categoria')->raw_query('select nombre, imagen, plazas, (plazas-count(*)) as plazas_libres, precio_inscripcion from categoria join piloto_categoria ON categoria.id = piloto_categoria.categoria_id group by nombre')->find_many();
+    return ORM::for_table('categoria')->raw_query('select categoria.id, nombre, imagen, plazas, (plazas-count(*)) as plazas_libres, precio_inscripcion from categoria join piloto_categoria ON categoria.id = piloto_categoria.categoria_id group by nombre')->find_many();
+}
+
+function cargarTodasLasCategorias() {
+    return ORM::for_table('categoria')->find_many();
 }
 
 function eliminarUsuario($idUsuario) {
@@ -920,7 +924,7 @@ function eliminarCategoria($idCat) {
 *
 * @return @void
 */
-function crearCarrera($app, $nombre, $primerCompuesto, $segundoCompuesto, $vueltas, $fecha, $hora, $categoria, $circuito) {
+function crearCarrera($app, $nombre, $primerCompuesto, $segundoCompuesto, $vueltas, $fecha, $hora, $fecha_limite, $categoria, $circuito) {
     $carrera = ORM::for_table('carrera')->create();
     $carrera->id = null;
     $carrera->nombre = $nombre;
@@ -929,6 +933,7 @@ function crearCarrera($app, $nombre, $primerCompuesto, $segundoCompuesto, $vuelt
     $carrera->vueltas = $vueltas;
     $carrera->fecha = $fecha;
     $carrera->hora = $hora;
+    $carrera->fecha_limite = $fecha_limite;
     $carrera->categoria_id = $categoria;
     $carrera->circuito_id = $circuito;
     $carrera->save();
