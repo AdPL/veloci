@@ -1,0 +1,103 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends 'admbase.html.twig' %}
+
+{% block head %}{% endblock %}
+
+{% block adminCarreras %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h2>Edición de carrera</h2>
+			<form method="post" action="{{ urlFor('modificarCarrera', {idCarrera: carrera['id'] }) }}" role="form">
+				<input type="hidden" value="{{ carrera['id'] }}">
+				<div class="form-group">
+					<label for="inputNombre">Nombre de la carrera</label>
+					<input type="text" class="form-control" id="inputNombre" name="inputNombre" value="{{ carrera['nombre'] }}" required>
+				</div>
+				<div class="form-group">
+					<label for="inputPlazas">Primer compuesto</label>
+					<select class="form-control" id="primerCompuesto" name="primerCompuesto" required>
+						<option value="Super Blandos">Super Blandos</option>
+						<option value="Blandos" {% if carrera['neumatico1'] == 'Blandos' %}selected{% endif %}>Blandos</option>
+						<option value="Medios" {% if carrera['neumatico1'] == 'Medios' %}selected{% endif %}>Medios</option>
+						<option value="Duros" {% if carrera['neumatico1'] == 'Duros' %}selected{% endif %}>Duros</option>
+						<option value="Normal" {% if carrera['neumatico1'] == 'Normal' %}selected{% endif %}>Normal</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputPlazas">Segundo compuesto</label>
+					<select class="form-control" id="segundoCompuesto" name="segundoCompuesto" value="{{ carrera['neumatico2'] }}" required>
+						<option value="Blandos" {% if carrera['neumatico2'] == 'Blandos' %}selected{% endif %}>Blandos</option>
+						<option value="Medios" {% if carrera['neumatico2'] == 'Medios' %}selected{% endif %}>Medios</option>
+						<option value="Duros" {% if carrera['neumatico2'] == 'Duros' %}selected{% endif %}>Duros</option>
+						<option value="Normal" {% if carrera['neumatico2'] == 'Normal' %}selected{% endif %}>Normal</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputVueltas">Vueltas</label>
+					<input type="text" class="form-control" id="inputVueltas" name="inputVueltas" value="{{ carrera['vueltas'] }}" required>
+				</div>
+				<div class="form-group">
+					<label for="inputFecha">Fecha</label>
+					<input type="date" class="form-control" id="inputFecha" name="inputFecha" value="{{ carrera['fecha'] }}" required>
+				</div>
+				<div class="form-group">
+					<label for="inputFLimite">Fecha límite de reclamaciones</label>
+					<input type="date" class="form-control" id="inputFLimite" name="inputFLimite" value="{{ carrera['fecha_limite'] }}" required>
+				</div>
+				<div class="form-group">
+					<label for="inputHora">Hora</label>
+					<input type="time" class="form-control" id="inputHora" name="inputHora" value="{{ carrera['hora'] }}" required>
+				</div>
+				<div class="form-group">
+					<label for="inputCategoria">Categoría</label>
+					<select class="form-control" id="inputCategoria" name="inputCategoria" required>
+						<option value="0">No asignar categoría</option>
+						{% for categoria in categorias %}
+							{% if categoria['id'] == carrera['categoria_id'] %}
+								<option value="{{ categoria['id'] }}" selected>{{ categoria['nombre'] }}</option>
+							{% else %}
+								<option value="{{ categoria['id'] }}">{{ categoria['nombre'] }}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputCircuito">Circuito</label>
+					<select class="form-control" id="inputCircuito" name="inputCircuito" required>
+						<option value="0">No asignar circuito</option>
+						{% for circuito in circuitos %}
+							{% if circuito['id'] == carrera['circuito_id'] %}
+								<option value="{{ circuito['id'] }}" selected>{{ circuito['nombre'] }}</option>
+							{% else %}
+								<option value="{{ circuito['id'] }}">{{ circuito['nombre'] }}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+				<button type="submit" class="btn btn-success">Editar carrera</button>
+				<a href="{{ urlFor('listaCarreras') }}" class="btn btn-danger">Volver</a>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

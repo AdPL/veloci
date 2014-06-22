@@ -1,0 +1,113 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends 'admbase.html.twig' %}
+
+{% block loadJS %}
+onload="rellenarSelect()"
+{% endblock %}
+
+{% block head %}
+<script>
+	function rellenarSelect() {
+		var myselect = document.getElementById('inputVueltas');
+		for (var i = 2 ; i < 70; i++) {
+			myselect.innerHTML += "<option value='" + i + "'>" + i + "</option>";
+		};
+	}
+</script>
+{% endblock %}
+
+{% block adminCarreras %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h2>Nueva carrera <small>Creación de nueva carrera</small></h2>
+			<form method="post" action="{{ urlFor('crearCarrera') }}" role="form">
+				<div class="form-group">
+					<label for="inputNombre">Nombre de la carrera</label>
+					<input type="text" class="form-control" id="inputNombre" name="inputNombre" placeholder="Nombre de la carrera, por ejemplo 'G.P. Montmelo'" required>
+				</div>
+				<div class="form-group">
+					<label for="inputPlazas">Primer compuesto</label>
+					<select class="form-control" id="primerCompuesto" name="primerCompuesto" required>
+						<option value="0">Seleccione el primer compuesto</option>
+						<option value="Super Blandos">Super Blandos</option>
+						<option value="Blandos">Blandos</option>
+						<option value="Medios">Medios</option>
+						<option value="Duros">Duros</option>
+						<option value="Normal">Normal</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputPlazas">Segundo compuesto</label>
+					<select class="form-control" id="segundoCompuesto" name="segundoCompuesto" required>
+						<option value="0">Seleccione el primer compuesto</option>
+						<option value="Super Blandos">Super Blandos</option>
+						<option value="Blandos">Blandos</option>
+						<option value="Medios">Medios</option>
+						<option value="Duros">Duros</option>
+						<option value="Normal">Normal</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputVueltas">Vueltas</label>
+					<select class="form-control" id="inputVueltas" name="inputVueltas" placeholder="Vueltas de la carrera" 
+					onload="rellenarSelect()" required>
+						<option value="0">Indicar número de vueltas</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputFecha">Fecha</label>
+					<input type="date" class="form-control" id="inputFecha" name="inputFecha" placeholder="Formato: 2014-05-30" required>
+				</div>
+				<div class="form-group">
+					<label for="inputHora">Hora</label>
+					<input type="time" class="form-control" id="inputHora" name="inputHora" placeholder="Formato: 23:00" required>
+				</div>
+				<div class="form-group">
+					<label for="inputLimite">Fecha límite de reclamaciones</label>
+					<input type="date" class="form-control" id="inputFLimite" name="inputFLimite" placeholder="Formato: 2014-05-30" required>
+				</div>
+				<div class="form-group">
+					<label for="inputCategoria">Categoría</label>
+					<select class="form-control" id="inputCategoria" name="inputCategoria" required>
+						<option value="0">No asignar categoría</option>
+						{% for categoria in categorias %}
+							<option value="{{ categoria['id'] }}">{{ categoria['nombre'] }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputCircuito">Circuito</label>
+					<select class="form-control" id="inputCircuito" name="inputCircuito" required>
+						<option value="0">No asignar circuito</option>
+						{% for circuito in circuitos %}
+							<option value="{{ circuito['id'] }}">{{ circuito['nombre'] }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<button type="submit" class="btn btn-success">Crear carrera</button>
+				<a href="{{ urlFor('admin') }}" class="btn btn-danger">Volver</a>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

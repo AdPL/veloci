@@ -1,0 +1,75 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block adminNoticias %}
+class="active"
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9 col-sm-12">
+	<div class="panel panel-default">
+	<div class="panel-heading">
+		Noticias
+	</div>
+	<div class="panel-body pull-right">
+        <form method="post" action="{{ urlFor('borrarNoticia') }}">
+        	<a href="{{ urlFor('nuevaNoticia') }}" class="btn btn-info">Nueva noticia</a>
+			<a class="btn btn-info btn-action" onclick="seleccionado('{{ urlFor('editarNoticia') }}', 'rNoticia')">Editar</a>
+			<input type="hidden" id="co" name="co">
+			<button type="submit" name="borralo" class="btn btn-danger btn-action">Eliminar</button>
+		</form>
+	</div>
+	<table class="table table-striped">
+		<thead>
+			<th>Seleccionar</th>
+			<th>Título</th>
+			<th>Fecha de publicación</th>
+			<th>Visibilidad</th>
+			<th>Estado</th>
+			<th>Creador</th>
+		</thead>
+		<tbody>
+		{% for noticia in noticias %}
+		<tr>
+			<td><input type="radio" class="rNoticia" name="rNoticia" value="{{ noticia['id'] }}" onclick="seleccion(this)"></td>
+			<td>{{ noticia['titulo'] }}</td>
+			<td>{{ noticia['fecha_publicacion']|date('d/m/Y') }}</td>
+			{% if noticia['rango_requerido'] == 0 %}
+				<td>Cualquier usuario</td>
+			{% elseif noticia['rango_requerido'] == 1 %}
+				<td>Usuarios registrados</td>
+			{% elseif noticia['rango_requerido'] == 2 %}
+				<td>Moderadores</td>
+			{% elseif noticia['rango_requerido'] == 3 %}
+				<td>Administradores</td>
+			{% endif %}
+			{% if noticia['estado'] == 1 %}
+				<td>Publicada</td>
+			{% else %}
+				<td>NO publicada</td>
+			{% endif %}
+				<td>{{ noticia['nombre_completo'] }}</td>
+		</tr>
+		{% else %}
+		<tr><td>No se han encontrado noticias</td></tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	</div>
+</div>
+{% endblock %}

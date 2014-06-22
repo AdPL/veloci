@@ -17,6 +17,7 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/]. */
 
 	require_once '../vendor/autoload.php';
+	require_once '../config/config.php';
 
 	$app = new \Slim\Slim(array(
 		'view' => new \Slim\Views\Twig(),
@@ -37,12 +38,10 @@
 	session_cache_limiter(false);
 	session_start();
 
-	$app->get('/', function() use ($app) {
-		$app->render('principal.html.twig');
-	})->name('principal');
+	require('../routes/testing.php');
+	require('../routes/principal.php');
+	require('../routes/usuario.php');
+	require('../routes/admin.php');
 
-	$app->get('/login', function() use ($app) {
-		$app->render('login.html.twig');
-	})->name('login');
 
 	$app->run();

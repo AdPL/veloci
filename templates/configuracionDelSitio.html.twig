@@ -1,0 +1,164 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block configSite %}
+class="active"
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h2>Configuración de la aplicación</h2>
+			<hr>
+			<form method="post" action="{{ urlFor('guardarConfiguracion') }}" role="form">
+				<div class="form-group">
+					<label for="inputNombre">Nombre de la aplicación</label>
+					<input type="text" class="form-control" name="inputNombre" value="{{ configuracion['nombre'] }}">
+				</div>
+				<div class="form-group">
+					<label for="inputDescripcion">Descripción</label>
+					<input type="text" class="form-control" name="inputDescripcion" value="{{ configuracion['descripcion'] }}">
+				</div>
+				<div class="form-group">
+					Requiere activación de cuentas de usuario:
+					<div class="radio">
+  						<label>
+  							{% if configuracion['requiere_activacion'] == 1 %}
+    							<input type="radio" name="activacion" value="1" checked>
+    						{% else %}
+    							<input type="radio" name="activacion" value="1">
+    						{% endif %}
+    						Sí
+  						</label>
+					</div>
+					<div class="radio">
+						<label>
+    						{% if configuracion['requiere_activacion'] == 0 %}
+    							<input type="radio" name="activacion" value="0" checked>
+    						{% else %}
+    							<input type="radio" name="activacion" value="0">
+    						{% endif %}
+    						No
+  						</label>
+  					</div>
+				</div>
+				<div class="form-group">
+					Requiere lectura y aprobación de normativa:
+					<div class="radio">
+  						<label>
+  							{% if configuracion['requiere_normativa'] == 1 %}
+    							<input type="radio" name="normativa" value="1" checked>
+    						{% else %}
+    							<input type="radio" name="normativa" value="1">
+    						{% endif %}
+    						Sí
+  						</label>
+					</div>
+					<div class="radio">
+						<label>
+    						{% if configuracion['requiere_normativa'] == 0 %}
+    							<input type="radio" name="normativa" value="0" checked>
+    						{% else %}
+    							<input type="radio" name="normativa" value="0">
+    						{% endif %}
+    						No
+  						</label>
+  					</div>
+				</div>
+				<div class="form-group">
+					Requiere pago para inscribirse:
+					<div class="radio">
+  						<label>
+  							{% if configuracion['requiere_pago'] == 1 %}
+    							<input type="radio" name="pago" value="1" checked>
+    						{% else %}
+    							<input type="radio" name="pago" value="1">
+    						{% endif %}
+    						Sí
+  						</label>
+					</div>
+					<div class="radio">
+						<label>
+							{% if configuracion['requiere_pago'] == 0 %}
+    							<input type="radio" name="pago" value="0" checked>
+    						{% else %}
+    							<input type="radio" name="pago" value="0">
+    						{% endif %}
+    						No
+  						</label>
+  					</div>
+				</div>
+				<hr>
+				<div class="form-group">
+					<label for="inputTwitter">Servidor Teamspeak 3</label>
+					<input type="text" class="form-control" name="inputTeamspeak" value="{{ configuracion['teamspeak'] }}">
+				</div>
+				<h4>Redes sociales</h4>
+				<div class="form-group">
+					<label for="inputTwitter">Twitter</label>
+					<input type="text" class="form-control" name="inputTwitter" value="{{ configuracion['twitter'] }}">
+				</div>
+				<div class="form-group">
+					<label for="inputFacebook">Facebook</label>
+					<input type="text" class="form-control" name="inputFacebook" value="{{ configuracion['facebook'] }}">
+				</div>
+				<div class="form-group">
+					<label for="inputYoutube">Youtube</label>
+					<input type="text" class="form-control" name="inputYoutube" value="{{ configuracion['youtube'] }}">
+				</div>
+				<div class="form-group">
+					<label for="inputVimeo">Vimeo</label>
+					<input type="text" class="form-control" name="inputVimeo" value="{{ configuracion['vimeo'] }}">
+				</div>
+				<hr>
+				<div class="form-group">
+					<div class="alert alert-danger">
+					<label>Permitir que los usuarios puedan seleccionar el tema que desean utilizar: Función disponible en la versión 1.1</label>
+					<!--<label></label>
+					<div class="btn-group" data-toggle="buttons">
+						<label class="btn btn-success active">
+							<input type="radio" name="permite" value="1" checked> Sí
+						</label>
+						<label class="btn btn-danger">
+							<input type="radio" name="permite" value="0"> No
+						</label>
+						<label class="btn btn-success">
+							<input type="radio" name="permite" value="1"> Sí
+						</label>
+						<label class="btn btn-danger active">
+							<input type="radio" name="permite" value="0" checked> No
+						</label>-->
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputTema">Tema por defecto del sitio:</label>
+					<select name="inputTema" class="form-control">
+						<option value="bootstrap">Plantilla por defecto</option>
+						<option value="darkly">Tema Darkly</option>
+						<option value="white">Tema White</option>
+						<option value="dark">Tema Dark</option>
+					</select>
+				</div>
+				<hr>
+				<button type="submit" class="btn btn-success">Guardar cambios</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block adminAsistencia %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Asistencias
+		</div>
+		<div class="panel-body">
+			Seleccione una categoría<hr>
+			{% for categoria in categorias %}
+				<a href="{{ urlFor('controlAsistenciasCategoria', {'idCategoria': categoria['id'] })}}" class="btn btn-info">{{ categoria['nombre'] }}</a>
+			{% endfor %}
+		</div>
+		{% if tabla %}
+		<form method="post" action="{{ urlFor('controlAsistenciaGuardar', {'idCategoria': c }) }}">
+		<table class="table table-striped">
+			<thead>
+				<th>Piloto/Circuito</th>
+				{% for carrera in carreras %}
+					<th>{{ carrera['nombre'] }}</th>
+				{% endfor %}
+			</thead>
+			<tbody>
+				{% for piloto in pilotos %}
+				<tr>
+					<td>{{ piloto['nombre_completo'] }}</td>
+					{% for carrera in carreras %}
+						<td>
+							{% set test = false %}
+							{% for estado in estados %}
+								{% if carrera['id'] == estado['carrera_id'] %}
+									{% if  piloto['id'] == estado['piloto_id'] %}
+										{% if estado['estado'] == 1 %}
+											<button type="button" class="btn btn-link btn-xs" onclick="editarAsistencia(this, '{{ piloto['id'] }}', '{{ carrera['id'] }}')">Asiste</button>
+											{% set test = true %}
+										{% elseif estado['estado'] == 2 %}
+											<button type="button" class="btn btn-link btn-xs" onclick="editarAsistencia(this, '{{ piloto['id'] }}', '{{ carrera['id'] }}')">Justifica falta</button>
+											{% set test = true %}
+										{% elseif estado['estado'] == 3 %}
+											<button type="button" class="btn btn-link btn-xs" onclick="editarAsistencia(this, '{{ piloto['id'] }}', '{{ carrera['id'] }}')">Falta sin justificar</button>
+											{% set test = true %}
+										{% elseif estado['estado'] == 4 %}
+											<button type="button" class="btn btn-link btn-xs" onclick="editarAsistencia(this, '{{ piloto['id'] }}', '{{ carrera['id'] }}')">Sanción</button>
+											{% set test = true %}
+										{% else %}
+											{% if test == false %}
+												<select name="{{ piloto['id'] }}-{{ carrera['id'] }}">
+													<option value="0">Selección</option>
+													<option value="1">Asiste</option>
+													<option value="2">Justifica falta</option>
+													<option value="3">Falta sin justificar</option>
+													<option value="4">Sanción</option>
+												</select>
+											{% endif %}
+										{% endif %}
+										{% set test = true %}
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+							{% if test == false %}
+								<select name="{{ piloto['id'] }}-{{ carrera['id'] }}">
+									<option value="0">Selección</option>
+									<option value="1">Asiste</option>
+									<option value="2">Justifica falta</option>
+									<option value="3">Falta sin justificar</option>
+									<option value="4">Sanción</option>
+								</select>
+							{% endif %}
+						</td>
+						{% set test = false %}
+					{% endfor %}				
+				</tr>
+				{% else %}
+				<tr><td>Todavía no se pueden pasar faltas</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<div class="panel panel-body">
+			<input type="submit" class="btn btn-success" value="Guardar faltas"/>
+		</div>
+		</form>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

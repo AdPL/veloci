@@ -1,0 +1,133 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block head %}
+<script>
+	function rellenarSelect() {
+		var myselect = document.getElementById('inputPlazas');
+		for (var i = 2 ; i < 30; i++) {
+			myselect.innerHTML += "<option value='" + i + "'>" + i + "</option>";
+		};
+	}
+</script>
+{% endblock %}
+{% block loadJS %}
+onload="rellenarSelect()"
+{% endblock %}
+{% block adminUsuarios %}
+class="active"
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h2>Usuario seleccionado: {{ piloto['nombre_completo'] }} <small> Edición de usuario</small></h2>
+			<form method="post" name="expulsar" action="{{ urlFor('banearUsuario', {'idUser': piloto['id']}) }}">
+				<input type="hidden" name="idUser" value="{{ piloto['id'] }}">
+				{% if piloto['rol'] != 5%}
+					{% if piloto['expulsado'] == 0 %}
+						<input type="submit" name="banear" class="btn btn-danger pull-right" value="Expulsar usuario">
+					{% else %}
+						<input type="submit" name="quitarbaneo" class="btn btn-info pull-right" value="Quitar expulsión">
+					{% endif %}
+				{% endif %}
+			</form>
+			<img src="{{ piloto['avatar'] }}" id="bloquePerfil" alt="avatar"/><br/>
+			<form method="post" action="{{ urlFor('editarUsuarioPost', {'idUser': piloto['id']}) }}" role="form">
+				<input type="hidden" name="idUser" value="{{ piloto['id'] }}">
+				<input type="text" name="id" value="{{ piloto['id'] }}" hidden>
+				<div class="form-group">
+					<label for="inputNombre">Nombre completo</label>
+					<input type="text" class="form-control" name="inputNombre" value="{{ piloto['nombre_completo'] }}" maxlength="40">
+				</div>
+				<div class="form-group">
+					<label for="inputEmail">Email</label>
+					<input type="text" class="form-control" name="inputEmail" value="{{ piloto['email'] }}">
+				</div>
+				<div class="form-group">
+					<label for="inputEscuderia">Escuderia</label>
+					<div class="alert alert-danger">Próximamente</div>
+					<!--<input type="text" class="form-control" id="inputNombre" name="inputNombre" value="{{ piloto['escuderia'] }}">-->
+				</div>
+				<div class="form-group">
+					<label for="inputActivo">Activo</label>
+					<select name="inputActivo" class="form-control">
+					{% if piloto['activo'] == 1 %}
+						<option value="1" selected>Activo</option>
+						<option value="0">Inactivo</option>
+					{% else %}
+						<option value="1">Activo</option>
+						<option value="0" selected>Inactivo</option>
+					{% endif %}
+					</select>
+				</div>
+				{% if piloto['rol'] == 5%}
+				<hr>
+				<div class="form-group">
+					<label for="inputRol">Rol</label>
+					<input type="hidden" name="inputRol" value="5">
+					<p>Super Administrador (No editable)</p>
+				</div>
+				<hr>
+				{% else %}
+					<div class="form-group">
+						<label for="inputRol">Rol</label>
+						<select name="inputRol" class="form-control">
+							<option value="1">Usuario registrado</option>
+							<option value="2">FIA</option>
+							<option value="3">Publicador</option>
+							<option value="4">Administrador</option>
+						</select>
+					</div>
+				{% endif %}
+
+				<div class="form-group">
+				{% if categorias == false %}<a href="{{ urlFor('nuevaCategoria') }}" class="btn btn-success">Crear su primera categoría</a>
+				{% else %}
+				<p>Seleccione las categorías en las que participa este piloto</p>
+					<select class="form-control" name="inputCategoriasA[]" multiple {% if categorias == false %}disabled{% endif %}>
+						{% for categoria in categorias %}
+								<option value="{{ categoria['id'] }}">{{ categoria['nombre'] }}</option>
+							{% else %}
+								<option>No se han encontrado categorías</option>
+						{% endfor %}
+					</select>
+				</div>
+				{% endif %}
+				<!--<input type="hidden" value="">-->
+				<div class="form-group">
+				<p>Este piloto participa en la siguientes categorías, seleccione las que desea quitar</p>
+					<select class="form-control" name="inputCategoriasQ[]" multiple {% if participa == false %}disabled{% endif %}>
+						{% for categoria in participa %}
+							{% if categoria['piloto_id'] == piloto['id'] %}
+								<option value="{{ categoria['id'] }}">{{ categoria['nombre'] }}</option>
+							{% endif %}
+
+							{% else %}
+								<option>No se han encontrado categorías</option>
+						{% endfor %}
+					</select>
+				</div>
+				<button type="submit" name="inputSubmit" class="btn btn-success">Editar usuario</button>
+				<a href="{{ urlFor('listaUsuarios') }}" class="btn btn-danger">Volver</a>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

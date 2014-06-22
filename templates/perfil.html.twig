@@ -1,0 +1,95 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "base.html.twig" %}
+
+{% block container %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-lg-3 col-md-5 col-sm-4 col-lg-offset-2">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<img src="{{ avatar }}" alt="avatar" class="img-circle img-responsive">
+					<h2 class="text-center">{{ usuario }}</h2>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-5 col-md-5 col-sm-8">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3>Edición de perfil</h3>
+				</div>
+				<div class="panel-body">
+					<form method="post" action="#" role="form" class="form-horizontal" enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="inputNombreCompleto" class="col-sm-2 control-label">Nombre completo</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="inputNombreCompleto" id="inputFoto" value="{{ datosUsuario['nombre_completo'] }}" maxlength="40" onkeydown="return soloTexto(event)">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputNombreCompleto" class="col-sm-2 control-label">Visibilidad del perfil</label>
+							<div class="col-sm-10">
+								<div class="btn-group" data-toggle="buttons">
+								{% if datosUsuario['privacidad_perfil'] == 1 %}
+									<label class="btn btn-primary active">
+											<input type="radio" name="visibilidad" value="1" checked> Público
+									</label>
+									<label class="btn btn-primary">
+											<input type="radio" name="visibilidad" id="option2" value="0"> Privado
+									</label>
+								{% else %}
+									<label class="btn btn-primary">
+											<input type="radio" name="visibilidad" value="1"> Público
+									</label>
+									<label class="btn btn-primary active">
+											<input type="radio" name="visibilidad" id="option2" value="0" checked> Privado
+									</label>
+								{% endif %}
+									
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputFoto" class="col-sm-2 control-label">Cambiar avatar</label>
+							<div class="col-sm-3">
+								<input type="file" name="inputFoto" id="inputFoto">
+							</div>
+						</div>
+						<p>Rango actual: 
+						{% if datosUsuario['rol'] == 5 %}
+							Super Administrador
+						{% elseif datosUsuario['rol'] == 4 %}
+							Administrador
+						{% elseif datosUsuario['rol'] == 3 %}
+							Moderador
+						{% elseif datosUsuario['rol'] == 2 %}
+							FIA
+						{% elseif datosUsuario['rol'] == 1 %}
+							Usuario registrado
+						{% endif %}
+						</p>
+						<button type="submit" class="btn btn-success">Guardar cambios</button>
+						<a href="{{ urlFor('principal') }}" class="btn btn-danger">Volver</a>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

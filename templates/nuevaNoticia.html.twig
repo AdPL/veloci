@@ -1,0 +1,61 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends 'admbase.html.twig' %}
+
+{% block head %}{% endblock %}
+
+{% block adminNoticias %}
+class="active"
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h2>Nueva noticia</h2>
+			<form method="post" action="{{ urlFor('crearNoticia') }}" role="form">
+				<div class="form-group">
+					<label for="inputTitulo">Título de la noticia</label>
+					<input type="text" class="form-control" id="inputTitulo" name="inputTitulo" required>
+				</div>
+				<div class="form-group">
+					<label for="inputTexto">Texto de la noticia</label>
+					<textarea rows="10" class="form-control" id="inputTexto" name="inputTexto" required></textarea>
+				</div>
+				<div class="form-group">
+					<label for="inputRango">Indique quien puede ver esta noticia</label>
+					<select name="inputRango" id="inputRango" class="form-control">
+						<option value="0">Cualquier usuario</option>
+						<option value="1">Registrados</option>
+						<option value="2">Moderadores</option>
+						<option value="3">Administradores</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputEstado">Indique quien puede ver esta noticia</label>
+					<select name="inputEstado" id="inputEstado" class="form-control">
+						<option value="1">Publicada</option>
+						<option value="0">No publicada</option>
+					</select>
+				</div>
+				<button type="submit" class="btn btn-success">Crear noticia</button>
+				<a href="{{ urlFor('listaNoticias') }}" class="btn btn-danger">Volver</a>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+
+{% extends "admbase.html.twig" %}
+
+{% block head %}{% endblock %}
+
+{% block adminCircuitos %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h2>Nuevo circuito <small>Agregar un nuevo circuito</small></h2>
+			<form method="post" action="{{ urlFor('crearCircuito') }}" role="form">
+				<div class="form-group">
+					<label for="inputNombre">Nombre del circuito</label>
+					<input type="text" class="form-control" id="inputNombre" name="inputNombre" placeholder="Nombre del circuito, por ejemplo, 'Circuito urbano de Valencia'" required>
+				</div>
+				<div class="form-group">
+					<label for="inputPlazas">País</label>
+					<input type="text" class="form-control" id="inputPais" name="inputPais" placeholder="País en el que se encuentra el circuito" required>
+				</div>
+				<div class="form-group">
+					<label for="inputPrecio">Distancia</label>
+					<input type="text" class="form-control" id="inputDistancia" name="inputDistancia" placeholder="Distancia (en metros) de la pista, es decir, una vuelta al circuito" required>
+				</div>
+				<button type="submit" class="btn btn-success">Crear circuito</button>
+				<a href="{{ urlFor('admin') }}" class="btn btn-danger">Volver</a>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

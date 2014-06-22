@@ -1,0 +1,63 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block adminCarreras %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel panel-body pull-right">
+			<form method="post" action="{{ urlFor('borrarCarrera') }}">
+				<a class="btn btn-info btn-action" onclick="seleccionado('{{ urlFor('editarCarrera') }}', 'rCarrera')">Editar</a>
+				<input type="hidden" id="co" name="co">
+				<button type="submit" name="borralo" class="btn btn-danger btn-action">Eliminar</button>
+			</form>
+		</div>
+		<table class="table table-striped">
+			<thead>
+				<th>Seleccionar</th>
+				<th>Nombre</th>
+				<th>Primer compuesto</th>
+				<th>Segundo compuesto</th>
+				<th>Vueltas</th>
+				<th>Fecha y hora</th>
+				<th>Categoría</th>
+				<th>Circuito</th>
+			</thead>
+			<tbody>
+				{% for carrera in carreras %}
+				<tr>
+					<td><input type="radio" class="rCarrera" name="rCarrera" value="{{ carrera['id'] }}" onclick="seleccion(this)"></td>
+					<td>{{ carrera['nombre'] }}</td>
+					<td>{{ carrera['neumatico1'] }}</td>
+					<td>{{ carrera['neumatico2'] }}</td>
+					<td>{{ carrera['vueltas'] }}</td>
+					<td>{{ carrera['fecha'] }} | {{ carrera['hora'] }}</td>
+					<td>{% if carrera['categoria_id'] == null %}No asignada{% else %}{{ carrera['categoria_id'] }}{% endif %}</td>
+					<td>{% if carrera['circuito_id'] == null or carrera['circuito_id'] == 0 %}No asignado{% else %}{{ carrera['circuito_id'] }}{% endif %}</td>
+				</tr>
+				{% else %}
+				<tr><td>No se han encontrado categorías</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}

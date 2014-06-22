@@ -1,0 +1,68 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block head %}
+<script>
+	function rellenarSelect() {
+		var myselect = document.getElementById('inputPlazas');
+		for (var i = 2 ; i < 30; i++) {
+			myselect.innerHTML += "<option value='" + i + "'>" + i + "</option>";
+		};
+	}
+</script>
+{% endblock %}
+
+{% block loadJS %}
+onload="rellenarSelect()"
+{% endblock %}
+
+{% block adminCategorias %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h2>Nueva categoría <small>Creación de nueva categoría</small></h2>
+			<form method="post" action="{{ urlFor('crearCategoria') }}" role="form" enctype="multipart/form-data">
+				<div class="form-group">
+					<label for="inputNombre">Nombre de la categoría</label>
+					<input type="text" class="form-control" id="inputNombre" name="inputNombre" placeholder="Nombre de la categoría, por ejemplo 'Formula 1'" required>
+				</div>
+				<div class="form-group">
+					<label for="inputPlazas">Plazas totales</label>
+					<select class="form-control" id="inputPlazas" name="inputPlazas" onload="rellenarSelect()" required>
+						<option value="0">Seleccione el número de plazas totales para la categoría</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="inputPrecio">Precio de inscripción</label>
+					<input type="text" class="form-control" id="inputPrecio" name="inputPrecio" placeholder="El coste económico de participar en la categoría" required>
+				</div>
+				<div class="form-group">
+					<label for="inputFoto">Imagen de la categoría</label>
+					<input type="file" name="inputFoto" id="inputFoto">
+				</div>
+				<button type="submit" class="btn btn-success">Crear categoría</button>
+				<a href="{{ urlFor('admin') }}" class="btn btn-danger">Volver</a>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

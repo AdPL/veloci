@@ -1,0 +1,55 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "admbase.html.twig" %}
+
+{% block adminCircuitos %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-9">
+	<div class="panel panel-default">
+	<div class="panel panel-body pull-right">
+		<form method="post" action="{{ urlFor('borrarCircuito') }}">
+			<a class="btn btn-info btn-action" onclick="seleccionado('{{ urlFor('editarCircuito') }}', 'rCircuito')">Editar</a>
+			<input type="hidden" id="co" name="co">
+			<button type="submit" name="borralo" class="btn btn-danger btn-action">Eliminar</button>
+		</form>
+	</div>
+		<table class="table table-striped">
+			<thead>
+				<th>Seleccionar</th>
+				<th>Nombre</th>
+				<th>País</th>
+				<th>Distancia</th>
+			</thead>
+			<tbody>
+				{% for circuito in circuitos %}
+				<tr>
+					<td><input type="radio" class="rCircuito" name="rCircuito" value="{{ circuito['id'] }}" onclick="seleccion(this)"></td>
+					<td>{{ circuito['nombre'] }}</td>
+					<td>{{ circuito['pais'] }}</td>
+					<td>{{ circuito['distancia'] }} Km</td>
+				</tr>
+				{% else %}
+				<tr><td>No se han encontrado circuitos</td></tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}

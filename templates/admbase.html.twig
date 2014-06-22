@@ -1,0 +1,148 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Panel admin</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" href="/css/bootstrap.css" type="text/css">
+	<link rel="stylesheet" href="/css/style.css" type="text/css">
+	<link rel="stylesheet" href="/css/font-awesome.css" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/js/jsfunctions.js"></script>
+	{% block head %}{% endblock %}
+</head>
+<body {% block loadJS %}{% endblock %}>
+	<div class="navbar navbar-default navbar-static-top navbar-me" role="navigation">
+		<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" rel="home" href="{{ urlFor('admin') }}">Admin Panel</a>
+		</div>
+
+		<div class="collapse navbar-collapse">
+			<div class="col-sm-2 col-md-2">
+				{% block Right %}
+				{% endblock %}
+			</div>
+
+			<ul class="nav navbar-nav navbar-right">
+				{% block Settings %}
+					<li><a href="{{ urlFor('notificaciones') }}"><i class="fa fa-bell"></i> <span class="badge">{{ notificacionesNoLeidas }}</span></a>
+					<li><a href="{{ urlFor('perfil') }}"><img src="{{ avatar }}" id="imgPerfilSuperior"/> Identificado como {{ usuario }}</a></li>
+					{% if rol >= 1 %}
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i><b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li class="bloquePerfil" href="#">
+									<a href="{{ urlFor('perfil') }}" class="menuitem">
+										<img src="{{ avatar }}" class="imgPerfil" id="imgPerfil"/>
+										{{ usuario }}
+									</a>
+								</li>
+								<li role="presentation" class="divider"></li>
+								<li><a href="{{ urlFor('principal') }}">Salir del panel</a></li>
+								{% block limenu %}{% endblock %}
+								<li><a href="{{ urlFor('cerrarSesion') }}">Cerrar sesión</a></li>
+							</ul>
+						</li>
+					{% else %}
+						<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-sign-in"></i><b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li class="bloquePerfil" href="#">
+									<a href="#" class="menuitem">
+										<img class="imgPerfil" src="/images/default.png" height="50px" width="50px" />
+										No identificado
+									</a>
+								</li>
+								<li role="presentation" class="divider"></li>
+								<li role="presentation">
+									<a class="menuitem" href="#" data-toggle="modal" data-target="#loginModal" data-backdrop="static">
+										<i class="fa fa-rocket"></i> Login
+									</a>
+								</li>
+								<li role="presentation">
+									<a class="menuitem" data-toggle="modal" data-target="#registerModal" data-backdrop="static">
+										<i class="fa fa-pencil"></i> Registro
+									</a>
+								</li>
+							</ul>
+						</li>
+					{% endif %}
+				{% endblock %}
+			</ul>
+		</div>
+		</div>
+	</div>
+
+	{% block container %}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="panel panel-default">
+					<div class="panel-body">
+					{% block menuAdmin %}
+						<ul class="nav nav-pills nav-stacked">
+							<li {% block adminPrincipal %}{% endblock %}><a href="{{ urlFor('admin') }}">Inicio</a></li>
+							<li {% block configSite %}{% endblock %}><a href="{{ urlFor('configuracionDelSitio') }}">Configuración del sitio</a></li>
+							<li {% block notificaciones %}{% endblock %}><a href="{{ urlFor('notificaciones') }}">Notificaciones <span class="badge">{{ notificacionesNoLeidas }}</span></a></li>
+							<li {% block adminUsuarios %}{% endblock %}><a href="{{ urlFor('listaUsuarios') }}">Pilotos (Usuarios)</a></li>
+							<li class="dropdown {% block adminCategorias %}{% endblock %}">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">Categorías <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="{{ urlFor('nuevaCategoria') }}"><i class="fa fa-file"></i> Nueva categoría</a></li>
+									<li><a href="{{ urlFor('listaCategorias') }}"><i class="fa fa-list"></i> Lista de categorías</a></li>
+								</ul>
+							</li>
+							<li class="dropdown {% block adminCarreras %}{% endblock %}">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">Carreras <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="{{ urlFor('nuevaCarrera') }}"><i class="fa fa-file"></i> Nueva carrera</a></li>
+									<li><a href="{{ urlFor('listaCarreras') }}"><i class="fa fa-list"></i> Lista de carreras</a></li>
+								</ul>
+							</li>
+							<li class="dropdown {% block adminCircuitos %}{% endblock %}">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">Circuitos <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="{{ urlFor('nuevoCircuito') }}"><i class="fa fa-file"></i> Nuevo circuito</a></li>
+									<li><a href="{{ urlFor('listaCircuitos') }}"><i class="fa fa-list"></i> Lista de circuitos</a></li>
+								</ul>
+							</li>
+							<li class="{% block adminAsistencia %}{% endblock %}"><a href="{{ urlFor('controlAsistencia') }}">Asistencias</a></li>
+							<li><a href="#">Estadísticas (No disponible)</a></li>
+							<li {% block adminNoticias %}{% endblock %}><a href="{{ urlFor('listaNoticias') }}">Noticias</a></li>
+						</ul>
+						<hr>
+						<a href="{{ urlFor('principal') }}" class="btn btn-success btn-block">Salir del panel</a>
+						{% endblock %}
+					</div>
+				</div>
+			</div>
+			{% block content %}{% endblock %}
+		</div>
+	{% endblock %}
+</body>
+</html>

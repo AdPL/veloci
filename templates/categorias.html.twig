@@ -1,0 +1,56 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "base.html.twig" %}
+
+{% block content %}
+<div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+	<div class="panel panel-default">
+	<div class="panel-heading">
+		Categorías
+	</div>
+	<div class="panel-body">
+	<div class="row">
+      <div class="col-xs-12">
+        
+      </div>
+    </div>
+	</div>
+	<table class="table table-striped">
+		<thead>
+			<th>Imagen</th>
+			<th>Nombre</th>
+			<th>Plazas disponibles</th>
+			<th>Plazas totales</th>
+			<th>Precio</th>
+		</thead>
+		<tbody>
+		{% for categoria in categorias %}
+		<tr>
+			<td><img src="{{ categoria['imagen'] }}" alt="Imagen {{ categoria['nombre'] }}" class="img100"/></td>
+			<td>{{ categoria['nombre'] }}</td>
+			<td>{{ categoria['plazas_libres'] }}</td>
+			<td>{{ categoria['plazas'] }}</td>
+			<td>{{ categoria['precio_inscripcion'] }}</td>
+		</tr>
+		{% else %}
+		<tr><td>No se han encontrado categorías</td></tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	</div>
+</div>
+{% endblock %}

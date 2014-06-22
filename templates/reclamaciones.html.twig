@@ -1,0 +1,52 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "base.html.twig" %}
+
+{% block content %}
+<div class="col-lg-9 col-sm-12">
+	<div class="panel panel-default">
+	<div class="panel-body">
+	<div class="row">
+        <h1>Reclamaciones <small>Carreras con plazo de reclamación abierto</small></h1>
+    </div>
+    {% if alert %}
+    	<div class="alert alert-danger">{{ alert }}</div>
+    {% endif %}
+	</div>
+	<table class="table table-striped">
+		<thead>
+			<th>Carrera</th>
+			<th>Fecha</th>
+			<th>Reclamar</th>
+			<th>Lista</th>
+		</thead>
+		<tbody>
+		{% for carrera in carreras %}
+		<tr>
+			<td>{{ carrera['nombre'] }}</td>
+			<td>{{ carrera['fecha']|date('d/m/Y') }}</td>
+			<td><a href="{{ urlFor('nuevaReclamacion', {'idCarrera': carrera['id']}) }}" class="btn btn-success">Nueva Reclamación</a></td>
+			<td><a href="{{ urlFor('listaReclamaciones', {'idCarrera': carrera['id']}) }}" class="btn btn-info">Ver reclamaciones</a></td>
+		</tr>
+		{% else %}
+		<tr><td>Ninguna carrera tiene el plazo de reclamación abierto</td></tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	</div>
+</div>
+{% endblock %}

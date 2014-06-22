@@ -1,0 +1,135 @@
+@media (max-width: 768px) {
+	.notablet {
+		display: none !important;
+	}
+}
+
+@media (max-width: 991px) {
+	.ocultar {
+		display: none !important;
+	}
+}
+
+@media (max-width: 710px) {
+	
+}
+
+.texto_cabecera {
+	font-weight: bold;
+	text-shadow: 3px 3px 7px #000;
+}
+
+#bloquePerfil {
+	min-height: 50px;
+	max-height: 50px !important;
+}
+
+#imgPerfil {
+	border-radius: 4px;
+	height: 50px;
+	width: 50px;
+	margin-right: 3px;
+}
+
+#imgPerfilSuperior {
+	margin-left: 5px;
+	border-radius: 4px;
+	height: 20px;
+	width: 20px;
+	margin-right: 3px;
+}
+
+.img100 {
+	height: 100px;
+	width: 100px;
+}
+
+.img50 {
+	height: 50px;
+	width: 50px;
+}
+
+.img40 {
+	height: 40px;
+	width: 40px;
+}
+
+.navbar {
+	margin-bottom: 0px !important;
+}
+
+.cabecera {
+	background: url('/images/cabecera.jpg') center center;
+	background-size: cover;
+}
+
+.container {
+	color: #ffffff;
+}
+
+.navbar-me {
+	margin-bottom: 20px !important;
+}
+
+.social {
+	text-align: center;
+}
+
+.social > a {
+	color: #000;
+	margin-left: 3%;
+	margin-right: 3%;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 15px;
+	padding-bottom: 5px;
+}
+
+.social > a.facebook {
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.social > a.twitter:hover {
+	color: #fff;
+	background-color: #2e8ece;
+}
+
+.social > a.facebook:hover {
+	color: #fff;
+	background-color: #4c66a4;
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.social > a.youtube:hover {
+	color: #fff;
+	background-color: #cc181e;
+}
+
+.social > a.vimeo:hover {
+	color: #fff;
+	background-color: #33454E;
+}
+
+.tcomentarios {
+	color: #008cba;
+}
+
+.neumatico {
+	width: 30%;
+}
+
+.img-circle {
+	min-height: 100px;
+	min-width: 100px;
+	max-height: 100px;
+	max-width: 100px;
+	max-width: 0 !important;
+	margin: 0 auto;
+}
+
+.recurso {
+	max-height: 20%;
+	max-width: 20%;
+}

@@ -1,0 +1,130 @@
+{#  VELOCI - Web application for management races
+	Copyright (C) 2014: Adrián Pérez López
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see [http://www.gnu.org/licenses/]. #}
+
+{% extends "base.html.twig" %}
+
+{% block content %}
+<div class="col-lg-9 col-sm-12">
+	<div class="panel panel-default">
+	<div class="panel-body">
+	<div class="row">
+        <h1>Lista de reclamaciones <small>Reclamaciones abiertas</small></h1>
+    </div>
+    {% if alert %}
+    	<div class="alert alert-danger">{{ alert }}</div>
+    {% endif %}
+    <h3>Pilotos bajo investigación</h3>
+    <div class="row">
+		{% for pilotoR in pilotosR %}
+			<div class="panel panel-default col-lg-4 col-sm-4">
+				<div class="panel-body">
+				{% if pilotoR['sancion'] == 0 %}
+					<img src="{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<span class="pull-right">{{ pilotoR['nombre_completo'] }}</span><hr>
+					<p>Este piloto todavía se encuentra bajo investigación</p>
+				{% elseif pilotoR['sancion'] == 1  %}
+					<img src="{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<span class="pull-right">{{ pilotoR['nombre_completo'] }}</span><hr>
+					<div class="alert alert-danger">
+						<p>{{ pilotoR['nota'] }}</p>
+					</div>
+				{% else %}
+					<img src="{{ pilotoR['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+					<span class="pull-right">{{ pilotoR['nombre_completo'] }}</span><hr>
+					<div class="alert alert-success">
+						<p>No sufre sanción</p>
+					</div>
+				{% endif %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	{% for comentario in comentarios %}
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<h2 class="pull-left">{{ comentario['titulo'] }}</h2>
+				<span class="pull-right">
+					{{ comentario['nombre_completo'] }}
+					<img src="{{ comentario['avatar'] }}" class="imgPerfil" id="imgPerfil"/>
+				</span><hr style="clear: both;">
+				{{ comentario['comentario'] }}
+				<hr>
+			</div>
+		</div>
+	{% endfor %}
+		<div class="panel panel-default">
+			<h2>Recursos</h2>
+			<div class="panel-body">
+			{% for recurso in recursos %}
+				<img src="/{{ recurso['imagen'] }}" class="recurso" alt="recurso"/>
+			{% endfor %}
+			</div>
+		</div>
+
+	{% if abierto == 1 %}
+		<hr>
+		<h2>Responder a la reclamación</h2>
+		<form role="form" method="post" action="{{ urlFor('nuevoComentario', {'idReclamacion': idReclamacion}) }}" enctype="multipart/form-data">
+		<input type="hidden" name="inputID" value="{{ idReclamacion }}">
+			<div class="form-group">
+				<label for="inputTitulo">Título</label>
+				<input type="text" name="inputTitulo" id="inputTitulo" class="form-control">
+			</div>
+			<div class="form-group">
+				<label for="inputComentario">Comentario</label>
+				<textarea class="form-control" rows="3" name="inputComentario" id="inputComentario" rows="3"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="inputRecurso">Agregar recurso</label>
+				<input type="file" name="inputRecurso" id="inputFoto">
+			</div>
+			<input type="submit" value="Enviar" class="btn btn-success">
+			<a href="{{ urlFor('reclamaciones') }}" class="btn btn-danger">Volver</a>
+		</form>
+		<hr>
+		{% if rol == 2 %}
+		<h2>Panel de la FIA <small>Resolución de la incidencia</small></h2>
+		<form role="form" id="v" method="post" action="{{ urlFor('sancionarReclamacion', {'idReclamacion': idReclamacion}) }}">
+			<input type="hidden" name="cReclamacion" value="{{ idReclamacion }}">
+			<div class="form-group">
+			<select class="form-control" id="inputPiloto" name="inputPiloto" required>
+				{% for pilotoR in pilotosR %}
+					<option value="{{ pilotoR['id'] }}">{{ pilotoR['nombre_completo'] }}</option>
+				{% endfor %}
+			</select>
+			</div>
+			<div class="form-group">
+				<label for="inputSancion">Sanción para el piloto</label>
+				<input type="text" name="inputSancion" id="inputSancion" class="form-control" placeholder="En caso de recibir sanción, indicar la sanción en este campo">
+			</div>
+			<input type="button" class="btn btn-success" onclick="cambiarRuta('{{ urlFor('noSancionarReclamacion', {'idReclamacion' : idReclamacion}) }}');" value="No sancionar">
+			<input type="submit" class="btn btn-danger" value="Sancionar">
+		</form>
+		<form method="post" class="pull-right" action="{{ urlFor('cerrarReclamacion', {'idReclamacion': idReclamacion}) }}">
+			<input type="hidden" name="cReclamacion" value="{{ idReclamacion }}">
+			<input type="submit" class="btn btn-info" value="Cerrar reclamación">
+		</form>
+		{% endif %}
+	{% else %}
+		<div class="alert alert-info">
+			Esta reclamación ya ha sido cerrada, no se permiten nuevos comentarios ni agregación de recursos
+		</div>
+	{% endif %}
+	</div>
+	</div>
+	</div>
+</div>
+{% endblock %}
