@@ -109,6 +109,11 @@
 									<li><a href="{{ urlFor('cerrarSesion') }}">Cerrar sesión</a></li>
 								</ul>
 							</li>
+							<li>
+								<a href="#" data-toggle="modal" data-target="#bugModal" data-backdrop="static">
+									<i class="fa fa-bug"></i>
+								</a>
+							</li>
 						{% else %}
 							<li>
 								<a href="#" data-toggle="modal" data-target="#loginModal" data-backdrop="static">
@@ -231,7 +236,7 @@
 
 					<div class="col-lg-12 col-md-12 col-sm-6 col-xs-12">
 						<div class="panel panel-default">
-							<div class="panel-heading">Últimas reclamaciones<span><a href="{{ urlFor('reclamaciones') }}" class="btn btn-success btn-xs pull-right btnreclamar notablet">Nueva reclamación</a></span></div>
+							<div class="panel-heading">Últimas reclamaciones<span><a href="{{ urlFor('reclamaciones') }}" class="btn btn-success btn-xs pull-right btnreclamar notablet">Nueva</a></span></div>
 							<div class="panel-body">
 								{% for reclamacion in reclamaciones %}
 								<a href={{ urlFor('reclamacion', {'idReclamacion': reclamacion['incidente_id']}) }} class="btn btn-info btn-block">
@@ -275,7 +280,7 @@
 			        	<li><a href="javascript: void(0);" onclick="window.open('http://www.facebook.com/sharer.php?u=http://noticia/{{ noticia['id'] }}','ventanacompartir', 'toolbar=0, status=0, width=650, height=450');">Facebook</a></li>
 			        	<li><a href="http://twitter.com/share?text=Veloci {{ noticia['titulo'] }}: {{ noticia['texto'] }}&url=http://localhost/7">Twitter</a></li>
 			        </ul>
-			        	<p>{{ noticia['texto'] }}</p>
+			        	<p>{{ noticia['texto']|raw }}</p>
 			        <p class="lead pull-right"><a href="noticia/{{ noticia['id'] }}" class="btn btn-info">Leer más</a></p>
 			      </div>
 			    </div>
@@ -404,6 +409,48 @@
 		<div class="modal-footer">
       		<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Cancelar</button>
         	<button type="submit" class="btn btn-success" onclick="guardarCookie()" name="login">Login</button>
+      	</div>
+		</form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block bugModal %}
+<div class="modal fade" id="bugModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Reportar error</h4>
+      </div>
+		<form role="form" method="post" action="{{ urlFor('reportarError') }}">
+		<div class="modal-body">
+			<div class="form-group">
+				<select class="form-control" name="inputMotivo" required>
+					<option value="0">Seleccione donde ha encontrado el error</option>
+					<option value="Usuarios">Sección usuarios</option>
+					<option value="Categorías">Sección categorías</option>
+					<option value="Carreras">Sección carreras</option>
+					<option value="Reclamaciones">Sección reclamaciones</option>
+					<option value="Asistencias">Sección asistencias</option>
+					<option value="Otro">Otro (Especificar más abajo)</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="inputExplicacion">Explicación</label>
+				<textarea rows="6" class="form-control" name="inputExplicacion" autocomplete="off" required></textarea>
+			</div>
+			<hr>
+			<p>Por razones de seguridad, por favor, introduzca su contraseña en el campo a continuación.</p>
+			<div class="form-group">
+				<label for="inputPassword">Contraseña</label>
+				<input type="password" class="form-control" name="inputPassword" placeholder="Contraseña del usuario" title="Introduzca su contraseña" required>
+			</div>
+		</div>
+		<div class="modal-footer">
+      		<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+        	<button type="submit" class="btn btn-success" onclick="guardarCookie()" name="login">Enviar</button>
       	</div>
 		</form>
     </div>

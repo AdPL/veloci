@@ -60,6 +60,9 @@ $app->post('/', function() use ($app) {
 
 	if (isset($_POST['login'])) {
 		$acceso = testAccess($app, $_POST['inputUsuario'], $_POST['inputPassword']);
+	} else {
+		$app->Redirect('/');
+		echo "<script type='text/javascript'>alertify.error('Error: usuario o contraseña incorrectos');</script>";
 	}
 
 	if ($acceso) {
@@ -170,7 +173,7 @@ $app->get('/reclamacion/nueva/:idCarrera', function($idCarrera) use ($app) {
 	$reclamaciones = cargarReclamacionesRecientes();
 
 	if(isset($_SESSION['id']) && isset($_SESSION['rol'])) {
-		if($_SESSION['rol'] >= 1) {
+		if(esPiloto($_SESSION['id'])) {
 			$notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
 			$nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
 			$app->render('nuevaReclamacion.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'carrera' => $carrera, 'categoria' => $categoria, 'pilotos' => $pilotos, 'idRace' => $idCarrera, 'reclamaciones' => $reclamaciones, 'datosCarrera' => $datosCarrera, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
@@ -215,7 +218,7 @@ $app->get('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 	$abierto = incidenteAbierto($idReclamacion);
 	$recursos = cargarRecursos($idReclamacion);
 
-	if(isset($_SESSION['id']) && $_SESSION['rol'] >= 1) {
+	if(isset($_SESSION['id']) && $_SESSION['rol'] >= 1 && esPiloto($_SESSION['id'])) {
 		$notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
 		$nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
 		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'sancionados' => $sancionados, 'idReclamacion' => $idReclamacion, 'abierto' => $abierto['abierto'], 'recursos' => $recursos, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
@@ -301,11 +304,12 @@ $app->post('/reclamacion/:idReclamacion', function($idReclamacion) use ($app) {
 	$reclamaciones = cargarReclamacionesRecientes();
 	$enlace = $app->urlFor('reclamacion', array('idReclamacion' => $idReclamacion));
 	creaNotificacion($enlace, 'agregado un nuevo comentario a una reclamación', $_SESSION['nombre_completo'], '5', '0', '0', '0');
+	$abierto = incidenteAbierto($idReclamacion);
 
-	if(isset($_SESSION['id']) && $_SESSION['rol'] >= 1) {
+	if(isset($_SESSION['id']) && $_SESSION['rol'] >= 1 && esPiloto($_SESSION['id'])) {
 		$notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
 		$nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
-		$app->render('reclamacion.html.twig', array('carrera' => $carrera, 'id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'comentarios' => $comentarios, 'idReclamacion' => $idReclamacion, 'pilotosR' => $pilotosR, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario));
+		$app->redirect('/reclamacion/' . $idReclamacion);
 	} else {
 		$carreras = cargarCarrerasReclamacion();
 		$app->render('reclamaciones.html.twig', array('carrera' => $carrera, 'alert' => "Error: No tiene permiso para acceder a esta zona, debe ser piloto oficial de la categoría", 'carreras' => $carreras, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
@@ -442,6 +446,62 @@ $app->get('/perfil/notificaciones', function() use ($app) {
 		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
 	}
 })->name('notificacionesUsuario');
+
+$app->post('/reportar/bug', function() use ($app) {
+	$configuracion = datosApp();
+	$carrera = cargarCarrera();
+	$noticias = cargarNoticiasPaginacion(4,0);
+	$nNoticias = cargarNnoticias(4);
+	$categorias = cargarCategorias();
+	$reclamaciones = cargarReclamacionesRecientes();
+
+	if(isset($_SESSION['id'])) {
+		$notificacionesUsuario = notificacionesUsuario($_SESSION['id']);
+		$notificacionesTodas = notificacionesUsuarioTodas($_SESSION['id']);
+		$nNotificacionesUsuario = nNotificacionesUsuario($_SESSION['id']);
+		if (comprobarPassword($_SESSION['id'], $_POST['inputPassword'])) {
+			enviarBug($_SESSION['id'], $_POST['inputMotivo'], $_POST['inputExplicacion']);
+			$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'],'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario, 'notificacionesTodas' => $notificacionesTodas));
+			echo "<script>alertify.alert('Muchas gracias por notificar el error, intentaremos corregirlo con la mayor brevedad posible.');</script>";
+		} else {
+			$app->render('principal.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'],'carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion, 'notificaciones' => $notificacionesUsuario, 'nNotificaciones' => $nNotificacionesUsuario, 'notificacionesTodas' => $notificacionesTodas));
+			echo "<script>alertify.alert('Error: contraseña de usuario incorrecta.');</script>";
+		}
+	} else {
+		$app->render('principal.html.twig', array('carrera' => $carrera, 'noticias' => $noticias, 'categorias' => $categorias, 'nNoticias' => $nNoticias, 'pagina' => 1, 'reclamaciones' => $reclamaciones, 'configuracion' => $configuracion));
+	}
+})->name('reportarError');
+
+function enviarBug($usuario, $motivo, $explicacion) {
+    $mail = new PHPMailer;
+
+    $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail->Host = 'smtp.googlemail.com;smtp.googlemail.com';  // Specify main and backup SMTP servers
+    $mail->SMTPAuth = true;                               // Enable SMTP authentication
+    $mail->Username = 'adrianpelopez@gmail.com';                 // SMTP username
+    $mail->Password = 'lnhgctnevnljjock';                           // SMTP password
+    $mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
+
+    $mail->From = 'F1MallorcaSimRacing@f1m.com';
+    $mail->FromName = 'F1Mallorca Sim Racing';
+    $mail->addAddress('adrianpelopez@gmail.com', 'Admin');     // Add a recipient
+    $mail->addReplyTo('fiatotalcontrol@hotmail.es', 'FIA TOTAL CONTROL');
+
+    $mail->WordWrap = 50;                                 // Set word wrap to 50 characters
+    $mail->isHTML(true);                                  // Set email format to HTML
+
+    $mail->Subject = 'Reporte de error';
+    $mail->Body    = 'El usuario X ha encontrado un error en ' . $motivo . '<br> y aporta la siguiente información: <br><br>' . $explicacion;
+}
+
+function comprobarPassword($usuario, $pass) {
+	$user = ORM::for_table('piloto')->where('id', $usuario)->find_one();
+	if (password_verify($pass, $user['password'])) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 function testAccess($app, $usuario, $pass) {
 	$usuario = strtolower($usuario);

@@ -36,6 +36,16 @@ function esRegistrado($idUsuario) {
     }
 }
 
+function esPiloto($idUsuario) {
+    $usuario = ORM::for_table('piloto_categoria')->
+    where('piloto_id', $idUsuario)->find_one();
+    if ($usuario) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function texto($cadena) {
 	$patron = "/^[A-z áéíóúñ]+$/";
 	$r =  preg_match($patron, $cadena) ? true : false;

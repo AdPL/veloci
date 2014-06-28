@@ -387,7 +387,7 @@ $app->post('/usuarios/editar/:idUser', function($idUser) use ($app) {
     if(isset($_SESSION['id'])) {
         if(esAdmin($_SESSION['id'])) {
             if (isset($_POST['inputSubmit'])) {
-                editarUsuario($idUser, $_POST['inputNombre'], $_POST['inputEmail'], $_POST['inputActivo']);
+                editarUsuario($idUser, $_POST['inputNombre'], $_POST['inputEmail'], $_POST['inputActivo'], $_POST['inputRol']);
                 if(isset($_POST['inputCategoriasA'])) {
                     asignarCategorias($idUser, $_POST['inputCategoriasA']); 
                 }
@@ -604,6 +604,32 @@ $app->get('/notificaciones', function() use ($app) {
         $app->Redirect('/');
     }
 })->name('notificaciones');
+
+$app->post('/notificaciones', function() use ($app) {
+    if(isset($_SESSION['id'])) {
+        if(esAdmin($_SESSION['id'])) {
+            leerNotificacionesAdmin();
+            $notificacionesNoLeidas = notificacionesNoLeidas();
+            $notificaciones = cargarNotificaciones();
+
+            $app->render('notificaciones.html.twig', array('id' => $_SESSION['id'], 'usuario' => $_SESSION['nombre_completo'], 'avatar' => $_SESSION['avatar'], 'rol' => $_SESSION['rol'], 'notificacionesNoLeidas' => $notificacionesNoLeidas, 'notificaciones' => $notificaciones));
+        } else {    
+            $app->Redirect('/');
+        }
+    } else {
+        $app->Redirect('/');
+    }
+})->name('leerNotificacionesAdmin');
+
+function leerNotificacionesAdmin() {
+    $notas = ORM::for_table('notificacion')->
+    where_gte('rango_requerido', 4)->find_many();
+
+    foreach ($notas as $nota) {
+        $nota->leida = 1;
+        $nota->save();
+    }
+}
 
 function datosApp() {
     return ORM::for_Table('configuracion')->find_one(1);
@@ -1136,11 +1162,12 @@ function cargarNotificaciones() {
     }
 }*/
 
-function editarUsuario($idUsuario, $nombre_completo, $email, $activo) {
+function editarUsuario($idUsuario, $nombre_completo, $email, $activo, $rol) {
     $usuario = ORM::for_table('piloto')->find_one($idUsuario);
     $usuario->nombre_completo = $nombre_completo;
     $usuario->email = $email;
     $usuario->activo = $activo;
+    $usuario->rol = $rol;
     $usuario->save();
 }
 
