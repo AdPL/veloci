@@ -44,7 +44,8 @@
 				<label for="inputVuelta">Vuelta</label>
 				<select class="form-control" id="inputVuelta" name="inputVuelta" required>
 					<option value="0">Vuelta en la que se produjo el accidente</option>
-					{% for i in 1..datosCarrera['vueltas'] %}
+					{#{% for i in 1..datosCarrera['vueltas'] %}#}
+					{% for i in 1..60 %}
 						<option value="{{ i }}">{{ i }}</option>
 					{% endfor %}
 				</select>

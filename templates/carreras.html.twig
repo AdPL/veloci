@@ -36,8 +36,8 @@
 			<th>Compuestos</th>
 			<th>Fecha</th>
 			<th>Vueltas</th>
-			<th>Categoría</th>
-			<th>Circuito</th>
+			<!--<th>Categoría</th>
+			<th>Circuito</th>-->
 		</thead>
 		<tbody>
 		{% for carrera in carreras %}
@@ -47,8 +47,8 @@
 			 <img src="images/neumaticos/{{ carrera['neumatico2'] }}.gif" class="neumatico" alt="{{ carrera['neumatico2'] }}"/></td>
 			<td>{{ carrera['fecha']|date('d/m/Y') }}</td>
 			<td>{{ carrera['vueltas'] }}</td>
-			<td></td>
-			<td></td>
+			<!--<td></td>
+			<td></td>-->
 		</tr>
 		{% else %}
 		<tr><td>No se han encontrado carreras</td></tr>

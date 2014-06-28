@@ -25,6 +25,9 @@ class="active"
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<h2>Notificaciones</h2>
+			<form method="post" action="{{ urlFor('leerNotificacionesAdmin') }}">
+				<button type="submit" class="btn btn-info">Marcar notificaciones como leídas</button>
+			</form>
 			<hr>
 			<ul class="list-group">
 				{% for notificacion in notificaciones %}

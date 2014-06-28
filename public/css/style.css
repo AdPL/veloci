@@ -118,6 +118,8 @@
 
 .neumatico {
 	width: 30%;
+	max-width: 116px;
+	max-height: 116px;
 }
 
 .img-circle {
